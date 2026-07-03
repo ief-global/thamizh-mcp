@@ -1,0 +1,150 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ThamizhWordAnalysis",
+  "description": "Canonical contract for one Tamil word analysis returned by the THAMIZH MCP server. Every analytical field carries provenance; gaps are explicit, never fabricated.",
+  "type": "object",
+  "required": ["word", "normalized", "origin", "lemma", "pos", "meaning", "formation", "grammar", "sources"],
+  "properties": {
+    "word": { "type": "string", "description": "Raw input word as received." },
+    "normalized": { "type": "string", "description": "Unicode-normalized form used for all lookups." },
+    "origin": {
+      "type": "object",
+      "required": ["class", "is_native", "sources"],
+      "properties": {
+        "class": { "type": "string", "enum": ["இயற்சொல்", "திரிசொல்", "திசைச்சொல்", "வடசொல்", "loanword", "unknown"] },
+        "is_native": { "type": "boolean" },
+        "borrowed_from": { "type": ["string", "null"], "description": "Source language, e.g. Sanskrit, English, Portuguese, Urdu, Marathi." },
+        "adaptation": { "type": ["string", "null"], "enum": ["தற்சமம்", "தற்பவம்", null] },
+        "evidence": { "type": "string" },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "alternatives": { "type": "array", "items": { "type": "object" }, "description": "Competing origin claims when authorities disagree." },
+        "sources": { "$ref": "#/definitions/sources" }
+      }
+    },
+    "lemma": { "type": "string", "description": "Root / dictionary form (வேர்ச்சொல் / lemma)." },
+    "all_analyses": {
+      "type": "array",
+      "description": "All valid morphological analyses when the surface form is ambiguous.",
+      "items": { "type": "object", "properties": { "lemma": {"type": "string"}, "pos": {"type": "string"}, "tags": {"type": "array", "items": {"type": "string"}} } }
+    },
+    "pos": { "type": "string", "enum": ["பெயர்ச்சொல்", "வினைச்சொல்", "இடைச்சொல்", "உரிச்சொல்", "unknown"] },
+    "meaning": {
+      "type": "object",
+      "required": ["senses", "sources"],
+      "properties": {
+        "senses": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "gloss_ta": { "type": "string" },
+              "gloss_en": { "type": "string" },
+              "pos": { "type": "string" },
+              "citation": { "type": "string" }
+            }
+          }
+        },
+        "sources": { "$ref": "#/definitions/sources" }
+      }
+    },
+    "formation": {
+      "type": "object",
+      "required": ["word_type", "components", "sources"],
+      "properties": {
+        "word_type": { "type": "string", "enum": ["பகுபதம்", "பகாப்பதம்", "unknown"] },
+        "components": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["part", "form"],
+            "properties": {
+              "part": { "type": "string", "enum": ["பகுதி", "விகுதி", "இடைநிலை", "சாரியை", "சந்தி", "விகாரம்"] },
+              "form": { "type": "string" },
+              "role": { "type": "string" }
+            }
+          }
+        },
+        "sandhi": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "type": { "type": "string", "enum": ["தோன்றல்", "திரிதல்", "கெடுதல்", "வல்லினம்மிகுதல்", "வல்லினம்மிகாமை"] },
+              "detail": { "type": "string" }
+            }
+          }
+        },
+        "sources": { "$ref": "#/definitions/sources" }
+      }
+    },
+    "grammar": {
+      "type": "object",
+      "required": ["word_class", "sources"],
+      "properties": {
+        "word_class": { "type": "string", "enum": ["பெயர்", "வினை", "இடை", "உரிச்சொல்"] },
+        "case": {
+          "type": ["object", "null"],
+          "properties": {
+            "number": { "type": "integer", "minimum": 1, "maximum": 8 },
+            "name": { "type": "string", "description": "e.g. ஏழாம் வேற்றுமை" },
+            "function": { "type": "string", "description": "e.g. locative / இடப்பொருள்" }
+          }
+        },
+        "tense": { "type": ["string", "null"] },
+        "person_number_gender": { "type": ["string", "null"] },
+        "authority": { "type": "string", "enum": ["Tholkappiyam", "Nannūl"], "description": "Classical authority. Tholkappiyam first; Nannūl only where Tholkappiyam does not codify the point." },
+        "notes": { "type": "string" },
+        "sources": { "$ref": "#/definitions/sources" }
+      }
+    },
+    "native_equivalent": {
+      "type": "object",
+      "description": "Objective 5 — attested native Tamil equivalent(s) of a borrowed word (e.g. கணினி for கம்ப்யூட்டர்). Only meaningful when origin is non-native.",
+      "required": ["applicable"],
+      "properties": {
+        "applicable": { "type": "boolean", "description": "false for native (இயற்சொல்) words; true for any borrowing." },
+        "candidates": {
+          "type": "array",
+          "description": "Ranked attested equivalents. Empty (with a note) when nothing is attested — never fabricated.",
+          "items": {
+            "type": "object",
+            "required": ["equivalent", "source", "attestation"],
+            "properties": {
+              "equivalent": { "type": "string" },
+              "source": { "type": "string", "description": "Authority attesting this equivalent (கலைச்சொல்/TVA/govt, Indic-To-Pure-Tamil, Wiktionary, தனித்தமிழ் list)." },
+              "tier": { "type": "string", "enum": ["anchor", "evolving"] },
+              "register": { "type": "string", "enum": ["technical", "literary", "everyday"] },
+              "attestation": { "type": "string", "enum": ["attested", "proposed"], "description": "attested = used by an authority; proposed = purist/movement coinage, not established usage." },
+              "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+              "citation": { "type": "string" }
+            }
+          }
+        },
+        "note": { "type": "string", "description": "e.g. 'no attested equivalent found'." },
+        "sources": { "$ref": "#/definitions/sources" }
+      }
+    },
+    "gaps": {
+      "type": "array",
+      "description": "Fields no source could ground — explicit honest gaps.",
+      "items": { "type": "object", "properties": { "field": {"type": "string"}, "note": {"type": "string"} } }
+    },
+    "sources": { "$ref": "#/definitions/sources" }
+  },
+  "definitions": {
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": { "type": "string", "description": "e.g. ThamizhiMorph, Madras Tamil Lexicon, Tholkappiyam" },
+          "tier": { "type": "string", "enum": ["anchor", "evolving"], "description": "anchor = stable/authoritative/version-pinned; evolving = community/internet-fed." },
+          "authority": { "type": ["string", "null"], "enum": ["Tholkappiyam", "Nannūl", null], "description": "For grammar claims: which classical authority. Tholkappiyam first; Nannūl fallback." },
+          "ref": { "type": "string", "description": "URL, citation, or rule reference." },
+          "retrieved": { "type": "string", "description": "ISO date (evolving pulls) or version pin (anchors)." }
+        }
+      }
+    }
+  }
+}

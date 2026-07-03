@@ -1,0 +1,169 @@
+"""Analysis core — the plain-Python engine every head (MCP/REST/CLI) sits on (blueprint §8).
+
+Pipeline: morphology (stateless FST anchor) fills lemma/analyses/pos/grammar-case;
+meaning follows the enrichment loop: store → evolving pull (if allowed) → write back.
+Unfilled fields are explicit gaps — never guesses. Formation/origin/native-equivalent
+decoding lands next (Phase 2/3).
+"""
+from __future__ import annotations
+
+import datetime as _dt
+from typing import Optional, Sequence
+
+from thamizh_mcp import config
+from thamizh_mcp.adapters.base import AdapterResult, SourceAdapter
+from thamizh_mcp.core import decoder
+from thamizh_mcp.schema import (
+    STUB_NOTE, Gap, Grammar, Meaning, NativeEquivalent, Origin, Sense, SourceRef, WordAnalysis,
+    empty_analysis,
+)
+from thamizh_mcp.store.knowledge import Claim, KnowledgeStore
+
+_PENDING = "grounding source not wired yet (Phase 1/2 in progress)"
+
+
+class Engine:
+    def __init__(
+        self,
+        morph: Optional[SourceAdapter] = None,
+        meaning_sources: Sequence[SourceAdapter] = (),
+        store: Optional[KnowledgeStore] = None,
+    ):
+        self.morph = morph
+        self.meaning_sources = list(meaning_sources)
+        self.store = store
+
+    async def analyze(
+        self, word: str, normalized: str,
+        include: Optional[list[str]] = None, allow_enrichment: bool = True,
+    ) -> WordAnalysis:
+        a = empty_analysis(word, normalized)
+        a.gaps = []
+        wants = set(include) if include else {"origin", "root", "meaning", "formation", "grammar", "native_equivalent"}
+
+        if {"root", "grammar", "formation"} & wants:
+            await self._fill_morphology(a, normalized, wants)
+        if "meaning" in wants:
+            await self._fill_meaning(a, normalized, allow_enrichment)
+        # Not yet wired (Phase 1/2): explicit gaps, never guesses.
+        if "origin" in wants:
+            a.gaps.append(Gap(field="origin", note=_PENDING))
+        if "native_equivalent" in wants:
+            a.native_equivalent = NativeEquivalent(
+                applicable=False, note="origin unresolved — equivalent check deferred")
+            a.gaps.append(Gap(field="native_equivalent", note=_PENDING))
+        if "formation" in wants and not a.formation.components:
+            a.gaps.append(Gap(field="formation", note="பகுபத உறுப்பு decoder lands in Phase 3"))
+        return a
+
+    async def _fill_morphology(self, a: WordAnalysis, normalized: str, wants: set) -> None:
+        if self.morph is None:
+            for f in ("lemma", "pos", "grammar"):
+                a.gaps.append(Gap(field=f, note=STUB_NOTE))
+            return
+        res = await self.morph.lookup(normalized)
+        if not isinstance(res, AdapterResult):
+            for f in ("lemma", "pos", "grammar"):
+                a.gaps.append(Gap(field=f, note=f"{res.source}: {res.reason} — {res.note}"))
+            return
+
+        analyses = res.fields["all_analyses"]
+        a.all_analyses = analyses
+        a.sources.extend(res.sources)
+
+        lemmas = {m.lemma for m in analyses}
+        if len(lemmas) == 1:
+            a.lemma = analyses[0].lemma
+        else:
+            a.gaps.append(Gap(field="lemma",
+                              note=f"ambiguous — {len(lemmas)} candidate lemmas, see all_analyses"))
+
+        pos_set = {decoder.map_pos(m.pos) for m in analyses}
+        if len(pos_set) == 1 and "unknown" not in pos_set:
+            a.pos = pos_set.pop()
+        else:
+            a.gaps.append(Gap(field="pos", note="ambiguous or unmapped POS across analyses"))
+
+        if "grammar" in wants:
+            grammar = Grammar(word_class=decoder.word_class_of(a.pos),
+                              authority="Tholkappiyam",
+                              sources=[*res.sources, decoder.THOLKAPPIYAM_COLLATIKARAM])
+            cases = {(m2.number, m2.name, m2.function)
+                     for m in analyses if (m2 := decoder.map_case(m.tags))}
+            if len(cases) == 1:
+                n, name, fn = cases.pop()
+                grammar.case = decoder.GrammarCase(number=n, name=name, function=fn)
+                grammar.sources.append(decoder.THOLKAPPIYAM_VETRUMAI)
+            elif len(cases) > 1:
+                grammar.notes = ("case ambiguous across analyses: "
+                                 + "; ".join(sorted(c[1] for c in cases))
+                                 + " — disambiguation is downstream (blueprint §2)")
+                grammar.sources.append(decoder.THOLKAPPIYAM_VETRUMAI)
+            a.grammar = grammar
+            if grammar.word_class == "unknown":
+                a.gaps.append(Gap(field="grammar", note="word class unmapped — see all_analyses"))
+
+    async def _fill_meaning(self, a: WordAnalysis, normalized: str, allow_enrichment: bool) -> None:
+        # 1) cache
+        if self.store is not None:
+            cached = await self.store.get_claims(normalized, "meaning")
+            if cached:
+                senses, srcs = [], []
+                for c in cached:
+                    senses.extend(Sense(**s) for s in c.value.get("senses", []))
+                    srcs.append(SourceRef(name=c.source, tier=c.tier, retrieved=c.retrieved))
+                a.meaning = Meaning(senses=senses, sources=srcs)
+                a.sources.extend(srcs)
+                return
+        # 2) evolving pull (anchor meaning source — Madras Lexicon — pending, blueprint §10)
+        misses: list[str] = []
+        if allow_enrichment:
+            for src in self.meaning_sources:
+                res = await src.lookup(normalized)
+                if isinstance(res, AdapterResult):
+                    senses = [Sense(**s) for s in res.fields["senses"]]
+                    a.meaning = Meaning(senses=senses, sources=res.sources)
+                    a.sources.extend(res.sources)
+                    # 3) write back — the store enriches itself with use
+                    if self.store is not None:
+                        ref = res.sources[0]
+                        await self.store.put_claims(normalized, [Claim(
+                            field="meaning", value=res.fields, source=ref.name, tier=res.tier,
+                            retrieved=ref.retrieved or _dt.date.today().isoformat())])
+                    return
+                # honest miss: keep the WHY so the gap is diagnosable, not mysterious
+                misses.append(f"{res.source}: {res.reason} — {res.note}")
+        note = "no cached claim; anchor lexicon pending (blueprint §10)"
+        if not allow_enrichment:
+            note += "; enrichment disabled"
+        elif misses:
+            note += "; evolving pull failed → " + " | ".join(misses)
+        else:
+            note += "; no evolving source configured"
+        a.gaps.append(Gap(field="meaning", note=note))
+
+
+_default: Optional[Engine] = None
+
+
+def default_engine() -> Engine:
+    """Auto-wire from environment: FST anchor if available; Wiktionary + store for meaning."""
+    global _default
+    if _default is None:
+        from thamizh_mcp.adapters.thamizhimorph import ThamizhiMorphAdapter
+        from thamizh_mcp.adapters.wiktionary import TamilWiktionaryAdapter
+        _default = Engine(
+            morph=ThamizhiMorphAdapter() if config.flookup_available() else None,
+            meaning_sources=[TamilWiktionaryAdapter()],
+            store=KnowledgeStore(config.DEFAULT_DB),
+        )
+    return _default
+
+
+async def analyze_word(
+    word: str, normalized: str,
+    include: Optional[list[str]] = None, allow_enrichment: bool = True,
+) -> WordAnalysis:
+    """Module-level entry point used by the MCP head (server.py)."""
+    return await default_engine().analyze(word, normalized, include=include,
+                                          allow_enrichment=allow_enrichment)

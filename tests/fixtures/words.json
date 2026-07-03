@@ -1,0 +1,12 @@
+{
+  "comment": "Phase 4 eval fixtures (blueprint §9). Expected values to be hand-verified against sources BEFORE locking. no-equivalent + disputed candidates are provisional.",
+  "words": [
+    {"word": "மரம்",        "why": "native (இயற்சொல்), simple"},
+    {"word": "மரத்தில்",     "why": "inflected; sandhi-aware split; 7th case"},
+    {"word": "புத்தகம்",     "why": "வடசொல் → attested equivalent நூல்"},
+    {"word": "கம்ப்யூட்டர்",  "why": "English loan → attested equivalent கணினி"},
+    {"word": "ஜன்னல்",      "why": "Portuguese loan → attested equivalent சாளரம்"},
+    {"word": "ஜிலேபி",      "why": "PROVISIONAL: loan with no attested equivalent (verify in Phase 4)"},
+    {"word": "உலகம்",       "why": "PROVISIONAL: disputed origin (உலகு vs Skt loka) — verify; alt: அரசன்"}
+  ]
+}

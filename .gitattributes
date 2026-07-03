@@ -1,0 +1,16 @@
+# Default: treat as text, normalize to LF in the repo (keeps Windows<->Linux clean).
+* text=auto eol=lf
+
+# UTF-8 Tamil source and data files -- text, LF endings.
+*.py    text eol=lf
+*.md    text eol=lf
+*.toml  text eol=lf
+*.csv   text eol=lf
+*.json  text eol=lf
+*.sql   text eol=lf
+*.cff   text eol=lf
+
+# Binary artifacts -- never normalize, never diff as text.
+*.fst      binary
+*.deb      binary
+*.sqlite3  binary

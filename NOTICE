@@ -1,0 +1,36 @@
+THAMIZH MCP
+Copyright 2026 International Educational Foundation Inc. and THAMIZH MCP contributors.
+
+The source code in this repository is licensed under the Apache License,
+Version 2.0 (see the LICENSE file). Portions of the bundled linguistic data and
+the third-party tools this project depends on carry their own licenses, listed
+below. Attribution is required; please retain this NOTICE file.
+
+================================================================================
+Bundled data and dependencies
+================================================================================
+
+ThamizhiMorph -- Tamil morphological analyser (finite-state transducers in data/fst/)
+  Source : https://github.com/sarves/thamizhi-morph
+  Pin    : adbacceda5e8aa902e4b6ed58a3edf5f78cd46fb (retrieved 2026-07-02)
+  License: Apache License, Version 2.0
+  Cite   : Sarveswaran, K., Dias, G., Butt, M. (2021).
+           "ThamizhiMorph: A morphological parser for the Tamil language."
+           Machine Translation, Springer. DOI: 10.1007/s10590-021-09261-5
+
+Indic-To-Pure-Tamil -- native-equivalent word lists (data/equivalents/indic-to-pure-tamil/)
+  Source : https://github.com/narVidhai/Indic-To-Pure-Tamil
+  Pin    : f734646675579d3d3eb8d44b288f6a13701feaa9 (retrieved 2026-07-02)
+  License: MIT (verify against the upstream repository before public redistribution)
+
+foma / flookup -- finite-state toolkit (runtime dependency; NOT redistributed here)
+  Version: 0.10.0
+  License: Apache License, Version 2.0
+  Note   : Install via the system package manager (e.g. `apt install foma`).
+           The .deb files under data/vendor/ are git-ignored and not published.
+
+Tamil Wiktionary (ta.wiktionary.org) -- word meanings fetched at run time
+  License: CC BY-SA 4.0 / GFDL (share-alike)
+  Note   : Text derived from Wiktionary is share-alike. The runtime cache
+           (data/*.sqlite3) is git-ignored. Review the share-alike obligation
+           (blueprint section 10) before redistributing any cached content.
