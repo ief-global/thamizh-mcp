@@ -2004,11 +2004,13 @@ dependencies = [
 ]
 
 [package.optional-dependencies]
-dev = [
-    { name = "pytest" },
-]
 full = [
     { name = "stanza" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "pytest" },
 ]
 
 [package.metadata]
@@ -2018,10 +2020,12 @@ requires-dist = [
     { name = "mcp", extras = ["cli"], specifier = ">=1.2.0" },
     { name = "open-tamil", specifier = ">=1.1" },
     { name = "pydantic", specifier = ">=2.7" },
-    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8" },
     { name = "stanza", marker = "extra == 'full'", specifier = ">=1.8" },
 ]
-provides-extras = ["full", "dev"]
+provides-extras = ["full"]
+
+[package.metadata.requires-dev]
+dev = [{ name = "pytest", specifier = ">=8" }]
 
 [[package]]
 name = "tomli"
