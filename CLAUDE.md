@@ -40,7 +40,7 @@ uv run python scripts/analyze.py புத்தகம் --include meaning   # 
 uv run python scripts/analyze.py புத்தகம் --include meaning   # again → must serve from cache
 sqlite3 data/knowledge.sqlite3 'select word,field,source,tier,retrieved from claims;'
 ```
-Register as an MCP server: `claude mcp add thamizh -- uv --directory ~/thamizh-mcp run thamizh-mcp`
+Register as an MCP server: `claude mcp add thamizh -- uv --directory ~/projects/thamizh-mcp run thamizh-mcp`
 
 ## Next tasks (build order)
 1. **Kalaichol / equivalents adapter** over the pinned I2PT CSVs
