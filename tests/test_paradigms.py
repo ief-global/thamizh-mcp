@@ -42,6 +42,53 @@ def test_png_is_decoded_from_the_generated_tags():
     assert tense == "இறந்தகாலம்" and png == "தன்மை ஒருமை"
 
 
+# --- present / future paradigms ---
+
+def test_present_forms_resolve():
+    ad = VerbParadigmAdapter()
+    cases = {"வருகிறான்": "வா", "கொடுக்கிறான்": "கொடு", "கேட்கிறாள்": "கேள்",
+             "விற்கிறேன்": "விற்", "தூங்குகிறோம்": "தூங்கு", "கற்கிறான்": "கல்"}
+    for word, lemma in cases.items():
+        got = ad.analyses_for(word)
+        assert got and got[0].lemma == lemma, f"{word} → {got}"
+        assert any(t.startswith("pres=") for t in got[0].tags)
+        assert decoder.decode_verb_grammar(got[0])[0] == "நிகழ்காலம்"
+
+
+def test_literary_present_variant_kinru():
+    ad = VerbParadigmAdapter()
+    got = ad.analyses_for("வருகின்றான்")
+    assert got and got[0].lemma == "வா" and any("கின்ற்" in t for t in got[0].tags)
+
+
+def test_future_forms_resolve():
+    ad = VerbParadigmAdapter()
+    cases = {"வருவான்": "வா", "கொடுப்பான்": "கொடு", "கேட்பாள்": "கேள்",
+             "விற்பேன்": "விற்", "தூங்குவோம்": "தூங்கு", "கற்பான்": "கல்"}
+    for word, lemma in cases.items():
+        got = ad.analyses_for(word)
+        assert got and got[0].lemma == lemma, f"{word} → {got}"
+        assert any(t.startswith("fut=") for t in got[0].tags)
+        assert decoder.decode_verb_grammar(got[0])[0] == "எதிர்காலம்"
+
+
+def test_future_neuter_um_is_not_invented():
+    """Tamil future neuter is -உம் (வரும்), which ThamizhiMorph tags as NONFINITE futANDadjpart —
+    the table must not fabricate a finite 3sgn future (வரு + அது)."""
+    ad = VerbParadigmAdapter()
+    assert ad.analyses_for("வருவது") == []      # not a finite future form we claim
+    for a in ad.analyses_for("வருவான்"):
+        assert "3sgn=அது" not in a.tags
+
+
+def test_tense_marker_matches_fst_convention():
+    """Markers mirror ThamizhiMorph's own surface-marker convention (strong doubling included)."""
+    ad = VerbParadigmAdapter()
+    assert any("pres=க்கிற்" in a.tags for a in ad.analyses_for("கொடுக்கிறான்"))
+    assert any("fut=ப்ப்" in a.tags for a in ad.analyses_for("கொடுப்பான்"))
+    assert any("fut=வ்" in a.tags for a in ad.analyses_for("வருவான்"))
+
+
 def test_table_is_closed_no_guessing():
     """An unlisted word must NOT match — the table is deliberately closed (honest gap, not a guess)."""
     ad = VerbParadigmAdapter()

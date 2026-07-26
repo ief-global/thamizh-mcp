@@ -1,6 +1,6 @@
 {
-  "comment": "Curated irregular-verb paradigm table (ANCHOR tier). Fills ThamizhiMorph FST lexicon gaps for common verbs whose PAST stem is irregular/suppletive and therefore absent from the primary FSTs. This is a hand-verified encoded rule table — the same grounding model as core/decoder.py's rule tables (design D-011: grounding = human-encoded rule table at design time + per-claim citation at runtime). It is NOT a guesser: only listed lemmas with verified past stems are matched, and every claim cites this table. Guesser FSTs remain excluded because they return WRONG lemmas (கொடுத் for கொடு, வந் for வா).",
-  "authority": "Standard Tamil verb paradigms (Nannūl வினையியல் classes); forms cross-checked against ThamizhiMorph output where the FST covers a sibling form.",
+  "comment": "Curated verb paradigm table (ANCHOR tier). Fills ThamizhiMorph FST lexicon gaps for common verbs whose stems are irregular/suppletive and therefore absent from the primary FSTs. This is a hand-verified encoded rule table — the same grounding model as core/decoder.py's rule tables (design D-011: grounding = human-encoded rule table at design time + per-claim citation at runtime). It is NOT a guesser: only listed lemmas match, and every claim cites this table. Guesser FSTs remain excluded because they return WRONG lemmas (கொடுத் for கொடு, வந் for வா).",
+  "authority": "Standard Tamil verb paradigms (Nannūl வினையியல் classes); markers follow the ThamizhiMorph tag convention (past=/pres=/fut= with the surface marker), cross-checked against FST output for sibling verbs it does cover.",
   "verified_date": "2026-07-20",
   "png_suffixes": {
     "1sg": "ஏன்",
@@ -12,16 +12,54 @@
     "2pl": "ஈர்கள்",
     "3ple": "ஆர்கள்"
   },
-  "past": [
-    {"lemma": "போ",     "stem": "போன்",     "marker": "ன்",   "note": "இறந்தகால ஒற்று ன் (போ → போன்)"},
-    {"lemma": "சொல்",   "stem": "சொன்ன்",   "marker": "ன்",   "note": "ல் → ன்ன் திரிதல் (சொல் → சொன்ன்)"},
-    {"lemma": "கல்",    "stem": "கற்ற்",     "marker": "ற்",   "note": "ல் → ற்ற் திரிதல் (கல் → கற்ற்)"},
-    {"lemma": "கொடு",   "stem": "கொடுத்த்",  "marker": "த்",   "note": "வலிமிகு இறந்தகாலம் (கொடு → கொடுத்த்)"},
-    {"lemma": "விற்",   "stem": "விற்ற்",    "marker": "ற்",   "note": "ற் ஒற்று இரட்டித்தல் (விற் → விற்ற்)"},
-    {"lemma": "தூங்கு", "stem": "தூங்கின்",  "marker": "இன்",  "note": "இன் இடைநிலை இறந்தகாலம்"},
-    {"lemma": "நில்",   "stem": "நின்ற்",    "marker": "ன்ற்", "note": "ல் → ன்ற் திரிதல் (நில் → நின்ற்)"},
-    {"lemma": "கேள்",   "stem": "கேட்ட்",    "marker": "ட்",   "note": "ள் → ட்ட் திரிதல் (கேள் → கேட்ட்)"},
-    {"lemma": "உண்",    "stem": "உண்ட்",     "marker": "ட்",   "note": "ண் + ட் இறந்தகாலம்"},
-    {"lemma": "கொள்",   "stem": "கொண்ட்",    "marker": "ட்",   "note": "ள் → ண்ட் திரிதல் (கொள் → கொண்ட்)"}
-  ]
+  "png_excluded_by_tense": {
+    "fut": ["3sgn"]
+  },
+  "png_exclusion_note": "Tamil future neuter is -உம் (வரும், படிக்கும்), which ThamizhiMorph itself tags as NONFINITE futANDadjpart, not a finite 3sgn form. Excluded rather than invented.",
+  "paradigms": {
+    "past": [
+      {"lemma": "போ",     "stem": "போன்",     "marker": "ன்",   "note": "இறந்தகால ஒற்று ன் (போ → போன்)"},
+      {"lemma": "சொல்",   "stem": "சொன்ன்",   "marker": "ன்",   "note": "ல் → ன்ன் திரிதல் (சொல் → சொன்ன்)"},
+      {"lemma": "கல்",    "stem": "கற்ற்",     "marker": "ற்",   "note": "ல் → ற்ற் திரிதல் (கல் → கற்ற்)"},
+      {"lemma": "கொடு",   "stem": "கொடுத்த்",  "marker": "த்",   "note": "வலிமிகு இறந்தகாலம் (கொடு → கொடுத்த்)"},
+      {"lemma": "விற்",   "stem": "விற்ற்",    "marker": "ற்",   "note": "ற் ஒற்று இரட்டித்தல் (விற் → விற்ற்)"},
+      {"lemma": "தூங்கு", "stem": "தூங்கின்",  "marker": "இன்",  "note": "இன் இடைநிலை இறந்தகாலம்"},
+      {"lemma": "நில்",   "stem": "நின்ற்",    "marker": "ன்ற்", "note": "ல் → ன்ற் திரிதல் (நில் → நின்ற்)"},
+      {"lemma": "கேள்",   "stem": "கேட்ட்",    "marker": "ட்",   "note": "ள் → ட்ட் திரிதல் (கேள் → கேட்ட்)"},
+      {"lemma": "உண்",    "stem": "உண்ட்",     "marker": "ட்",   "note": "ண் + ட் இறந்தகாலம்"},
+      {"lemma": "கொள்",   "stem": "கொண்ட்",    "marker": "ட்",   "note": "ள் → ண்ட் திரிதல் (கொள் → கொண்ட்)"}
+    ],
+    "pres": [
+      {"lemma": "வா",     "stem": "வருகிற்",     "marker": "கிற்",    "note": "suppletive present stem வரு (வா → வருகிறான்)"},
+      {"lemma": "வா",     "stem": "வருகின்ற்",   "marker": "கின்ற்",  "note": "literary variant கின்ற் (வருகின்றான்)"},
+      {"lemma": "கல்",    "stem": "கற்கிற்",     "marker": "கிற்",    "note": "ல் → ற் before the present marker (கல் → கற்கிறான்)"},
+      {"lemma": "கல்",    "stem": "கற்கின்ற்",   "marker": "கின்ற்",  "note": "literary variant"},
+      {"lemma": "கொடு",   "stem": "கொடுக்கிற்",  "marker": "க்கிற்",  "note": "strong-verb doubling க்கிற் (கொடுக்கிறான்)"},
+      {"lemma": "கொடு",   "stem": "கொடுக்கின்ற்", "marker": "க்கின்ற்", "note": "literary variant"},
+      {"lemma": "கேள்",   "stem": "கேட்கிற்",    "marker": "கிற்",    "note": "ள் → ட் before the present marker (கேட்கிறான்)"},
+      {"lemma": "கேள்",   "stem": "கேட்கின்ற்",  "marker": "கின்ற்",  "note": "literary variant"},
+      {"lemma": "விற்",   "stem": "விற்கிற்",    "marker": "கிற்",    "note": "விற் + கிற் (விற்கிறான்)"},
+      {"lemma": "விற்",   "stem": "விற்கின்ற்",  "marker": "கின்ற்",  "note": "literary variant"},
+      {"lemma": "தூங்கு", "stem": "தூங்குகிற்",  "marker": "கிற்",    "note": "weak verb + கிற் (தூங்குகிறான்)"},
+      {"lemma": "தூங்கு", "stem": "தூங்குகின்ற்", "marker": "கின்ற்",  "note": "literary variant"},
+      {"lemma": "நில்",   "stem": "நிற்கிற்",    "marker": "கிற்",    "note": "ல் → ற் (நிற்கிறான்)"},
+      {"lemma": "உண்",    "stem": "உண்கிற்",     "marker": "கிற்",    "note": "உண் + கிற்"},
+      {"lemma": "கொள்",   "stem": "கொள்கிற்",    "marker": "கிற்",    "note": "கொள் + கிற்"},
+      {"lemma": "சொல்",   "stem": "சொல்கிற்",    "marker": "கிற்",    "note": "சொல் + கிற்"},
+      {"lemma": "போ",     "stem": "போகிற்",      "marker": "கிற்",    "note": "போ + கிற்"}
+    ],
+    "fut": [
+      {"lemma": "வா",     "stem": "வருவ்",     "marker": "வ்",   "note": "suppletive future stem வரு (வா → வருவான்)"},
+      {"lemma": "கல்",    "stem": "கற்ப்",     "marker": "ப்",   "note": "ல் → ற் + ப் (கல் → கற்பான்)"},
+      {"lemma": "கொடு",   "stem": "கொடுப்ப்",  "marker": "ப்ப்", "note": "strong-verb doubling ப்ப் (கொடுப்பான்)"},
+      {"lemma": "கேள்",   "stem": "கேட்ப்",    "marker": "ப்",   "note": "ள் → ட் + ப் (கேட்பான்)"},
+      {"lemma": "விற்",   "stem": "விற்ப்",    "marker": "ப்",   "note": "விற் + ப் (விற்பான்)"},
+      {"lemma": "தூங்கு", "stem": "தூங்குவ்",  "marker": "வ்",   "note": "weak verb + வ் (தூங்குவான்)"},
+      {"lemma": "நில்",   "stem": "நிற்ப்",    "marker": "ப்",   "note": "ல் → ற் + ப் (நிற்பான்)"},
+      {"lemma": "உண்",    "stem": "உண்ப்",     "marker": "ப்",   "note": "உண் + ப்"},
+      {"lemma": "கொள்",   "stem": "கொள்வ்",    "marker": "வ்",   "note": "கொள் + வ்"},
+      {"lemma": "சொல்",   "stem": "சொல்வ்",    "marker": "வ்",   "note": "சொல் + வ்"},
+      {"lemma": "போ",     "stem": "போவ்",      "marker": "வ்",   "note": "போ + வ்"}
+    ]
+  }
 }
