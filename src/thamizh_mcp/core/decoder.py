@@ -84,6 +84,11 @@ def map_case(tags: list[str]) -> Optional[GrammarCase]:
 _TENSE_ROLE: dict[str, str] = {
     "past": "இறந்தகாலம்", "pres": "நிகழ்காலம்", "fut": "எதிர்காலம்",
 }
+# Voice/derivation இடைநிலை that sit BETWEEN பகுதி and the tense marker (செய்+வி+த்+ஆன்).
+# The FST supplies the surface form (caus=வி); order here is the surface order.
+_MID_ROLE: dict[str, str] = {
+    "caus": "பிறவினை (causative)", "pass": "செயப்பாட்டு வினை (passive)",
+}
 # Verb terminal ending (விகுதி): PNG code → முற்று role (person·gender·number).
 _PNG_ROLE: dict[str, str] = {
     "1sg": "தன்மை ஒருமை", "2sg": "முன்னிலை ஒருமை",
@@ -191,6 +196,13 @@ def decode_formation(word: str, analysis: MorphAnalysis) -> Formation:
     inflected = False
 
     if _is_verb(pos):
+        # voice/derivation இடைநிலை first — it precedes the tense marker on the surface
+        for mcode, mrole in _MID_ROLE.items():
+            if feats.get(mcode) not in (None, "", "∅"):
+                inflected = True
+                comps.append(FormationComponent(
+                    part="இடைநிலை", form=feats[mcode], role=mrole, authority="Nannūl"))
+                break
         for tcode, trole in _TENSE_ROLE.items():
             if feats.get(tcode) not in (None, "", "∅"):
                 inflected = True

@@ -27,8 +27,10 @@ class Engine:
         meaning_sources: Sequence[SourceAdapter] = (),
         equivalent_sources: Sequence[SourceAdapter] = (),
         store: Optional[KnowledgeStore] = None,
+        morph_fallback: Optional[SourceAdapter] = None,
     ):
         self.morph = morph
+        self.morph_fallback = morph_fallback   # curated paradigms — used only on an FST miss
         self.meaning_sources = list(meaning_sources)
         self.equivalent_sources = list(equivalent_sources)
         self.store = store
@@ -81,11 +83,16 @@ class Engine:
             pass
 
     async def _fill_morphology(self, a: WordAnalysis, normalized: str, wants: set) -> None:
-        if self.morph is None:
+        res = await self.morph.lookup(normalized) if self.morph is not None else None
+        # FST miss (or no FST) → curated irregular-verb paradigms, an anchor rule table, never a guesser.
+        if not isinstance(res, AdapterResult) and self.morph_fallback is not None:
+            fb = await self.morph_fallback.lookup(normalized)
+            if isinstance(fb, AdapterResult):
+                res = fb
+        if res is None:
             for f in ("lemma", "pos", "grammar"):
                 a.gaps.append(Gap(field=f, note=STUB_NOTE))
             return
-        res = await self.morph.lookup(normalized)
         if not isinstance(res, AdapterResult):
             for f in ("lemma", "pos", "grammar"):
                 a.gaps.append(Gap(field=f, note=f"{res.source}: {res.reason} — {res.note}"))
@@ -205,6 +212,9 @@ class Engine:
         elif self.morph is not None:
             res = await self.morph.lookup(normalized)
             fst_native = isinstance(res, AdapterResult) and bool(res.fields.get("all_analyses"))
+            if not fst_native and self.morph_fallback is not None:
+                fb = await self.morph_fallback.lookup(normalized)   # curated paradigms are native too
+                fst_native = isinstance(fb, AdapterResult) and bool(fb.fields.get("all_analyses"))
         else:
             fst_native = None
         in_i2pt = await self._word_in_i2pt(normalized)
@@ -319,10 +329,12 @@ def default_engine() -> Engine:
     global _default
     if _default is None:
         from thamizh_mcp.adapters.equivalents import IndicToPureTamilAdapter
+        from thamizh_mcp.adapters.paradigms import VerbParadigmAdapter
         from thamizh_mcp.adapters.thamizhimorph import ThamizhiMorphAdapter
         from thamizh_mcp.adapters.wiktionary import TamilWiktionaryAdapter
         _default = Engine(
             morph=ThamizhiMorphAdapter() if config.flookup_available() else None,
+            morph_fallback=VerbParadigmAdapter(),
             meaning_sources=[TamilWiktionaryAdapter()],
             equivalent_sources=[IndicToPureTamilAdapter()],
             store=KnowledgeStore(config.DEFAULT_DB),

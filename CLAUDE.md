@@ -50,6 +50,14 @@ classical rule applies (no invented split). Grammar now also carries verb tense 
 (explicit `words` and/or `stale_days` sweep of the store), bounded by `limit`, overwriting the cache;
 per-word report with honest errors. Adds a `force_refresh` path to the engine + `KnowledgeStore.stale_words`.
 **Nine MCP tools now** (only optional `validate_pure_tamil`/`generate_forms`/`transliterate` left from §6).
+**FST coverage gaps fixed (2026-07-20):** the primary FSTs miss ~25% of everyday past-tense verbs
+(போனான், சொன்னான், கொடுத்தான், கற்றான், விற்றான், தூங்கினான்) — those lemmas/irregular past stems aren't in
+the lexicon. Guessers stay excluded (they return WRONG lemmas: கொடுத் for கொடு). Instead
+`adapters/paradigms.py` + `data/verb_paradigms.json` = a curated ANCHOR rule table (irregular past stem
+× regular PNG suffixes), used ONLY on an FST miss, emitting the FST's own tag shape so decoder/grammar
+work unchanged. Surface forms are GENERATED with a proper Tamil mei+uyir join (போன்+ஆன்→போனான், not
+string concat). Past-form coverage 18/24 → **24/24**; table is closed (unlisted word → honest gap).
+Also fixed: causative இடைநிலை was dropped by the decoder (செய்வித்தான் → செய்+**வி**+த்+ஆன்).
 **Transaction logging live (2026-07-18):** every resolved `analyze()` is logged to a `transactions`
 table as gold data (blueprint §12) — full WordAnalysis + tool label + `eval_fixture` contamination flag
 (from `data/eval_fixtures.json`). On by default (`THAMIZH_TXN_LOG=0` disables); a non-fatal background
@@ -62,7 +70,7 @@ side-output. Captures the FST/rule-based segmentation+origin gold the `claims` c
 ```bash
 uv sync                                              # installs deps incl. pytest
 which flookup && echo "மரம்" | flookup data/fst/noun.fst
-uv run pytest -v                                     # expect 87 passed with foma
+uv run pytest -v                                     # expect 99 passed with foma
 uv run python scripts/analyze.py மரத்தில் --include formation  # பகுதி மரம் + சாரியை அத்து + விகுதி இல்
 uv run python scripts/analyze.py ரயில் --include origin       # loanword: முதல் எழுத்து rule
 uv run python scripts/analyze.py ஜோதி --include origin        # வடசொல்: Grantha letter
