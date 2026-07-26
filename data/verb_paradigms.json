@@ -1,0 +1,27 @@
+{
+  "comment": "Curated irregular-verb paradigm table (ANCHOR tier). Fills ThamizhiMorph FST lexicon gaps for common verbs whose PAST stem is irregular/suppletive and therefore absent from the primary FSTs. This is a hand-verified encoded rule table — the same grounding model as core/decoder.py's rule tables (design D-011: grounding = human-encoded rule table at design time + per-claim citation at runtime). It is NOT a guesser: only listed lemmas with verified past stems are matched, and every claim cites this table. Guesser FSTs remain excluded because they return WRONG lemmas (கொடுத் for கொடு, வந் for வா).",
+  "authority": "Standard Tamil verb paradigms (Nannūl வினையியல் classes); forms cross-checked against ThamizhiMorph output where the FST covers a sibling form.",
+  "verified_date": "2026-07-20",
+  "png_suffixes": {
+    "1sg": "ஏன்",
+    "2sg": "ஆய்",
+    "3sgm": "ஆன்",
+    "3sgf": "ஆள்",
+    "3sgn": "அது",
+    "1pl": "ஓம்",
+    "2pl": "ஈர்கள்",
+    "3ple": "ஆர்கள்"
+  },
+  "past": [
+    {"lemma": "போ",     "stem": "போன்",     "marker": "ன்",   "note": "இறந்தகால ஒற்று ன் (போ → போன்)"},
+    {"lemma": "சொல்",   "stem": "சொன்ன்",   "marker": "ன்",   "note": "ல் → ன்ன் திரிதல் (சொல் → சொன்ன்)"},
+    {"lemma": "கல்",    "stem": "கற்ற்",     "marker": "ற்",   "note": "ல் → ற்ற் திரிதல் (கல் → கற்ற்)"},
+    {"lemma": "கொடு",   "stem": "கொடுத்த்",  "marker": "த்",   "note": "வலிமிகு இறந்தகாலம் (கொடு → கொடுத்த்)"},
+    {"lemma": "விற்",   "stem": "விற்ற்",    "marker": "ற்",   "note": "ற் ஒற்று இரட்டித்தல் (விற் → விற்ற்)"},
+    {"lemma": "தூங்கு", "stem": "தூங்கின்",  "marker": "இன்",  "note": "இன் இடைநிலை இறந்தகாலம்"},
+    {"lemma": "நில்",   "stem": "நின்ற்",    "marker": "ன்ற்", "note": "ல் → ன்ற் திரிதல் (நில் → நின்ற்)"},
+    {"lemma": "கேள்",   "stem": "கேட்ட்",    "marker": "ட்",   "note": "ள் → ட்ட் திரிதல் (கேள் → கேட்ட்)"},
+    {"lemma": "உண்",    "stem": "உண்ட்",     "marker": "ட்",   "note": "ண் + ட் இறந்தகாலம்"},
+    {"lemma": "கொள்",   "stem": "கொண்ட்",    "marker": "ட்",   "note": "ள் → ண்ட் திரிதல் (கொள் → கொண்ட்)"}
+  ]
+}

@@ -38,6 +38,10 @@ TXN_LOG = os.environ.get("THAMIZH_TXN_LOG", "1") not in ("0", "false", "no", "")
 # so the data-curation skill can drop them from published datasets. thamizh-eval extends the file.
 EVAL_FIXTURES_FILE = Path(os.environ.get("THAMIZH_EVAL_FIXTURES", REPO_ROOT / "data" / "eval_fixtures.json"))
 
+# Curated irregular-verb paradigms (anchor) — fills FST lexicon gaps; see adapters/paradigms.py.
+VERB_PARADIGMS_FILE = Path(os.environ.get(
+    "THAMIZH_VERB_PARADIGMS", REPO_ROOT / "data" / "verb_paradigms.json"))
+
 
 def flookup_available() -> bool:
     return bool(FLOOKUP) and Path(FLOOKUP).exists() and FST_DIR.is_dir()
