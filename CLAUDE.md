@@ -63,7 +63,7 @@ table as gold data (blueprint §12) — full WordAnalysis + tool label + `eval_f
 (from `data/eval_fixtures.json`). On by default (`THAMIZH_TXN_LOG=0` disables); a non-fatal background
 side-output. Captures the FST/rule-based segmentation+origin gold the `claims` cache never held. The
 `thamizh-data-curation` skill reads this table directly. `KnowledgeStore.transaction_stats()` for growth.
-**87 tests pass** (85 without live foma). Design repo at `~/projects/thamizh-mcp-design/` →
+**99 tests pass** (97 without live foma). Design repo at `~/projects/thamizh-mcp-design/` →
 `ief-global/thamizh-mcp-design` (blueprint, tamil-grammar.md, DECISIONS, roadmap, CODE-STATUS.md).
 
 ## Test ladder (run in order, from repo root)
