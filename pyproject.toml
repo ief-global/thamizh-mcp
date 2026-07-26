@@ -17,6 +17,8 @@ dependencies = [
 [project.optional-dependencies]
 # stanza deferred off the single-word path (hosting-plan cost lever); install with `uv sync --extra full`
 full = ["stanza>=1.8"]
+# REST head + browser UI (blueprint §8 "heads over one engine"): `uv sync --extra web`
+web = ["fastapi>=0.110", "uvicorn[standard]>=0.29"]
 
 [dependency-groups]
 # dev tooling — installed by default on `uv sync`; run tests with `uv run pytest -q`
@@ -24,6 +26,7 @@ dev = ["pytest>=8"]
 
 [project.scripts]
 thamizh-mcp = "thamizh_mcp.server:main"
+thamizh-web = "thamizh_mcp.web:main"
 
 [build-system]
 requires = ["hatchling"]

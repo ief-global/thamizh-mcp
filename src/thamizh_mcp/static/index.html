@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="ta">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>தமிழ் MCP — சொல் இலக்கணம்</title>
+<style>
+  /* Tamil-first font stack. Browsers shape Tamil correctly (terminals do not) — that is why this
+     UI exists. Falls back through the fonts commonly present on Linux/Windows/macOS. */
+  :root{
+    --ink:#241c1c; --muted:#6b5e5e; --line:#e2d9d3; --bg:#fbf8f5; --card:#fff;
+    --accent:#7a1f2b; --accent2:#2f3d6b; --ok:#1f6b4a; --gap:#8a6a1f;
+    --tamil:"Noto Sans Tamil","Latha","Nirmala UI","Tamil Sangam MN","Lohit Tamil",sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --ink:#f0e9e4; --muted:#b3a69f; --line:#3c3331; --bg:#1a1615; --card:#241f1d;
+           --accent:#e08a96; --accent2:#9fb0e6; --ok:#7fd3ab; --gap:#e0be6a; }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font-family:var(--tamil);line-height:1.65;font-size:17px}
+  header{border-bottom:1px solid var(--line);padding:22px 20px;background:var(--card)}
+  .wrap{max-width:860px;margin:0 auto;padding:0 20px}
+  h1{margin:0;font-size:1.7rem;letter-spacing:.2px}
+  h1 small{display:block;font-size:.8rem;color:var(--muted);font-weight:400;margin-top:4px;
+           font-family:system-ui,sans-serif}
+  form{display:flex;gap:10px;margin:26px 0 8px;flex-wrap:wrap}
+  input[type=text]{flex:1;min-width:240px;font-family:var(--tamil);font-size:1.5rem;padding:12px 16px;
+    border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink)}
+  input[type=text]:focus{outline:2px solid var(--accent);outline-offset:1px}
+  button{font-size:1rem;padding:12px 22px;border:0;border-radius:10px;background:var(--accent);
+    color:#fff;cursor:pointer;font-family:system-ui,sans-serif}
+  button:disabled{opacity:.5;cursor:progress}
+  .opts{font-size:.85rem;color:var(--muted);font-family:system-ui,sans-serif;margin-bottom:18px}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 26px}
+  .chip{font-size:1.15rem;padding:5px 14px;border:1px solid var(--line);border-radius:999px;
+        background:var(--card);cursor:pointer;color:var(--ink)}
+  .chip:hover{border-color:var(--accent)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px;
+        margin-bottom:16px}
+  .word{font-size:2.4rem;margin:0 0 4px;color:var(--accent)}
+  .facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-top:14px}
+  .fact{border:1px solid var(--line);border-radius:10px;padding:10px 13px}
+  .fact b{display:block;font-size:.72rem;color:var(--muted);font-weight:600;letter-spacing:.4px;
+          font-family:system-ui,sans-serif;text-transform:uppercase}
+  .fact span{font-size:1.25rem}
+  h2{font-size:.78rem;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);
+     font-family:system-ui,sans-serif;margin:0 0 12px}
+  .parts{display:flex;gap:10px;flex-wrap:wrap;align-items:stretch}
+  .part{border:1px solid var(--line);border-left:4px solid var(--accent2);border-radius:9px;
+        padding:9px 14px;min-width:110px}
+  .part .k{font-size:.72rem;color:var(--muted);font-family:system-ui,sans-serif}
+  .part .v{font-size:1.5rem}
+  .plus{align-self:center;color:var(--muted);font-size:1.3rem}
+  .row{padding:9px 0;border-bottom:1px dashed var(--line)}
+  .row:last-child{border-bottom:0}
+  .src{font-size:.8rem;color:var(--muted);font-family:system-ui,sans-serif}
+  .ev{font-size:.9rem;color:var(--muted);margin-top:6px}
+  .badge{display:inline-block;font-size:.72rem;padding:2px 9px;border-radius:999px;
+         background:var(--line);color:var(--ink);font-family:system-ui,sans-serif;margin-left:8px}
+  .gaps{border-left:4px solid var(--gap)}
+  .gaps b{color:var(--gap)}
+  .err{border-left:4px solid var(--accent);color:var(--accent)}
+  footer{color:var(--muted);font-size:.8rem;font-family:system-ui,sans-serif;
+         padding:26px 0 50px;text-align:center}
+  code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.85em}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <h1>தமிழ் MCP · சொல் இலக்கணம்
+    <small>Grounded Tamil word analysis — Tholkappiyam-first, every claim cited, honest about gaps</small>
+  </h1>
+</div></header>
+
+<div class="wrap">
+  <form id="f">
+    <input type="text" id="w" placeholder="ஒரு தமிழ்ச் சொல்…" autocomplete="off" autofocus>
+    <button id="go" type="submit">பகுப்பாய்வு</button>
+  </form>
+  <div class="opts">
+    <label><input type="checkbox" id="m"> பொருள் (meaning) — live lookup, slower</label>
+  </div>
+  <div class="chips" id="chips"></div>
+  <div id="out"></div>
+</div>
+<footer>ThamizhiMorph FST · Tholkappiyam / Nannūl rules · Indic-To-Pure-Tamil · Tamil Wiktionary</footer>
+
+<script>
+const SAMPLES = ["மரத்தில்","வந்தான்","வருகிறான்","கொடுத்தான்","அகராதி","புத்தகம்","ரயில்","ஜோதி"];
+const $ = s => document.querySelector(s);
+const el = (t,c,x) => { const e=document.createElement(t); if(c)e.className=c; if(x!=null)e.textContent=x; return e; };
+
+SAMPLES.forEach(s => {
+  const b = el("button","chip",s); b.type="button";
+  b.onclick = () => { $("#w").value = s; run(); };
+  $("#chips").appendChild(b);
+});
+
+$("#f").onsubmit = e => { e.preventDefault(); run(); };
+
+async function run(){
+  const word = $("#w").value.trim();
+  if(!word) return;
+  $("#go").disabled = true;
+  $("#out").innerHTML = '<div class="card"><em>பகுப்பாய்வு நடைபெறுகிறது…</em></div>';
+  try{
+    const r = await fetch(`/api/analyze?word=${encodeURIComponent(word)}&meaning=${$("#m").checked}`);
+    const d = await r.json();
+    render(word, d, r.ok);
+  }catch(err){
+    $("#out").innerHTML = "";
+    $("#out").appendChild(card("err", [el("div",null,"Request failed: "+err)]));
+  }
+  $("#go").disabled = false;
+}
+
+function card(cls, kids){ const c = el("div","card"+(cls?" "+cls:"")); kids.forEach(k=>c.appendChild(k)); return c; }
+function h2(t){ return el("h2",null,t); }
+
+function render(word, d, ok){
+  const out = $("#out"); out.innerHTML = "";
+  if(!ok || d.error){ out.appendChild(card("err",[el("div",null,d.error||"Error")])); return; }
+
+  // headline + quick facts
+  const head = [el("div","word", d.word)];
+  const facts = el("div","facts");
+  const add = (k,v) => { if(!v||v==="unknown") return;
+    const f = el("div","fact"); f.appendChild(el("b",null,k)); f.appendChild(el("span",null,v)); facts.appendChild(f); };
+  add("வேர்ச்சொல் root", d.lemma);
+  add("சொல் வகை class", d.grammar?.word_class);
+  add("வேற்றுமை case", d.grammar?.case?.name);
+  add("காலம் tense", d.grammar?.tense);
+  add("முற்று person", d.grammar?.person_number_gender);
+  if(facts.children.length) head.push(facts);
+  out.appendChild(card(null, head));
+
+  // formation
+  const F = d.formation||{};
+  if(F.components?.length){
+    const kids = [h2(`பகுபத உறுப்பு — formation  [${F.word_type}]`)];
+    const parts = el("div","parts");
+    F.components.forEach((c,i)=>{
+      if(i) parts.appendChild(el("div","plus","+"));
+      const p = el("div","part");
+      p.appendChild(el("div","k", c.part + (c.authority? " · "+c.authority : "")));
+      p.appendChild(el("div","v", c.form));
+      if(c.role) p.appendChild(el("div","k", c.role));
+      parts.appendChild(p);
+    });
+    kids.push(parts);
+    (F.sandhi||[]).forEach(s=>{
+      const r = el("div","row");
+      r.appendChild(el("span",null, s.type));
+      r.appendChild(el("span","badge", s.authority||""));
+      r.appendChild(el("div","ev", s.detail||""));
+      kids.push(r);
+    });
+    out.appendChild(card(null,kids));
+  }
+
+  // origin
+  const O = d.origin||{};
+  if(O.class && O.class!=="unknown" || O.evidence){
+    const kids=[h2("பிறப்பு — origin")];
+    const r = el("div");
+    r.appendChild(el("span",null, O.class==="unknown" ? "unknown (honest)" : O.class));
+    if(O.confidence) r.appendChild(el("span","badge","confidence "+O.confidence));
+    kids.push(r);
+    if(O.evidence) kids.push(el("div","ev",O.evidence));
+    out.appendChild(card(null,kids));
+  }
+
+  // equivalents
+  const NE = d.native_equivalent||{};
+  if(NE.candidates?.length){
+    const kids=[h2("தனித்தமிழ் நிகரானவை — attested equivalents")];
+    NE.candidates.forEach(c=>{
+      const r=el("div","row");
+      r.appendChild(el("span",null,c.equivalent));
+      r.appendChild(el("span","badge",c.attestation||""));
+      r.appendChild(el("div","src", c.citation || c.source || ""));
+      kids.push(r);
+    });
+    out.appendChild(card(null,kids));
+  }
+
+  // meaning
+  if(d.meaning?.senses?.length){
+    const kids=[h2("பொருள் — meaning")];
+    d.meaning.senses.slice(0,4).forEach(s=>{
+      kids.push(el("div","row", s.gloss_ta || s.gloss_en || ""));
+    });
+    out.appendChild(card(null,kids));
+  }
+
+  // honest gaps
+  if(d.gaps?.length){
+    const kids=[h2("honest gaps — no source could ground these")];
+    d.gaps.forEach(g=>{
+      const r=el("div","row");
+      r.appendChild(el("b",null,g.field));
+      r.appendChild(el("div","ev",g.note||""));
+      kids.push(r);
+    });
+    out.appendChild(card("gaps",kids));
+  }
+
+  // provenance
+  const names=[...new Set((d.sources||[]).map(s=>s.name))];
+  if(names.length){
+    out.appendChild(card(null,[h2("சான்று — sources"), el("div","src", names.join("  ·  "))]));
+  }
+}
+</script>
+</body>
+</html>
