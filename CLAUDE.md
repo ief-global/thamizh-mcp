@@ -56,21 +56,26 @@ the lexicon. Guessers stay excluded (they return WRONG lemmas: கொடுத�
 `adapters/paradigms.py` + `data/verb_paradigms.json` = a curated ANCHOR rule table (irregular past stem
 × regular PNG suffixes), used ONLY on an FST miss, emitting the FST's own tag shape so decoder/grammar
 work unchanged. Surface forms are GENERATED with a proper Tamil mei+uyir join (போன்+ஆன்→போனான், not
-string concat). Past-form coverage 18/24 → **24/24**; table is closed (unlisted word → honest gap).
+string concat). Table is closed (unlisted word → honest gap).
 Also fixed: causative இடைநிலை was dropped by the decoder (செய்வித்தான் → செய்+**வி**+த்+ஆன்).
+**Extended to all three tenses (2026-07-20):** paradigms are keyed by tense (`past`/`pres`/`fut`) using
+ThamizhiMorph's own marker convention (`pres=க்கிற்`, `fut=ப்ப்`…), incl. the literary `கின்ற்` variant.
+Future **excludes 3sgn** — Tamil future neuter is `-உம்` (வரும்), which the FST itself tags NONFINITE
+`futANDadjpart`, so it is not invented as a finite form. Coverage on the common-verb sweep:
+past 18/24 → **24/24**, present 12/18 → **18/18**, future 12/18 → **18/18**.
 **Transaction logging live (2026-07-18):** every resolved `analyze()` is logged to a `transactions`
 table as gold data (blueprint §12) — full WordAnalysis + tool label + `eval_fixture` contamination flag
 (from `data/eval_fixtures.json`). On by default (`THAMIZH_TXN_LOG=0` disables); a non-fatal background
 side-output. Captures the FST/rule-based segmentation+origin gold the `claims` cache never held. The
 `thamizh-data-curation` skill reads this table directly. `KnowledgeStore.transaction_stats()` for growth.
-**99 tests pass** (97 without live foma). Design repo at `~/projects/thamizh-mcp-design/` →
+**104 tests pass** (102 without live foma). Design repo at `~/projects/thamizh-mcp-design/` →
 `ief-global/thamizh-mcp-design` (blueprint, tamil-grammar.md, DECISIONS, roadmap, CODE-STATUS.md).
 
 ## Test ladder (run in order, from repo root)
 ```bash
 uv sync                                              # installs deps incl. pytest
 which flookup && echo "மரம்" | flookup data/fst/noun.fst
-uv run pytest -v                                     # expect 99 passed with foma
+uv run pytest -v                                     # expect 104 passed with foma
 uv run python scripts/analyze.py மரத்தில் --include formation  # பகுதி மரம் + சாரியை அத்து + விகுதி இல்
 uv run python scripts/analyze.py ரயில் --include origin       # loanword: முதல் எழுத்து rule
 uv run python scripts/analyze.py ஜோதி --include origin        # வடசொல்: Grantha letter
