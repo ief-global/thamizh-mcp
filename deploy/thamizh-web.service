@@ -1,0 +1,51 @@
+# Thamizh MCP — web/REST head as a long-running service (headless dev box, e.g. minnaham).
+#
+# Install (system-wide, starts at boot, no login needed):
+#   sudo cp deploy/thamizh-web.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now thamizh-web
+#
+# Operate:
+#   systemctl status thamizh-web
+#   journalctl -u thamizh-web -f          # live logs
+#   sudo systemctl restart thamizh-web    # after a git pull
+#
+# Adjust User/paths below if this ever runs somewhere other than minnaham.
+
+[Unit]
+Description=Thamizh MCP web/REST head (Tamil word-grammar analysis)
+Documentation=https://github.com/ief-global/thamizh-mcp
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=exec
+User=saran
+Group=saran
+WorkingDirectory=/home/saran/projects/thamizh-mcp
+
+# Bind on all interfaces so the app is reachable from other machines. On this box that is
+# Tailscale-only; do NOT expose it to the public internet without a reverse proxy + TLS.
+Environment=THAMIZH_WEB_HOST=0.0.0.0
+Environment=THAMIZH_WEB_PORT=8080
+Environment=PATH=/home/saran/.local/bin:/usr/local/bin:/usr/bin:/bin
+# The knowledge store keeps growing as the app is used — keep it in the repo's data/ dir.
+Environment=THAMIZH_DB=/home/saran/projects/thamizh-mcp/data/knowledge.sqlite3
+
+ExecStart=/home/saran/.local/bin/uv run --extra web thamizh-web
+
+Restart=always
+RestartSec=3
+# Journal only; the app logs to stdout/stderr.
+StandardOutput=journal
+StandardError=journal
+
+# Light hardening — it only needs to read the repo and write the SQLite store.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=read-only
+ReadWritePaths=/home/saran/projects/thamizh-mcp/data
+
+[Install]
+WantedBy=multi-user.target
