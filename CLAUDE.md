@@ -120,15 +120,22 @@ Register as an MCP server: `claude mcp add thamizh -- uv --directory ~/projects/
    **non-finite forms** (infinitive கொடுக்க, verbal participle கொடுத்து, adjectival கொடுக்கும்) — very
    common in running text and still gapping for the curated lemmas; and **more lemmas** beyond the ~11
    verified (ஆகு, தா, வை, செல், காண்…).
-6. **▶ NEXT (2026-07-26, Saran's direction): TESTING-DRIVEN development from the web app.**
+6. **Storage backend abstraction (for the public app).** `thamizh-ai.org` (domain bought 2026-07-26)
+   is a **separate deliverable** from this MCP product — see D-013. It runs as a container + **Postgres**;
+   **the MCP product keeps zero-config SQLite and must NEVER require containers or Postgres.** So
+   `store/knowledge.py` needs a thin backend abstraction (it is SQLite-coupled today: `import sqlite3`,
+   `INSERT OR REPLACE`, `AUTOINCREMENT` in `schema.sql`), with both backends tested and SQLite the default.
+   App layers: browser UI → FastAPI head → same engine → Postgres (growing data) + pinned anchor data in
+   the image. Hosting stays on minnaham; public access via Tailscale Funnel when needed.
+7. **▶ NEXT (2026-07-26, Saran's direction): TESTING-DRIVEN development from the web app.**
    Saran is testing at http://minnaham:8080 and will bring back observed gaps + questions + UI tweaks.
    Those findings drive what we build next — fix what real use exposes, rather than working the backlog
    blind. Expect: web-UI tweaks, clarification questions, and code fixes to already-delivered features.
-7. **Phase 4 eval** (morphological lift, `thamizh-eval` — D-005). Paused mid-run; harness is resumable
+8. **Phase 4 eval** (morphological lift, `thamizh-eval` — D-005). Paused mid-run; harness is resumable
    (`--model`/`--max-new`/`--grounded`, budget-spaced). Note the coverage fixes raised the achievable
    ceiling, so a re-measure is now more meaningful. Prior finding: bare Opus ~97% on BASIC morphology →
    little headroom there; real headroom is on weaker models + harder items.
-8. Lift `classify_origin` (Thamizhi Validator + loanword dataset) · **network session (batch):**
+9. Lift `classify_origin` (Thamizhi Validator + loanword dataset) · **network session (batch):**
    Madras Lexicon + TVA கலைச்சொல் snapshots + locate/license Aalamaram (D-008) + pin a digitized
    Tholkappiyam/Nannūl edition for D-011 நூற்பா citations (**edition chosen: Project Madurai**;
    `SourceRef.verse` field already exists — NEVER hardcode verse numbers from memory).
