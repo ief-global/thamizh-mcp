@@ -146,8 +146,9 @@ Register as an MCP server: `claude mcp add thamizh -- uv --directory ~/projects/
   (`THAMIZH_HTTP_UA` overrides).
 - `--include meaning` skips morphology by design (empty lemma there is not a bug).
 - `data/knowledge.sqlite3` is gitignored — the self-enriching cache is machine-local.
-- Wiktionary text is CC BY-SA (share-alike): cache is fine for private testing,
-  resolve licensing before distributing any cached text.
+- Wiktionary text is CC BY-SA (share-alike) and is **cleared for use incl. the public
+  service** (2026-07-26) — serve it WITH attribution, keep it marked CC BY-SA, never
+  relicense it as Apache-2.0. Mixed-licence product, classified per source: `LICENSING.md`.
 
 ## Where things live
 - Runbook: `TESTING-ON-LINUX.md` · Pins/citations: `data/PINS.md` · Contract: `src/thamizh_mcp/schema.py`
