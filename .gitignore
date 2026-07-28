@@ -35,3 +35,7 @@ Thumbs.db
 *~
 .idea/
 .vscode/
+
+# Local secrets (Postgres credentials etc.) — never commit
+.env
+**/.env
