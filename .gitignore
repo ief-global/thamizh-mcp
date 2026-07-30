@@ -39,3 +39,8 @@ Thumbs.db
 # Local secrets (Postgres credentials etc.) — never commit
 .env
 **/.env
+
+# --- Claude Code local/session artifacts ---
+.claude/settings.local.json
+.claude/worktrees/
+.claude/plans/
