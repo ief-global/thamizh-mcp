@@ -14,6 +14,7 @@ from __future__ import annotations
 
 from typing import Optional
 
+from thamizh_mcp import config
 from thamizh_mcp.schema import (
     Formation, FormationComponent, GrammarCase, MorphAnalysis, Pos, SandhiEvent, SourceRef,
     WordClass, WordType,
@@ -80,10 +81,41 @@ def map_case(tags: list[str]) -> Optional[GrammarCase]:
 
 # --- Formation / grammar decoding (Nannūl six-part உறுப்பு + Tholkappiyam elements) ---
 
-# Verb tense marker (இடைநிலை): FST hands over the surface form (past=த்); we add the காலம் role.
+# Verb tense marker (இடைநிலை): FST hands over a SURFACE form (pres=கிற்); the grammatical உறுப்பு is
+# a different thing (கிறு). data/grammar/idainilai.json maps one to the other and splits off any
+# வல்லினம் doubling as its own சந்தி உறுப்பு. See NANNOOL_IDAINILAI below.
 _TENSE_ROLE: dict[str, str] = {
     "past": "இறந்தகாலம்", "pres": "நிகழ்காலம்", "fut": "எதிர்காலம்",
 }
+
+
+def _load_idainilai() -> dict:
+    """Load the cited இடைநிலை rule table (best-effort: a missing file must not break analysis)."""
+    import json
+    try:
+        data = json.loads(config.GRAMMAR_IDAINILAI_FILE.read_text("utf-8"))
+        return data.get("idainilai", {})
+    except (OSError, ValueError):
+        return {}
+
+
+_IDAINILAI = _load_idainilai()
+
+
+def map_idainilai(tense_code: str, fst_surface: str) -> tuple[str, Optional[str], str]:
+    """FST surface tense marker → (canonical இடைநிலை, சந்தி or None, class name).
+
+    Nannūl names the உறுப்பு, not the surface morph: the FST's `pres=கிற்` is the grammatical
+    இடைநிலை **கிறு**, and a strong verb's `pres=க்கிற்` is சந்தி க் + இடைநிலை கிறு (வல்லினம் மிகுதல்
+    is புணர்ச்சி, not part of the marker). Unknown surfaces pass through unchanged rather than being
+    guessed at — an unmapped form is reported as-is, never invented.
+    """
+    entry = _IDAINILAI.get(tense_code, {})
+    hit = entry.get("from_fst", {}).get(fst_surface)
+    cls = entry.get("class", "")
+    if not hit:
+        return fst_surface, None, cls
+    return hit.get("idainilai", fst_surface), hit.get("sandhi"), cls
 # Voice/derivation இடைநிலை that sit BETWEEN பகுதி and the tense marker (செய்+வி+த்+ஆன்).
 # The FST supplies the surface form (caus=வி); order here is the surface order.
 _MID_ROLE: dict[str, str] = {
@@ -206,8 +238,19 @@ def decode_formation(word: str, analysis: MorphAnalysis) -> Formation:
         for tcode, trole in _TENSE_ROLE.items():
             if feats.get(tcode) not in (None, "", "∅"):
                 inflected = True
+                # FST surface → canonical Nannūl உறுப்பு, splitting off வல்லினம் doubling as சந்தி.
+                marker, sandhi_form, cls = map_idainilai(tcode, feats[tcode])
+                if sandhi_form:
+                    comps.append(FormationComponent(
+                        part="சந்தி", form=sandhi_form,
+                        role="வல்லினம் மிகுதல் (strong-verb doubling)", authority="Tholkappiyam"))
+                    sandhi.append(SandhiEvent(
+                        type="வல்லினம்மிகுதல்",
+                        detail=f"‘{sandhi_form}’ doubles before the {cls or 'இடைநிலை'}",
+                        authority="Tholkappiyam"))
                 comps.append(FormationComponent(
-                    part="இடைநிலை", form=feats[tcode], role=trole, authority="Nannūl"))
+                    part="இடைநிலை", form=marker, role=f"{trole} ({cls})" if cls else trole,
+                    authority="Nannūl"))
                 break
         for pcode, prole in _PNG_ROLE.items():
             if feats.get(pcode) not in (None, "", "∅"):

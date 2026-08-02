@@ -1,0 +1,12 @@
+{
+  "$comment": "Shared, portable permissions for this repo. Committed so they travel to every clone and so phone-driven remote-control sessions don't prompt for the standard test ladder. Machine-specific rules belong in the gitignored settings.local.json. NOTE: git reset --hard is deliberately NOT denied here -- CLAUDE.md documents 'git reset --hard origin/main' as the required recovery step after a history rewrite, and a deny rule cannot be approved at runtime. It still prompts, since it is not on the allow list.",
+  "permissions": {
+    "allow": [
+      "Bash(uv run *)"
+    ],
+    "deny": [
+      "Bash(git push --force:*)",
+      "Bash(git push --force-with-lease:*)"
+    ]
+  }
+}

@@ -13,4 +13,4 @@ Sandbox note (no root): extract debs to ~/local and export
 
 Smoke test (2026-07-02): மரம்→`மரம்+noun+nom`; மரத்தில்→`மரம்+noun+infInc+loc|soc` (both analyses kept).
 
-| Indic-To-Pure-Tamil CSVs (`data/equivalents/indic-to-pure-tamil/`) | github.com/narVidhai/Indic-To-Pure-Tamil @ `f734646675579d3d3eb8d44b288f6a13701feaa9` | 2026-07-02 | MIT (verify in repo) |
+| Indic-To-Pure-Tamil CSVs (`data/equivalents/indic-to-pure-tamil/`) | github.com/narVidhai/Indic-To-Pure-Tamil @ `f734646675579d3d3eb8d44b288f6a13701feaa9` | 2026-07-02 | MIT — **cleared for use and redistribution** (2026-07-26, see LICENSING.md) |

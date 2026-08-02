@@ -21,7 +21,9 @@ ThamizhiMorph -- Tamil morphological analyser (finite-state transducers in data/
 Indic-To-Pure-Tamil -- native-equivalent word lists (data/equivalents/indic-to-pure-tamil/)
   Source : https://github.com/narVidhai/Indic-To-Pure-Tamil
   Pin    : f734646675579d3d3eb8d44b288f6a13701feaa9 (retrieved 2026-07-02)
-  License: MIT (verify against the upstream repository before public redistribution)
+  License: MIT -- cleared for use and redistribution with attribution (2026-07-26).
+           Upstream aggregates openly-licensed community word lists. May be
+           superseded later by higher-quality authenticated sources; see LICENSING.md.
 
 foma / flookup -- finite-state toolkit (runtime dependency; NOT redistributed here)
   Version: 0.10.0
@@ -31,6 +33,8 @@ foma / flookup -- finite-state toolkit (runtime dependency; NOT redistributed he
 
 Tamil Wiktionary (ta.wiktionary.org) -- word meanings fetched at run time
   License: CC BY-SA 4.0 / GFDL (share-alike)
-  Note   : Text derived from Wiktionary is share-alike. The runtime cache
-           (data/*.sqlite3) is git-ignored. Review the share-alike obligation
-           (blueprint section 10) before redistributing any cached content.
+  Note   : Cleared for use, including in the public service (2026-07-26). Meaning
+           text derived from Wiktionary is served WITH attribution and remains
+           CC BY-SA; it is not relicensed under Apache-2.0. The project ships a
+           mixed-licence product with per-source classification -- see LICENSING.md.
+           The runtime cache (data/*.sqlite3) is git-ignored.

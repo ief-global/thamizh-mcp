@@ -42,6 +42,10 @@ EVAL_FIXTURES_FILE = Path(os.environ.get("THAMIZH_EVAL_FIXTURES", REPO_ROOT / "d
 VERB_PARADIGMS_FILE = Path(os.environ.get(
     "THAMIZH_VERB_PARADIGMS", REPO_ROOT / "data" / "verb_paradigms.json"))
 
+# Cited grammar rule tables (Nannūl / TVA-verified) — the canonical உறுப்பு names the FST does not give.
+GRAMMAR_IDAINILAI_FILE = Path(os.environ.get(
+    "THAMIZH_IDAINILAI", REPO_ROOT / "data" / "grammar" / "idainilai.json"))
+
 
 def flookup_available() -> bool:
     return bool(FLOOKUP) and Path(FLOOKUP).exists() and FST_DIR.is_dir()

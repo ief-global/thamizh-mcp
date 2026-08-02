@@ -1,0 +1,42 @@
+# Postgres for the thamizh-ai.org app (D-013). NOT required by the MCP product — anyone installing
+# thamizh-mcp keeps the zero-config SQLite store. This is the app's growing-data backend.
+#
+#   cd deploy/postgres
+#   cp .env.example .env     # then set a real password
+#   docker compose up -d
+#   docker compose logs -f   # first start initialises the cluster
+#
+# Data lives in the named volume `thamizh_pgdata` and survives container recreation.
+# Removing the volume destroys the gold corpus — `docker compose down` alone does NOT remove it,
+# but `docker compose down -v` DOES. Be careful with that flag.
+
+name: thamizh-postgres
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: thamizh-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-thamizh}
+      POSTGRES_USER: ${POSTGRES_USER:-thamizh}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      # Deterministic collation so Tamil ordering doesn't shift with the host locale.
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
+    ports:
+      # 127.0.0.1 ONLY — reachable from minnaham itself, never from the network.
+      # Change to 0.0.0.0 (or a Tailscale IP) only if something off-box must connect.
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - thamizh_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-thamizh} -d ${POSTGRES_DB:-thamizh}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    shm_size: 256mb
+
+volumes:
+  thamizh_pgdata:
+    name: thamizh_pgdata

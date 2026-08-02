@@ -76,8 +76,10 @@ is not on your PATH; the rest run without it.
 - The code is Apache-2.0. Do not add third-party data or models without a
   license compatible with redistribution, and record the source, version pin,
   and license in `NOTICE`.
-- Content derived from Tamil Wiktionary is CC BY-SA (share-alike). Be careful
-  before bundling or redistributing any cached Wiktionary text.
+- Content derived from Tamil Wiktionary is CC BY-SA (share-alike) and is cleared for
+  use, including in the public service — serve it with attribution and keep it marked
+  CC BY-SA; never relicense it as Apache-2.0. This project is a **mixed-licence product
+  with per-source classification**; the settled position is in `LICENSING.md`.
 
 ## Conduct
 

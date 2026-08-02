@@ -68,14 +68,23 @@ table as gold data (blueprint §12) — full WordAnalysis + tool label + `eval_f
 (from `data/eval_fixtures.json`). On by default (`THAMIZH_TXN_LOG=0` disables); a non-fatal background
 side-output. Captures the FST/rule-based segmentation+origin gold the `claims` cache never held. The
 `thamizh-data-curation` skill reads this table directly. `KnowledgeStore.transaction_stats()` for growth.
-**104 tests pass** (102 without live foma). Design repo at `~/projects/thamizh-mcp-design/` →
+**Web/REST head live (2026-07-26):** `src/thamizh_mcp/web.py` + `static/index.html` — FastAPI head over
+the SAME engine (blueprint §8 "heads: MCP | REST | CLI over one engine"; zero engine changes were
+needed, which validates that design). `GET /` UI · `GET /api/analyze?word=…&meaning=…` · `GET /healthz`.
+**Network/meaning is OFF by default** so a demo or test can never hang. **Why it exists:** terminals do
+NOT shape Tamil script (vowel signs detach/reorder) — CLI output is unreadable for demos; browsers shape
+it correctly. Runs 24/7 on minnaham via `deploy/thamizh-web.service` (systemd) at
+**http://minnaham:8080** — every word tested there also feeds the `transactions` gold log.
+Also: `scripts/demo.py` (projector-readable CLI view) and a Dockerfile fix (`foma`, not the empty
+transitional `foma-bin` — the container had shipped with no working FST).
+**115 tests pass** (113 without live foma). Design repo at `~/projects/thamizh-mcp-design/` →
 `ief-global/thamizh-mcp-design` (blueprint, tamil-grammar.md, DECISIONS, roadmap, CODE-STATUS.md).
 
 ## Test ladder (run in order, from repo root)
 ```bash
 uv sync                                              # installs deps incl. pytest
 which flookup && echo "மரம்" | flookup data/fst/noun.fst
-uv run pytest -v                                     # expect 104 passed with foma
+uv run pytest -v                                     # expect 115 passed with foma
 uv run python scripts/analyze.py மரத்தில் --include formation  # பகுதி மரம் + சாரியை அத்து + விகுதி இல்
 uv run python scripts/analyze.py ரயில் --include origin       # loanword: முதல் எழுத்து rule
 uv run python scripts/analyze.py ஜோதி --include origin        # வடசொல்: Grantha letter
@@ -107,10 +116,38 @@ Register as an MCP server: `claude mcp add thamizh -- uv --directory ~/projects/
    `decode_formation` + verb tense/முற்று grammar. **Deferred (honest boundary):** precise
    விகாரம்/சந்தி naming beyond the confident rules (e.g. verb root வா→வந்) — the FST doesn't hand
    the join over, so it's left unnamed for now, never invented.
-5. **Phase 4 eval** (morphological lift, `thamizh-eval` skill — D-005) — the flagship next.
-   ~~transaction logging~~ (done 2026-07-18) and ~~`refresh_sources`~~ (done) landed. Remaining
-   near-term: lift `classify_origin` with Thamizhi Validator + loanword data; Madras Lexicon +
-   TVA கலைச்சொல் snapshots (network session). Roadmap: `~/projects/thamizh-mcp-design/TAMIL-HIGH-RESOURCE-ROADMAP.md`.
+5. ~~FST coverage gaps~~ **DONE (2026-07-20)** — see Current state. Remaining coverage work:
+   **non-finite forms** (infinitive கொடுக்க, verbal participle கொடுத்து, adjectival கொடுக்கும்) — very
+   common in running text and still gapping for the curated lemmas; and **more lemmas** beyond the ~11
+   verified (ஆகு, தா, வை, செல், காண்…).
+6. **▶ GRAMMAR CORRECTNESS (D-014, opened 2026-08-02) — the live thread.** Saran (formal TVA
+   coursework) found a SYSTEMIC error: we emitted ThamizhiMorph's *computational* surface morph as if
+   it were the *grammatical* உறுப்பு (வருகிறான் → கிற், should be **கிறு**). Fixed for இடைநிலை via
+   `data/grammar/idainilai.json` + `decoder.map_idainilai`. **The rule generalises: every FST output
+   must be normalised to classical naming before being presented as grammar.** Next: extract the
+   remaining rule inventories from the TVA materials (ePUB) into cited `data/grammar/*.json` tables —
+   விகுதி, சாரியை, வேற்றுமை உருபு, புணர்ச்சி — and audit each existing decoder output the same way.
+   Known gap: strong-verb PAST doubling (படித்தான்) isn't recoverable from the FST tag.
+7. **Storage backend abstraction (for the public app).** `thamizh-ai.org` (domain bought 2026-07-26)
+   is a **separate deliverable** from this MCP product — see D-013. It runs as a container + **Postgres**;
+   **the MCP product keeps zero-config SQLite and must NEVER require containers or Postgres.** So
+   `store/knowledge.py` needs a thin backend abstraction (it is SQLite-coupled today: `import sqlite3`,
+   `INSERT OR REPLACE`, `AUTOINCREMENT` in `schema.sql`), with both backends tested and SQLite the default.
+   App layers: browser UI → FastAPI head → same engine → Postgres (growing data) + pinned anchor data in
+   the image. Hosting stays on minnaham; public access via Tailscale Funnel when needed.
+8. **▶ NEXT (2026-07-26, Saran's direction): TESTING-DRIVEN development from the web app.**
+   Saran is testing at http://minnaham:8080 and will bring back observed gaps + questions + UI tweaks.
+   Those findings drive what we build next — fix what real use exposes, rather than working the backlog
+   blind. Expect: web-UI tweaks, clarification questions, and code fixes to already-delivered features.
+9. **Phase 4 eval** (morphological lift, `thamizh-eval` — D-005). Paused mid-run; harness is resumable
+   (`--model`/`--max-new`/`--grounded`, budget-spaced). Note the coverage fixes raised the achievable
+   ceiling, so a re-measure is now more meaningful. Prior finding: bare Opus ~97% on BASIC morphology →
+   little headroom there; real headroom is on weaker models + harder items.
+10. Lift `classify_origin` (Thamizhi Validator + loanword dataset) · **network session (batch):**
+   Madras Lexicon + TVA கலைச்சொல் snapshots + locate/license Aalamaram (D-008) + pin a digitized
+   Tholkappiyam/Nannūl edition for D-011 நூற்பா citations (**edition chosen: Project Madurai**;
+   `SourceRef.verse` field already exists — NEVER hardcode verse numbers from memory).
+   Program roadmap: `~/projects/thamizh-mcp-design/DESIGN.md` (supersedes TAMIL-HIGH-RESOURCE-ROADMAP.md).
 
 ## Design rules (do not violate)
 - **Tholkappiyam-first:** cite Tholkappiyam before Nannool for grammar claims.
@@ -124,10 +161,19 @@ Register as an MCP server: `claude mcp add thamizh -- uv --directory ~/projects/
   (`THAMIZH_HTTP_UA` overrides).
 - `--include meaning` skips morphology by design (empty lemma there is not a bug).
 - `data/knowledge.sqlite3` is gitignored — the self-enriching cache is machine-local.
-- Wiktionary text is CC BY-SA (share-alike): cache is fine for private testing,
-  resolve licensing before distributing any cached text.
+- Wiktionary text is CC BY-SA (share-alike) and is **cleared for use incl. the public
+  service** (2026-07-26) — serve it WITH attribution, keep it marked CC BY-SA, never
+  relicense it as Apache-2.0. Mixed-licence product, classified per source: `LICENSING.md`.
 
 ## Where things live
-- Runbook: `TESTING-ON-LINUX.md` · Pins/citations: `data/PINS.md` · Demo CLI:
-  `scripts/analyze.py` · Contract: `src/thamizh_mcp/schema.py`
-- Design docs (Windows/E:\ only, not in repo): blueprint, hosting + distribution plans.
+- Runbook: `TESTING-ON-LINUX.md` · Pins/citations: `data/PINS.md` · Contract: `src/thamizh_mcp/schema.py`
+- **Web app (main test surface): http://minnaham:8080** — `src/thamizh_mcp/web.py`,
+  `src/thamizh_mcp/static/index.html`, service unit `deploy/thamizh-web.service`.
+  Local run: `uv sync --extra web && uv run thamizh-web`.
+  After a dep change: `uv sync --extra web && sudo systemctl restart thamizh-web`
+  (the unit runs `.venv/bin/thamizh-web` directly — NOT `uv run`, whose ~/.cache lock is blocked by
+  ProtectHome=read-only).
+- CLI: `scripts/demo.py <word>` (readable) · `scripts/analyze.py <word>` (raw JSON)
+- **Design repo (separate, private):** `~/projects/thamizh-mcp-design` → `ief-global/thamizh-mcp-design`
+  — blueprint, DESIGN.md, DECISIONS.md, tamil-grammar.md, CODE-STATUS.md, PRESENTATION-SOURCE.md,
+  thamizh-eval/. NEVER nest it here or commit design docs into this public repo.

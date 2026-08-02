@@ -59,5 +59,5 @@ Open a PR `develop → main` at milestones (`main` is protected: PR-only).
 - **foma:** package `foma`, NOT `foma-bin`.
 - `data/knowledge.sqlite3` is gitignored — the self-enriching cache is machine-local.
 - Wikimedia UA policy: descriptive UA is in the adapter (`THAMIZH_HTTP_UA` overrides).
-- Wiktionary licence (CC BY-SA) — fine for private testing; resolve before any public release.
+- Wiktionary licence (CC BY-SA) — **resolved 2026-07-26**: cleared for use incl. public release, served with attribution and kept marked CC BY-SA (`LICENSING.md`).
 - `--include meaning` skips morphology by design (empty lemma there is not
