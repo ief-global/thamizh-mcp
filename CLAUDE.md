@@ -77,14 +77,14 @@ it correctly. Runs 24/7 on minnaham via `deploy/thamizh-web.service` (systemd) a
 **http://minnaham:8080** — every word tested there also feeds the `transactions` gold log.
 Also: `scripts/demo.py` (projector-readable CLI view) and a Dockerfile fix (`foma`, not the empty
 transitional `foma-bin` — the container had shipped with no working FST).
-**109 tests pass** (107 without live foma). Design repo at `~/projects/thamizh-mcp-design/` →
+**115 tests pass** (113 without live foma). Design repo at `~/projects/thamizh-mcp-design/` →
 `ief-global/thamizh-mcp-design` (blueprint, tamil-grammar.md, DECISIONS, roadmap, CODE-STATUS.md).
 
 ## Test ladder (run in order, from repo root)
 ```bash
 uv sync                                              # installs deps incl. pytest
 which flookup && echo "மரம்" | flookup data/fst/noun.fst
-uv run pytest -v                                     # expect 109 passed with foma
+uv run pytest -v                                     # expect 115 passed with foma
 uv run python scripts/analyze.py மரத்தில் --include formation  # பகுதி மரம் + சாரியை அத்து + விகுதி இல்
 uv run python scripts/analyze.py ரயில் --include origin       # loanword: முதல் எழுத்து rule
 uv run python scripts/analyze.py ஜோதி --include origin        # வடசொல்: Grantha letter
@@ -120,22 +120,30 @@ Register as an MCP server: `claude mcp add thamizh -- uv --directory ~/projects/
    **non-finite forms** (infinitive கொடுக்க, verbal participle கொடுத்து, adjectival கொடுக்கும்) — very
    common in running text and still gapping for the curated lemmas; and **more lemmas** beyond the ~11
    verified (ஆகு, தா, வை, செல், காண்…).
-6. **Storage backend abstraction (for the public app).** `thamizh-ai.org` (domain bought 2026-07-26)
+6. **▶ GRAMMAR CORRECTNESS (D-014, opened 2026-08-02) — the live thread.** Saran (formal TVA
+   coursework) found a SYSTEMIC error: we emitted ThamizhiMorph's *computational* surface morph as if
+   it were the *grammatical* உறுப்பு (வருகிறான் → கிற், should be **கிறு**). Fixed for இடைநிலை via
+   `data/grammar/idainilai.json` + `decoder.map_idainilai`. **The rule generalises: every FST output
+   must be normalised to classical naming before being presented as grammar.** Next: extract the
+   remaining rule inventories from the TVA materials (ePUB) into cited `data/grammar/*.json` tables —
+   விகுதி, சாரியை, வேற்றுமை உருபு, புணர்ச்சி — and audit each existing decoder output the same way.
+   Known gap: strong-verb PAST doubling (படித்தான்) isn't recoverable from the FST tag.
+7. **Storage backend abstraction (for the public app).** `thamizh-ai.org` (domain bought 2026-07-26)
    is a **separate deliverable** from this MCP product — see D-013. It runs as a container + **Postgres**;
    **the MCP product keeps zero-config SQLite and must NEVER require containers or Postgres.** So
    `store/knowledge.py` needs a thin backend abstraction (it is SQLite-coupled today: `import sqlite3`,
    `INSERT OR REPLACE`, `AUTOINCREMENT` in `schema.sql`), with both backends tested and SQLite the default.
    App layers: browser UI → FastAPI head → same engine → Postgres (growing data) + pinned anchor data in
    the image. Hosting stays on minnaham; public access via Tailscale Funnel when needed.
-7. **▶ NEXT (2026-07-26, Saran's direction): TESTING-DRIVEN development from the web app.**
+8. **▶ NEXT (2026-07-26, Saran's direction): TESTING-DRIVEN development from the web app.**
    Saran is testing at http://minnaham:8080 and will bring back observed gaps + questions + UI tweaks.
    Those findings drive what we build next — fix what real use exposes, rather than working the backlog
    blind. Expect: web-UI tweaks, clarification questions, and code fixes to already-delivered features.
-8. **Phase 4 eval** (morphological lift, `thamizh-eval` — D-005). Paused mid-run; harness is resumable
+9. **Phase 4 eval** (morphological lift, `thamizh-eval` — D-005). Paused mid-run; harness is resumable
    (`--model`/`--max-new`/`--grounded`, budget-spaced). Note the coverage fixes raised the achievable
    ceiling, so a re-measure is now more meaningful. Prior finding: bare Opus ~97% on BASIC morphology →
    little headroom there; real headroom is on weaker models + harder items.
-9. Lift `classify_origin` (Thamizhi Validator + loanword dataset) · **network session (batch):**
+10. Lift `classify_origin` (Thamizhi Validator + loanword dataset) · **network session (batch):**
    Madras Lexicon + TVA கலைச்சொல் snapshots + locate/license Aalamaram (D-008) + pin a digitized
    Tholkappiyam/Nannūl edition for D-011 நூற்பா citations (**edition chosen: Project Madurai**;
    `SourceRef.verse` field already exists — NEVER hardcode verse numbers from memory).
