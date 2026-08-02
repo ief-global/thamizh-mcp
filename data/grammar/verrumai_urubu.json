@@ -1,13 +1,50 @@
 {
-  "comment": "வேற்றுமை உருபு (case-marker) rule table — the eight வேற்றுமை, their உருபு inventories, their பொருள், and their நூற்பா. This table exists for the D-014 reason: the decoder's hardcoded case map listed ONE உருபு per case and mixed சொல்லுருபு (word-postpositions like ‘உடைய’, ‘இலிருந்து’) in with real உருபு. Nannūl gives ஐந்தாம் வேற்றுமை TWO உருபு (இன், இல்), மூன்றாம் FOUR (ஆல், ஆன், ஒடு, ஓடு), ஆறாம் THREE (அது, ஆது, அ), and ஏழாம் an open list headed by கண். A சொல்லுருபு is a SEPARATE category and must never be presented as the உருபு.",
-  "authority": "Nannūl — சொல்லதிகாரம், பெயரியல், நூற்பா 291–303 (வேற்றுமை and their உருபு/பொருள்) and 315 (முதல்/சினை உருபு); எழுத்ததிகாரம், உருபு புணரியல், நூற்பா 240–242 (the eight உருபு, their count of forty, and their புணர்ச்சி); verified against Tamil Virtual Academy courses A0211 பெயர்ச்சொல் (பாடம் 5–6 வேற்றுமை 1–2) and C0214 புணர்ச்சி–2 (பாடம் 4) (Government of Tamil Nadu, degree-level accredited material), which quote the நூற்பா verbatim.",
+  "comment": "வேற்றுமை உருபு (case-marker) rule table — the eight வேற்றுமை, their உருபு inventories, their பொருள், and their நூற்பா. Two reasons this table exists. (1) D-014: the decoder's hardcoded case map listed ONE உருபு per case and mixed சொல்லுருபு (word-postpositions like ‘உடைய’, ‘இலிருந்து’) in with real உருபு. (2) D-011 / source priority: the first version of this table named Nannūl as its authority, but வேற்றுமை is governed by THOLKAPPIYAM — corrected 2026-08-02 once the Project Madurai edition was pinned, so every case now carries its Tholkappiyam நூற்பா with Nannūl as the cited fallback.",
+  "source_priority": {
+    "primary": "Tholkappiyam",
+    "primary_ref": "சொல்லதிகாரம், வேற்றுமையியல் (and எழுத்ததிகாரம், புணரியல் 11 for the உருபு list)",
+    "fallback": "Nannūl",
+    "why": "tamil-grammar.md assigns வேற்றுமை (the eight cases) to Tholkappiyam as primary, Nannūl as fallback. Tholkappiyam-first is design rule #1 — it is never demoted because a modern course happened to quote Nannūl instead.",
+    "citation_format": "தொல்காப்பியம் நூற்பா numbers RESTART in every இயல் and collide across இயல் and அதிகாரம், so they are ALWAYS qualified: ‘தொல்காப்பியம், சொல்லதிகாரம், வேற்றுமையியல், நூற்பா 3’. நன்னூல் numbering is continuous, so ‘நன்னூல், நூற்பா 296’ is unambiguous.",
+    "divergence": "The authorities genuinely differ on the third case: Tholkappiyam gives ஒடு alone (வேற்றுமையியல் 12); Nannūl 297 gives ஆல், ஆன், ஒடு, ஓடு. Both are recorded — the difference is content, not noise."
+  },
+  "authority": "Tholkappiyam — சொல்லதிகாரம், வேற்றுமையியல், நூற்பா 1–22 (the eight வேற்றுமை, their உருபு and பொருள்); எழுத்ததிகாரம், புணரியல், நூற்பா 11 (the six உருபு restated). Pinned edition: Project Madurai. Fallback and expansion: Nannūl — சொல்லதிகாரம், பெயரியல், நூற்பா 291–303 and 315; எழுத்ததிகாரம், உருபு புணரியல், நூற்பா 240–242, verified against Tamil Virtual Academy courses A0211 பெயர்ச்சொல் and C0214 புணர்ச்சி–2 (Government of Tamil Nadu, degree-level accredited material), which quote the நூற்பா verbatim.",
+  "pinned_edition": {
+    "text": "Tholkappiyam",
+    "edition": "Project Madurai",
+    "attribution": "© Project Madurai 1999-2001. Etext preparation: Dr. K. Kalyanasundaram. Proof-reading & web version: Mr. N. D. Logasundaram. Project Madurai is an open, voluntary, worldwide initiative devoted to preparation of electronic texts of Tamil literary works and to distribute them free on the Internet — http://www.projectmadurai.org",
+    "urls": {
+      "எழுத்ததிகாரம்": "https://tamilnation.org/literature/grammar/mp100a",
+      "சொல்லதிகாரம்": "https://tamilnation.org/literature/grammar/mp100b",
+      "பொருளதிகாரம்": "https://tamilnation.org/literature/grammar/mp100c"
+    },
+    "pinned_date": "2026-08-02"
+  },
   "verified_by": "Saran Saravanan (formal TVA A021 coursework)",
   "verified_date": "2026-08-02",
   "definition": {
-    "verse": "நன்னூல் 291",
-    "nurpa": "ஏற்கும் எவ்வகைப் பெயர்க்கும் ஈறாய்ப் பொருள் வேற்றுமை செய்வன எட்டே வேற்றுமை (291)",
-    "gloss": "வேற்றுமை = what differentiates the meaning of a பெயர்ச்சொல்; the உருபு is the mark added at its ஈறு to do so. There are eight.",
-    "urubu_headline": "ஐ, ஆல், கு, இன், அது, கண் — the six cases that carry a distinct உருபு (TVA A0211 §5.1, C0214 §4.1).",
+    "tholkappiyam": {
+      "ref": "சொல்லதிகாரம், வேற்றுமையியல்",
+      "verses": {
+        "1": "வேற்றுமைதாமே ஏழ் என மொழிப.",
+        "2": "விளி கொள்வதன்கண் விளியடு எட்டே.",
+        "3": "அவைதாம், பெயர் ஐ ஒடு கு இன் அது கண் விளி என்னும் ஈற்ற."
+      },
+      "gloss": "Tholkappiyam counts the வேற்றுமை as SEVEN (நூற்பா 1); with விளி they are eight (நூற்பா 2). நூற்பா 3 lists all eight ஈறு: பெயர், ஐ, ஒடு, கு, இன், அது, கண், விளி."
+    },
+    "tholkappiyam_punariyal": {
+      "ref": "எழுத்ததிகாரம், புணரியல்",
+      "verses": {
+        "11": "ஐ ஒடு கு இன் அது கண் என்னும் அவ் ஆறு என்ப வேற்றுமை உருபே.",
+        "12": "வல்லெழுத்து முதலிய வேற்றுமை உருபிற்கு ஒல்வழி ஒற்று இடை மிகுதல் வேண்டும்."
+      },
+      "gloss": "The six உருபு restated in the எழுத்து section, with the வல்லினம் ஒற்று மிகுதல் rule that governs how they join."
+    },
+    "nannul_fallback": {
+      "verse": "நன்னூல் 291",
+      "nurpa": "ஏற்கும் எவ்வகைப் பெயர்க்கும் ஈறாய்ப் பொருள் வேற்றுமை செய்வன எட்டே வேற்றுமை (291)",
+      "gloss": "Nannūl states eight directly rather than seven + விளி."
+    },
     "eight_as_urubu": {
       "verse": "நன்னூல் 293",
       "nurpa": "ஆறன் உருபும் ஏற்கும் அவ்வுருபே (293)",
@@ -32,112 +69,132 @@
       "urubu_note": "உருபு இல்லை — திரிபு இல்லாத பெயரே உருபு.",
       "porul": ["எழுவாய்ப் பொருள் (கருத்தா / வினைமுதல்)"],
       "sollurubu": ["ஆனவன்", "ஆனவள்", "ஆனவர்", "ஆனது", "ஆனவை", "என்பவன்", "என்பவள்", "என்பவர்", "என்பது", "என்பவை"],
-      "sollurubu_note": "இக்காலத்தே உரையாசிரியர் கூறுவன (TVA A0211 §5.2) — NOT Nannūl உருபு.",
-      "verse": "நன்னூல் 295",
-      "nurpa": "எழுவாய் உருபு திரிபுஇல் பெயரே வினை பெயர் வினாக்கொளல் அதன் பயனிலையே (295)",
+      "sollurubu_note": "இக்காலத்தே உரையாசிரியர் கூறுவன (TVA A0211 §5.2) — NOT உருபு.",
+      "authority": {
+        "primary": {"text": "Tholkappiyam", "ref": "சொல்லதிகாரம், வேற்றுமையியல்", "verse": "நூற்பா 4", "nurpa": "அவற்றுள், எழுவாய் வேற்றுமை பெயர் தோன்று நிலையே."},
+        "fallback": {"text": "Nannūl", "verse": "நன்னூல் 295", "nurpa": "எழுவாய் உருபு திரிபுஇல் பெயரே வினை பெயர் வினாக்கொளல் அதன் பயனிலையே (295)"}
+      },
       "example": "முல்லை மலர்ந்தது"
     },
     "acc": {
       "number": 2,
       "name": "இரண்டாம் வேற்றுமை (ஐ)",
       "urubu": ["ஐ"],
-      "urubu_note": "‘ஐ’ ஒன்றே — இரண்டாம் வேற்றுமைக்கு வேறு உருபு இல்லை.",
+      "urubu_note": "‘ஐ’ ஒன்றே — both authorities agree.",
       "porul": ["செயப்படுபொருள்", "ஆக்கல்", "அழித்தல்", "அடைதல்", "நீத்தல்", "ஒத்தல்", "உடைமை"],
       "sollurubu": [],
-      "verse": "நன்னூல் 296",
-      "nurpa": "இரண்டாவதன் உருபு ஐயே ; அதன் பொருள் ஆக்கல் அழித்தல் அடைதல் நீத்தல் ஒத்தல் உடைமை ஆதி ஆகும் (296)",
+      "authority": {
+        "primary": {"text": "Tholkappiyam", "ref": "சொல்லதிகாரம், வேற்றுமையியல்", "verse": "நூற்பா 10", "nurpa": "இரண்டாகுவதே, ஐ எனப் பெயரிய வேற்றுமைக் கிளவி எவ் வழி வரினும் வினையே வினைக்குறிப்பு அவ் இரு முதலின் தோன்றும் அதுவே.", "porul_verse": "நூற்பா 11 lists the பொருள் (காப்பின், ஒப்பின், ஊர்தியின், இழையின், …)."},
+        "fallback": {"text": "Nannūl", "verse": "நன்னூல் 296", "nurpa": "இரண்டாவதன் உருபு ஐயே ; அதன் பொருள் ஆக்கல் அழித்தல் அடைதல் நீத்தல் ஒத்தல் உடைமை ஆதி ஆகும் (296)"}
+      },
       "example": "அவள் முல்லையைச் சூடினாள்"
     },
     "inst": {
       "number": 3,
-      "name": "மூன்றாம் வேற்றுமை (ஆல்)",
-      "urubu": ["ஆல்", "ஆன்"],
-      "urubu_note": "ஆல், ஆன் ஆகிய இரண்டும் கருவிப் பொருளுக்கும் கருத்தாப் பொருளுக்கும் பெரும்பாலும் பயன்படுகின்றன. ஒடு, ஓடு are the same case but the உடன்நிகழ்ச்சி (sociative) sense — see `soc`.",
-      "porul": ["கருவிப்பொருள்", "கருத்தாப்பொருள்"],
+      "name": "மூன்றாம் வேற்றுமை (ஒடு / ஆல்)",
+      "urubu": ["ஒடு", "ஆல்", "ஆன்"],
+      "urubu_note": "⚠️ THE AUTHORITIES DIFFER. Tholkappiyam names ONLY ‘ஒடு’ (வேற்றுமையியல் 12) and folds வினைமுதல் + கருவி into it. Nannūl 297 gives ஆல், ஆன், ஒடு, ஓடு, splitting கருவி/கருத்தா (ஆல், ஆன்) from உடன்நிகழ்ச்சி (ஒடு, ஓடு) — see the `soc` entry. List order is Tholkappiyam-first.",
+      "porul": ["கருவிப்பொருள்", "கருத்தாப்பொருள் (வினைமுதல்)"],
       "sollurubu": ["கொண்டு"],
-      "verse": "நன்னூல் 297",
-      "nurpa": "மூன்றாவதன் உருபு ஆல்ஆன் ஒடு ஓடு கருவி கருத்தா உடன்நிகழ்வு அதன் பொருள் (297)",
+      "authority": {
+        "primary": {"text": "Tholkappiyam", "ref": "சொல்லதிகாரம், வேற்றுமையியல்", "verse": "நூற்பா 12", "nurpa": "மூன்றாகுவதே, ஒடு எனப் பெயரிய வேற்றுமைக் கிளவி வினைமுதல் கருவி அனை முதற்று அதுவே.", "porul_verse": "நூற்பா 13 lists the பொருள்."},
+        "fallback": {"text": "Nannūl", "verse": "நன்னூல் 297", "nurpa": "மூன்றாவதன் உருபு ஆல்ஆன் ஒடு ஓடு கருவி கருத்தா உடன்நிகழ்வு அதன் பொருள் (297)"}
+      },
       "example": "கத்தியால் வெட்டினான்"
     },
     "soc": {
       "number": 3,
-      "name": "மூன்றாம் வேற்றுமை (ஒடு/ஓடு)",
+      "name": "மூன்றாம் வேற்றுமை (ஒடு/ஓடு — உடன்நிகழ்ச்சி)",
       "urubu": ["ஒடு", "ஓடு"],
-      "urubu_note": "The sociative sits INSIDE the third case; it is not a ninth வேற்றுமை.",
+      "urubu_note": "The sociative sits INSIDE the third case; it is not a ninth வேற்றுமை. Splitting ஒடு/ஓடு from ஆல்/ஆன் is Nannūl's refinement — Tholkappiyam treats the third case as ஒடு throughout.",
       "porul": ["உடன்நிகழ்ச்சிப் பொருள்"],
       "sollurubu": ["உடன்"],
-      "verse": "நன்னூல் 297",
-      "nurpa": "மூன்றாவதன் உருபு ஆல்ஆன் ஒடு ஓடு கருவி கருத்தா உடன்நிகழ்வு அதன் பொருள் (297)",
+      "authority": {
+        "primary": {"text": "Tholkappiyam", "ref": "சொல்லதிகாரம், வேற்றுமையியல்", "verse": "நூற்பா 12", "nurpa": "மூன்றாகுவதே, ஒடு எனப் பெயரிய வேற்றுமைக் கிளவி வினைமுதல் கருவி அனை முதற்று அதுவே.", "note": "நூற்பா 13 includes ‘அதனொடு மயங்கல்’ and ‘அதனொடு இயைந்த ஒரு வினைக் கிளவி’ — the உடன்நிகழ்ச்சி senses."},
+        "fallback": {"text": "Nannūl", "verse": "நன்னூல் 297", "nurpa": "மூன்றாவதன் உருபு ஆல்ஆன் ஒடு ஓடு கருவி கருத்தா உடன்நிகழ்வு அதன் பொருள் (297)"}
+      },
       "example": "கோவலனொடு கண்ணகி வந்தாள்"
     },
     "dat": {
       "number": 4,
       "name": "நான்காம் வேற்றுமை (கு)",
       "urubu": ["கு"],
-      "urubu_note": "‘கு’ ஒன்றே.",
+      "urubu_note": "‘கு’ ஒன்றே — both authorities agree.",
       "porul": ["கோடல்பொருள்", "கொடை", "பகை", "நட்பு", "தகுதி", "அதுவாதல்", "பொருட்டு", "முறை"],
       "sollurubu": ["பொருட்டு", "நிமித்தம்", "ஆக"],
       "sollurubu_note": "‘ஆக’ வருவது ‘கு’ உருபோடு சேர்ந்துதான் — ஊருக்கு + ஆக (TVA A0211 §5.5).",
-      "verse": null,
-      "verse_note": "HONEST GAP: TVA A0211 §5.5 states the உருபு and the seven பொருள் but does NOT quote the நான்காம் வேற்றுமை நூற்பா. The number is not asserted from memory — see D-011 / the ‘never hardcode verse numbers’ rule.",
+      "authority": {
+        "primary": {"text": "Tholkappiyam", "ref": "சொல்லதிகாரம், வேற்றுமையியல்", "verse": "நூற்பா 14", "nurpa": "நான்காகுவதே, கு எனப் பெயரிய வேற்றுமைக் கிளவி எப் பொருள் ஆயினும் கொள்ளும் அதுவே.", "porul_verse": "நூற்பா 15 lists the பொருள் (நட்பின், பகையின், காதலின், சிறப்பின், …)."},
+        "fallback": {"text": "Nannūl", "verse": null, "verse_note": "HONEST GAP: TVA A0211 §5.5 states the உருபு and the seven பொருள் but does NOT quote the நான்காம் வேற்றுமை நூற்பா, and no Nannūl edition is pinned. Not asserted from memory. The Tholkappiyam primary above IS fully cited, so the case stays grounded."}
+      },
       "example": "முல்லைக்கு நீர் ஊற்று"
     },
     "abl": {
       "number": 5,
-      "name": "ஐந்தாம் வேற்றுமை (இன்/இல்)",
+      "name": "ஐந்தாம் வேற்றுமை (இன்)",
       "urubu": ["இன்", "இல்"],
-      "urubu_note": "TWO உருபு, not one. Both differentiate the பெயர்ப்பொருள் in all four senses below.",
+      "urubu_note": "Tholkappiyam names ‘இன்’ (வேற்றுமையியல் 16); Nannūl 299 adds ‘இல்’. TWO உருபு in the combined view, not one.",
       "porul": ["நீங்கல் பொருள்", "ஒப்புப் பொருள் (உவமை)", "எல்லைப் பொருள்", "ஏதுப் பொருள்"],
       "sollurubu": ["விட", "காட்டிலும்", "பார்க்கிலும்"],
-      "sollurubu_note": "எல்லைப்பொருளில் ‘காட்டிலும்’, ‘பார்க்கிலும்’ ஐகாரம் பெற்று வரும் (TVA A0211 §6.1). The modern ‘இலிருந்து’ is NOT a Nannūl உருபு and must not be presented as one.",
-      "verse": "நன்னூல் 299",
-      "nurpa": "ஐந்தாவதன் உருபு இல்லும் இன்னும் நீங்கல் ஒப்பு எல்லை ஏதுப் பொருளே (299)",
+      "sollurubu_note": "எல்லைப்பொருளில் ‘காட்டிலும்’, ‘பார்க்கிலும்’ ஐகாரம் பெற்று வரும் (TVA A0211 §6.1). The modern ‘இலிருந்து’ is in NEITHER authority and must not be presented as an உருபு.",
+      "authority": {
+        "primary": {"text": "Tholkappiyam", "ref": "சொல்லதிகாரம், வேற்றுமையியல்", "verse": "நூற்பா 16", "nurpa": "ஐந்தாகுவதே, இன் எனப் பெயரிய வேற்றுமைக் கிளவி இதனின் இற்று இது என்னும் அதுவே.", "porul_verse": "நூற்பா 17 lists the பொருள் (வண்ணம், வடிவே, அளவே, சுவையே, …)."},
+        "fallback": {"text": "Nannūl", "verse": "நன்னூல் 299", "nurpa": "ஐந்தாவதன் உருபு இல்லும் இன்னும் நீங்கல் ஒப்பு எல்லை ஏதுப் பொருளே (299)"}
+      },
       "example": "முல்லையின் எடுத்த இதழ்"
     },
     "gen": {
       "number": 6,
-      "name": "ஆறாம் வேற்றுமை (அது/ஆது/அ)",
+      "name": "ஆறாம் வேற்றுமை (அது)",
       "urubu": ["அது", "ஆது", "அ"],
-      "urubu_note": "வருமொழி ஒருமையானால் அது, ஆது; பன்மையானால் அ. THREE உருபு, number-conditioned.",
+      "urubu_note": "Tholkappiyam names ‘அது’ (வேற்றுமையியல் 18). Nannūl 300 adds the number-conditioned forms: வருமொழி ஒருமையானால் அது/ஆது; பன்மையானால் அ.",
       "porul": ["தற்கிழமைப் பொருள்", "பிறிதின் கிழமைப் பொருள்"],
       "sollurubu": ["உடைய"],
       "sollurubu_note": "‘உடைய’ is a சொல்லுருபு (TVA A0211 §6.2), NOT the உருபு.",
-      "verse": "நன்னூல் 300",
-      "nurpa": "ஆறன் ஒருமைக்கு அதுவும் ஆதுவும் பன்மைக்கு அவ்வும் உருபாம்; …… தற்கிழமையும் பிறிதின் கிழமையும் பேணுதல் பொருளே! (300)",
+      "authority": {
+        "primary": {"text": "Tholkappiyam", "ref": "சொல்லதிகாரம், வேற்றுமையியல்", "verse": "நூற்பா 18", "nurpa": "ஆறாகுவதே, அது எனப் பெரிய வேற்றுமைக் கிளவி தன்னினும் பிறிதினும் இதனது இது எனும் அன்ன கிளவிக் கிழமைத்து அதுவே.", "porul_verse": "நூற்பா 19 lists the பொருள் (இயற்கையின், உடைமையின், முறைமையின், கிழமையின், …)."},
+        "fallback": {"text": "Nannūl", "verse": "நன்னூல் 300", "nurpa": "ஆறன் ஒருமைக்கு அதுவும் ஆதுவும் பன்மைக்கு அவ்வும் உருபாம்; …… தற்கிழமையும் பிறிதின் கிழமையும் பேணுதல் பொருளே! (300)"}
+      },
       "example": "முல்லையினது நறுமணம்"
     },
     "loc": {
       "number": 7,
       "name": "ஏழாம் வேற்றுமை (கண்)",
-      "urubu": ["கண்", "கால்", "கடை", "இடை", "தலை", "வாய்", "திசை", "வயின்", "முன்", "சார்", "வலம்", "இடம்", "மேல்", "கீழ்", "புடை", "பின்", "பாடு", "அளை", "தேம்", "உழை", "வளி", "உழி", "உளி", "உள்", "அகம்", "புறம்", "இல்"],
-      "urubu_note": "‘கண்’ ஆதியாக வரும் பலவற்றுள் ஒன்று — an OPEN, கண்-headed list, not a single உருபு. ‘இல்’ is a member of it (நன்னூல் 302), so the common modern locative is grounded, but ‘கண்’ is the head name of the case.",
+      "urubu": ["கண்", "கால்", "புறம்", "அகம்", "உள்", "உழை", "கீழ்", "மேல்", "பின்", "சார்", "அயல்", "புடை", "முன்", "இடை", "கடை", "தலை", "வலம்", "இடம்", "வாய்", "திசை", "வயின்", "பாடு", "அளை", "தேம்", "வளி", "உழி", "உளி", "இல்"],
+      "urubu_note": "‘கண்’ ஆதியாக வரும் பலவற்றுள் ஒன்று — an OPEN, கண்-headed list in BOTH authorities (Tholkappiyam வேற்றுமையியல் 21; Nannūl 302). The first 18 entries follow Tholkappiyam 21's order; the remainder are Nannūl 302's additions, including ‘இல்’, which grounds the common modern locative.",
       "porul": ["இடப்பொருள்", "பொருள் முதல் ஆறும் ஓரிரு கிழமையின் இடனாய் நிற்றல்"],
       "sollurubu": [],
-      "verse": "நன்னூல் 301, 302",
-      "nurpa": "ஏழன் உருபு கண் ஆதியாகும் பொருள் முதல் ஆறும் ஓரிரு கிழமையின் இடனாய் நிற்றல் இதன்பொருள் என்ப (301) · கண்கால் கடைஇடை தலைவாய் திசைவயின் முன்சார் வலமிடம் மேல்கீழ் புடைமுதல் பின்பாடுஅளைதேம் உழைவளி உழி உளி உள்அகம் புறம் இல் இடப்பொருள் உருபே (302)",
+      "authority": {
+        "primary": {"text": "Tholkappiyam", "ref": "சொல்லதிகாரம், வேற்றுமையியல்", "verse": "நூற்பா 20, 21", "nurpa": "ஏழாகுவதே, கண் எனப் பெயரிய வேற்றுமை கிளவி வினை செய் இடத்தின் நிலத்தின் காலத்தின் அனை வகைக் குறிப்பின் தோன்றும் அதுவே. (20) · கண் கால் புறம் அகம் உள் உழை கீழ் மேல் பின் சார் அயல் புடை தேவகை எனாஅ முன் இடை கடை தலை வலம் இடம் எனாஅ அன்ன பிறவும் அதன் பால என்மனார். (21)"},
+        "fallback": {"text": "Nannūl", "verse": "நன்னூல் 301, 302", "nurpa": "ஏழன் உருபு கண் ஆதியாகும் பொருள் முதல் ஆறும் ஓரிரு கிழமையின் இடனாய் நிற்றல் இதன்பொருள் என்ப (301) · கண்கால் கடைஇடை தலைவாய் திசைவயின் முன்சார் வலமிடம் மேல்கீழ் புடைமுதல் பின்பாடுஅளைதேம் உழைவளி உழி உளி உள்அகம் புறம் இல் இடப்பொருள் உருபே (302)"}
+      },
       "example": "முல்லைக்கண் வண்டுகள் மொய்த்தன"
     },
     "voc": {
       "number": 8,
       "name": "எட்டாம் வேற்றுமை (விளிவேற்றுமை)",
       "urubu": [],
-      "urubu_note": "தனி உருபு இல்லை — பெயரின் திரிபே விளியுருபு (இராமன் > இராமா; அரசன் > அரசே). ஈற்றின் திரிபு, குன்றல், மிகுதல், இயல்பு, அயல் திரிபு ஆகியவற்றால் அமையும்.",
+      "urubu_note": "தனி உருபு இல்லை — பெயரின் திரிபே விளியுருபு (இராமன் > இராமா; அரசன் > அரசே). Tholkappiyam counts விளி as the eighth ஈறு (வேற்றுமையியல் 2, 3) and devotes a whole இயல் to it (விளிமரபு, 37 நூற்பா).",
       "porul": ["விளிப்பொருள் (அழைப்பு)"],
       "sollurubu": [],
-      "verse": "நன்னூல் 303",
-      "nurpa": "எட்டன் உருபே எய்து பெயர் ஈற்றின் திரிபு குன்றல் மிகுதல் இயல்பு அயல் திரிபுமாம் : பொருள் படர்க்கை யோரைத் தன்முகமாகத் தான்அழைப் பதுவே (303)",
+      "authority": {
+        "primary": {"text": "Tholkappiyam", "ref": "சொல்லதிகாரம், வேற்றுமையியல் / விளிமரபு", "verse": "வேற்றுமையியல் நூற்பா 2", "nurpa": "விளி கொள்வதன்கண் விளியடு எட்டே.", "note": "The detailed விளி rules occupy சொல்லதிகாரம், விளிமரபு, நூற்பா 1–37 — not yet extracted into this table."},
+        "fallback": {"text": "Nannūl", "verse": "நன்னூல் 303", "nurpa": "எட்டன் உருபே எய்து பெயர் ஈற்றின் திரிபு குன்றல் மிகுதல் இயல்பு அயல் திரிபுமாம் : பொருள் படர்க்கை யோரைத் தன்முகமாகத் தான்அழைப் பதுவே (303)"}
+      },
       "example": "முல்லையே! நீ மாலையில் மலர்கிறாய்!"
     }
   },
   "mutal_sinai": {
     "verse": "நன்னூல் 315",
     "nurpa": "முதலை ஐயுறின் சினையைக் கண் உறும் அதுமுதற்கு ஆயின் சினைக்கை ஆகும் (315)",
-    "gloss": "முதற்பொருள் and சினைப்பொருள் take DIFFERENT உருபு in the same தொடர்: முதல் ஐ → சினை கண்; முதல் கண் → சினை ஐ; முதல் அது → சினை ஐ. (TVA A0211 §6.5.)"
+    "gloss": "முதற்பொருள் and சினைப்பொருள் take DIFFERENT உருபு in the same தொடர்: முதல் ஐ → சினை கண்; முதல் கண் → சினை ஐ; முதல் அது → சினை ஐ. (TVA A0211 §6.5.)",
+    "tholkappiyam_note": "Tholkappiyam treats முதல்/சினை at length in சொல்லதிகாரம், வேற்றுமைமயங்கியல் (35 நூற்பா) — not yet extracted, so Nannūl carries this entry for now."
   },
   "known_gaps": [
-    "நான்காம் வேற்றுமை has no verse recorded — TVA A0211 does not quote its நூற்பா. Fill it only from a pinned edition (D-011), never from memory.",
-    "The decoder currently picks ONE உருபு per case by longest surface suffix match. With multi-உருபு cases now encoded (inst ஆல்/ஆன், abl இன்/இல், gen அது/ஆது/அ, loc கண்-headed open list) the selector should match against every listed உருபு for the tagged case, and fall back to the FIRST listed form only when nothing matches.",
-    "ஏழாம் வேற்றுமை's உருபு list is declared open by நன்னூல் 302 (‘…முதல்’). Treat non-matches as unclassified, not as errors."
+    "நான்காம் வேற்றுமை has no Nannūl verse recorded — TVA A0211 does not quote it and no Nannūl edition is pinned. The Tholkappiyam primary (வேற்றுமையியல் 14) IS cited, so the case is grounded.",
+    "The decoder currently picks ONE உருபு per case by longest surface suffix match. With multi-உருபு cases now encoded (inst ஒடு/ஆல்/ஆன், abl இன்/இல், gen அது/ஆது/அ, loc கண்-headed open list) the selector should match against every listed உருபு for the tagged case, and fall back to the FIRST listed form (Tholkappiyam's) only when nothing matches.",
+    "ஏழாம் வேற்றுமை's உருபு list is declared open by both authorities (‘அன்ன பிறவும்’ / ‘…முதல்’). Treat non-matches as unclassified, not as errors.",
+    "Not yet extracted: சொல்லதிகாரம், வேற்றுமைமயங்கியல் (case syncretism, 35 நூற்பா) and விளிமரபு (37 நூற்பா). Both are Tholkappiyam-primary material relevant to this table."
   ],
-  "source_extract": "Verified from the TVA A0211 and C0214 ePUBs (clean Unicode). A0211 §§5.1–6.5 quotes நூற்பா 291, 295, 296, 297, 299, 300, 301, 302, 303 and 315; C0214 §4.1 quotes 240, 241, 242 and 293 — so these rules carry நூற்பா-level citation (D-011) without a separately pinned edition."
+  "source_extract": "Tholkappiyam verses extracted verbatim from the pinned Project Madurai edition (சொல்லதிகாரம், வேற்றுமையியல் 1–22; எழுத்ததிகாரம், புணரியல் 11–12) on 2026-08-02. Nannūl verses verified from the TVA A0211 and C0214 ePUBs (clean Unicode), which quote நூற்பா 240–242, 291, 293, 295–297, 299–303 and 315 verbatim."
 }

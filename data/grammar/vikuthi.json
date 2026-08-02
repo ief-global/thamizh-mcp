@@ -1,5 +1,11 @@
 {
   "comment": "விகுதி (terminal suffix / இறுதிநிலை) rule table — the canonical Nannūl inventory, and how ThamizhiMorph's SURFACE PNG suffix maps onto it. Same discipline as idainilai.json (D-014): the FST hands over the string where the word splits, not the grammatical உறுப்பு. Two systemic instances this table fixes: (1) the FST reports `2pl=ஈர்கள்` / `3ple=ஆர்கள்`, but the விகுதி is ஈர் / ஆர் — கள் is a MODERN plural accretion, not part of the classical விகுதி; (2) the FST reports `3pln=அன` as one suffix, but Nannūl analyses it as சாரியை அன் + விகுதி அ.",
+  "source_priority": {
+    "primary": "Nannūl",
+    "fallback": null,
+    "why": "CORRECT AS-IS — not a Tholkappiyam-first violation. விகுதி is one of the six பகுபத உறுப்பு, and tamil-grammar.md records that **Tholkappiyam does not enumerate the six**; the 37→40 விகுதி inventory is Nannūl's (நூற்பா 140). Nannūl is the genuine primary here, not a convenience. Checked 2026-08-02 during the Tholkappiyam-first audit.",
+    "citation_format": "நன்னூல் numbering is continuous, so a bare number is unambiguous: ‘நன்னூல், நூற்பா 140’. (தொல்காப்பியம் numbers restart per இயல் and must be qualified — not needed for this table.)"
+  },
   "authority": "Nannūl — பதவியல், விகுதி, நூற்பா 140 (the closed inventory); வினையியல் நூற்பா 336 (இர்/ஈர்); verified against Tamil Virtual Academy courses C0212 எழுத்தின் பிறப்பும் பத இலக்கணமும் (பாடம் 6.1 விகுதி) and A0212 வினைச்சொல் (Government of Tamil Nadu, degree-level accredited material), which quote the நூற்பா and list the inventory directly.",
   "verified_by": "Saran Saravanan (formal TVA A021 coursework)",
   "verified_date": "2026-08-02",

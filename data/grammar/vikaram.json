@@ -1,6 +1,30 @@
 {
-  "comment": "விகாரம் (sandhi change) rule table — the classical taxonomy the decoder's SandhiEvent.type must use. Nannūl names exactly THREE விகாரம்: தோன்றல், திரிதல், கெடுதல் (நூற்பா 154). The decoder currently also emits ‘வல்லினம்மிகுதல்’, which is a descriptive phrase, not one of the three; under நூற்பா 154 the doubling of a வல்லினம் at a join IS a தோன்றல் விகாரம் (யானை + கொம்பு = யானைக்கொம்பு — ‘க் என்ற எழுத்துத் தோன்றியது’). Same D-014 discipline: name the உறுப்பு the way the grammar names it.",
-  "authority": "Nannūl — எழுத்ததிகாரம், புணரியல், நூற்பா 153 (இயல்பு), 154 (the three விகாரம்), 157 (several விகாரம் in one join); பதவியல் நூற்பா 133 (விகாரம் as one of the six பகுபத உறுப்பு); verified against Tamil Virtual Academy course C0213 புணர்ச்சி–1 (பாடம் 1 §1.6) and C0212 எழுத்தின் பிறப்பும் பத இலக்கணமும் (§5.3.6) (Government of Tamil Nadu, degree-level accredited material), which quote the நூற்பா verbatim.",
+  "comment": "விகாரம் (sandhi change) rule table — the classical taxonomy the decoder's SandhiEvent.type must use. THOLKAPPIYAM names the three first (எழுத்ததிகாரம், புணரியல் 7: மெய் பிறிது ஆதல் மிகுதல் குன்றல்); Nannūl 154's தோன்றல்/திரிதல்/கெடுதல் is the later restatement. The decoder currently emits ‘வல்லினம்மிகுதல்’, which is a descriptive phrase, not one of the three — under Tholkappiyam it is மிகுதல், under Nannūl தோன்றல் (யானை + கொம்பு = யானைக்கொம்பு — ‘க் என்ற எழுத்துத் தோன்றியது’). Same D-014 discipline: name the உறுப்பு the way the grammar names it. Source priority corrected 2026-08-02 — the first version of this table named Nannūl as authority for புணர்ச்சி, which Tholkappiyam governs.",
+  "source_priority": {
+    "primary": "Tholkappiyam",
+    "primary_ref": "எழுத்ததிகாரம், புணரியல்",
+    "fallback": "Nannūl",
+    "why": "tamil-grammar.md assigns புணர்ச்சி / சந்தி to Tholkappiyam as primary, Nannūl as fallback. Tholkappiyam-first is design rule #1.",
+    "citation_format": "தொல்காப்பியம் நூற்பா numbers RESTART in every இயல், so they are ALWAYS qualified: ‘தொல்காப்பியம், எழுத்ததிகாரம், புணரியல், நூற்பா 7’. நன்னூல் numbering is continuous.",
+    "terminology_map": "Tholkappiyam's names map onto Nannūl's: பிறிது ஆதல் → திரிதல் · மிகுதல் → தோன்றல் · குன்றல் → கெடுதல். Emit whichever the surface calls for, but record which authority the name came from."
+  },
+  "authority": "Tholkappiyam — எழுத்ததிகாரம், புணரியல், நூற்பா 6 (three திரிபு + one இயல்பு) and 7 (the three named). Pinned edition: Project Madurai. Fallback and expansion: Nannūl — எழுத்ததிகாரம், புணரியல், நூற்பா 153 (இயல்பு), 154 (the three விகாரம்), 157 (several விகாரம் in one join); பதவியல் நூற்பா 133 (விகாரம் as one of the six பகுபத உறுப்பு); verified against Tamil Virtual Academy course C0213 புணர்ச்சி–1 (பாடம் 1 §1.6) and C0212 (§5.3.6) (Government of Tamil Nadu, degree-level accredited material), which quote the நூற்பா verbatim.",
+  "pinned_edition": {
+    "text": "Tholkappiyam",
+    "edition": "Project Madurai",
+    "attribution": "© Project Madurai 1999-2001. Etext preparation: Dr. K. Kalyanasundaram. Proof-reading & web version: Mr. N. D. Logasundaram. Project Madurai is an open, voluntary, worldwide initiative devoted to preparation of electronic texts of Tamil literary works and to distribute them free on the Internet — http://www.projectmadurai.org",
+    "urls": {"எழுத்ததிகாரம்": "https://tamilnation.org/literature/grammar/mp100a"},
+    "pinned_date": "2026-08-02"
+  },
+  "tholkappiyam": {
+    "ref": "எழுத்ததிகாரம், புணரியல்",
+    "verses": {
+      "6": "அவற்றுள், நிறுத்த சொல்லின் ஈறு ஆகு எழுத்தொடு குறித்து வரு கிளவி முதல் எழுத்து இயைய … மூன்றே திரிபு இடன் ஒன்றே இயல்பு என ஆங்கு அந் நான்கே மொழி புணர் இயல்பே.",
+      "7": "அவைதாம், மெய் பிறிது ஆதல் மிகுதல் குன்றல் என்று இவ் என மொழிப திரியும் ஆறே.",
+      "12": "வல்லெழுத்து முதலிய வேற்றுமை உருபிற்கு ஒல்வழி ஒற்று இடை மிகுதல் வேண்டும்."
+    },
+    "gloss": "நூற்பா 6 sets the frame — three திரிபு plus one இயல்பு make the four ways words join. நூற்பா 7 names the three: மெய் பிறிது ஆதல் (a மெய் becomes another = திரிதல்), மிகுதல் (increase = தோன்றல்), குன்றல் (reduction = கெடுதல்). நூற்பா 12 is the வல்லினம் ஒற்று மிகுதல் rule at a வேற்றுமை உருபு join."
+  },
   "verified_by": "Saran Saravanan (formal TVA A021 coursework)",
   "verified_date": "2026-08-02",
   "iyalbu": {
@@ -11,13 +35,17 @@
     "examples": ["தாமரை + பூத்தது = தாமரை பூத்தது", "பொன் + மலை = பொன் மலை", "கதவு + திறந்தது = கதவு திறந்தது"]
   },
   "vikaram": {
+    "primary_verse": "தொல்காப்பியம், எழுத்ததிகாரம், புணரியல், நூற்பா 7",
+    "primary_nurpa": "அவைதாம், மெய் பிறிது ஆதல் மிகுதல் குன்றல் என்று இவ் என மொழிப திரியும் ஆறே. (7)",
+    "primary_canonical": ["பிறிது ஆதல்", "மிகுதல்", "குன்றல்"],
     "verse": "நன்னூல் 154",
     "nurpa": "தோன்றல், திரிதல், கெடுதல் விகாரம் மூன்றும் மொழிமூ இடத்தும் இயலும் (154)",
-    "gloss": "Exactly three விகாரம், each able to occur at the முதல், இடை or இறுதி of either the நிலைமொழி or the வருமொழி.",
+    "gloss": "Exactly three விகாரம் in both authorities, each able to occur at the முதல், இடை or இறுதி of either the நிலைமொழி or the வருமொழி. Tholkappiyam names them பிறிது ஆதல் / மிகுதல் / குன்றல்; Nannūl restates them as திரிதல் / தோன்றல் / கெடுதல். Same three.",
     "count": 3,
     "canonical": ["தோன்றல்", "திரிதல்", "கெடுதல்"],
     "types": {
       "தோன்றல்": {
+        "tholkappiyam_name": "மிகுதல்",
         "definition": "இரு சொற்களுக்கு இடையில் எழுத்தோ, சாரியையோ தோன்றுவது.",
         "examples": [
           {"join": "பூ + கொடி = பூங்கொடி", "detail": "ங் என்ற எழுத்துத் தோன்றியது"},
@@ -27,6 +55,7 @@
         "note": "A சாரியை appearing at a join is a தோன்றல் விகாரம் — stated explicitly by TVA C0213 §1.6.2. So is வல்லினம் doubling (யானைக்கொம்பு)."
       },
       "திரிதல்": {
+        "tholkappiyam_name": "பிறிது ஆதல்",
         "definition": "இரு சொற்களில் ஏதேனும் ஒரு சொல்லில் உள்ள எழுத்து இன்னோர் எழுத்தாகத் திரிதல் (மாறுதல்).",
         "examples": [
           {"join": "பொன் + குடம் = பொற்குடம்", "detail": "நிலைமொழி இறுதி ன் என்பது ற் எனத் திரிந்தது"},
@@ -35,6 +64,7 @@
         ]
       },
       "கெடுதல்": {
+        "tholkappiyam_name": "குன்றல்",
         "definition": "இரு சொற்களில் ஏதேனும் ஒரு சொல்லில் உள்ள எழுத்து மறைந்து போதல்.",
         "examples": [
           {"join": "மரம் + நிழல் = மரநிழல்", "detail": "நிலைமொழி இறுதி ம் என்பது கெட்டது"}
@@ -61,7 +91,8 @@
   "decoder_mapping": {
     "வல்லினம்மிகுதல்": {
       "canonical": "தோன்றல்",
-      "note": "The decoder currently emits SandhiEvent(type=\"வல்லினம்மிகுதல்\"). That is a description of what happened, not one of Nannūl's three விகாரம். Keep the description in `detail`; set `type` to தோன்றல்."
+      "tholkappiyam_name": "மிகுதல்",
+      "note": "The decoder currently emits SandhiEvent(type=\"வல்லினம்மிகுதல்\"). That is a description of what happened, not one of the three விகாரம். Keep the description in `detail`; set `type` to the classical name. Tholkappiyam's own term மிகுதல் is the closer match here — புணரியல் 12 states the rule directly: ‘வல்லெழுத்து முதலிய வேற்றுமை உருபிற்கு ஒல்வழி ஒற்று இடை மிகுதல் வேண்டும்.’"
     },
     "மரம்_oblique": {
       "canonical": ["கெடுதல்", "தோன்றல்"],

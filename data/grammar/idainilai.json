@@ -1,5 +1,11 @@
 {
   "comment": "இடைநிலை (tense infix) rule table — the canonical grammatical markers of பகுபத உறுப்பிலக்கணம், and how ThamizhiMorph's SURFACE segmentation maps onto them. This table exists because the FST's computational split is not the same thing as the traditional grammatical analysis: the FST reports the surface morph (e.g. 'கிற்'), while Nannūl names the உறுப்பு ('கிறு'). Passing the FST form through unmapped produced a systemic error (வருகிறான் split as வா+கிற்+ஆன் instead of வா+கிறு+ஆன்), reported by Saran 2026-08-02.",
+  "source_priority": {
+    "primary": "Nannūl",
+    "fallback": null,
+    "why": "CORRECT AS-IS — not a Tholkappiyam-first violation. இடைநிலை is one of the six பகுபத உறுப்பு, and tamil-grammar.md records that **Tholkappiyam does not enumerate the six**; the tense-இடைநிலை inventories are Nannūl's (நூற்பா 142/143/144). Nannūl is the genuine primary here. Checked 2026-08-02 during the Tholkappiyam-first audit. (Tholkappiyam IS cited by the decoder for the surrounding சந்தி and காலம் claims — see decoder.py THOLKAPPIYAM_PUNARIYAL / THOLKAPPIYAM_VINAIYIYAL.)",
+    "citation_format": "நன்னூல் numbering is continuous, so a bare number is unambiguous: ‘நன்னூல், நூற்பா 143’. (தொல்காப்பியம் numbers restart per இயல் and must be qualified — not needed for this table.)"
+  },
   "authority": "Nannūl — வினையியல், பகுபத உறுப்பிலக்கணம், நூற்பா 142/143/144; verified against Tamil Virtual Academy course A0212 வினைச்சொல் (Government of Tamil Nadu, degree-level accredited material), which quotes the நூற்பா text directly.",
   "verified_by": "Saran Saravanan (formal TVA A021 coursework)",
   "verified_date": "2026-08-02",
