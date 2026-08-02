@@ -1,0 +1,46 @@
+{
+  "comment": "இடைநிலை (tense infix) rule table — the canonical grammatical markers of பகுபத உறுப்பிலக்கணம், and how ThamizhiMorph's SURFACE segmentation maps onto them. This table exists because the FST's computational split is not the same thing as the traditional grammatical analysis: the FST reports the surface morph (e.g. 'கிற்'), while Nannūl names the உறுப்பு ('கிறு'). Passing the FST form through unmapped produced a systemic error (வருகிறான் split as வா+கிற்+ஆன் instead of வா+கிறு+ஆன்), reported by Saran 2026-08-02.",
+  "authority": "Nannūl — பகுபத உறுப்பிலக்கணம்; verified against Tamil Virtual Academy course A0212 வினைச்சொல் (Government of Tamil Nadu, degree-level accredited material).",
+  "verified_by": "Saran Saravanan (formal TVA A021 coursework)",
+  "verified_date": "2026-08-02",
+  "sandhi_rule": "Strong-verb வல்லினம் doubling (படிக்கிறான், படிப்பான்) is சந்தி, NOT part of the இடைநிலை — it is emitted as its own உறுப்பு. சந்தி may appear before or after the இடைநிலை. (Saran's ruling, 2026-08-02.)",
+  "idainilai": {
+    "pres": {
+      "class": "நிகழ்கால இடைநிலை",
+      "canonical": ["கிறு", "கின்று", "ஆநின்று"],
+      "note": "Exactly three valid present-tense இடைநிலை. 'கிற்'/'கின்ற்' are FST surface forms, not grammatical உறுப்புகள்.",
+      "from_fst": {
+        "கிற்":     {"idainilai": "கிறு"},
+        "கின்ற்":   {"idainilai": "கின்று"},
+        "க்கிற்":   {"idainilai": "கிறு",   "sandhi": "க்"},
+        "க்கின்ற்": {"idainilai": "கின்று", "sandhi": "க்"},
+        "ஆநின்ற்":  {"idainilai": "ஆநின்று"}
+      }
+    },
+    "past": {
+      "class": "இறந்தகால இடைநிலை",
+      "canonical": ["த்", "ட்", "ற்", "இன்"],
+      "from_fst": {
+        "த்":   {"idainilai": "த்"},
+        "ட்":   {"idainilai": "ட்"},
+        "ற்":   {"idainilai": "ற்"},
+        "இன்":  {"idainilai": "இன்"},
+        "ன்":   {"idainilai": "ன்",  "note": "curated-paradigm surface (போன், சொன்ன்)"},
+        "ன்ற்": {"idainilai": "ன்ற்", "note": "curated-paradigm surface (நின்ற்)"},
+        "த்த்": {"idainilai": "த்",  "sandhi": "த்"},
+        "ட்ட்": {"idainilai": "ட்",  "sandhi": "ட்"},
+        "ற்ற்": {"idainilai": "ற்",  "sandhi": "ற்"}
+      }
+    },
+    "fut": {
+      "class": "எதிர்கால இடைநிலை",
+      "canonical": ["ப்", "வ்"],
+      "from_fst": {
+        "ப்":   {"idainilai": "ப்"},
+        "வ்":   {"idainilai": "வ்"},
+        "ப்ப்": {"idainilai": "ப்", "sandhi": "ப்"}
+      }
+    }
+  },
+  "known_gap": "Strong-verb PAST doubling (படித்தான் = படி + த்[சந்தி] + த்[இடைநிலை] + ஆன்) is not recoverable from the FST tag alone — ThamizhiMorph reports only past=த் and does not expose the doubling. Such words currently show the இடைநிலை without the சந்தி உறுப்பு. Do not fabricate it; resolve from the surface form in a later pass."
+}

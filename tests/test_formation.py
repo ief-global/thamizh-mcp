@@ -133,3 +133,50 @@ def test_live_formation_marathil(monkeypatch):
     out = json.loads(asyncio.run(server.explain_formation(server.ExplainFormationInput(word="மரத்தில்"))))
     forms = {c["part"]: c["form"] for c in out["formation"]["components"]}
     assert forms.get("பகுதி") == "மரம்" and "விகுதி" in forms
+
+
+# --- இடைநிலை normalisation (Nannūl உறுப்பு vs FST surface morph) ---
+
+def test_present_idainilai_is_the_grammatical_form_not_the_fst_surface():
+    """நிகழ்கால இடைநிலை are கிறு / கின்று / ஆநின்று. The FST reports the surface morph (கிற்),
+    which is NOT a valid இடைநிலை — reported by Saran 2026-08-02 from TVA A0212."""
+    an = MorphAnalysis(lemma="வா", pos="verb", tags=["fin", "sim", "pres=கிற்", "3sgm=ஆன்"])
+    forms = {c.part: c.form for c in decoder.decode_formation("வருகிறான்", an).components}
+    assert forms["இடைநிலை"] == "கிறு"          # not "கிற்"
+    an2 = MorphAnalysis(lemma="வா", pos="verb", tags=["fin", "pres=கின்ற்", "3sgm=ஆன்"])
+    forms2 = {c.part: c.form for c in decoder.decode_formation("வருகின்றான்", an2).components}
+    assert forms2["இடைநிலை"] == "கின்று"        # not "கின்ற்"
+
+
+def test_strong_verb_doubling_is_sandhi_not_part_of_the_idainilai():
+    """வல்லினம் மிகுதல் is புணர்ச்சி, so க் is its own சந்தி உறுப்பு — Saran's ruling 2026-08-02."""
+    an = MorphAnalysis(lemma="படி", pos="verb", tags=["fin", "strong", "pres=க்கிற்", "3sgm=ஆன்"])
+    f = decoder.decode_formation("படிக்கிறான்", an)
+    assert [(c.part, c.form) for c in f.components] == [
+        ("பகுதி", "படி"), ("சந்தி", "க்"), ("இடைநிலை", "கிறு"), ("விகுதி", "ஆன்")]
+    assert any(s.type == "வல்லினம்மிகுதல்" for s in f.sandhi)
+
+
+def test_future_doubling_also_splits():
+    an = MorphAnalysis(lemma="படி", pos="verb", tags=["fin", "strong", "fut=ப்ப்", "3sgm=ஆன்"])
+    forms = [(c.part, c.form) for c in decoder.decode_formation("படிப்பான்", an).components]
+    assert forms == [("பகுதி", "படி"), ("சந்தி", "ப்"), ("இடைநிலை", "ப்"), ("விகுதி", "ஆன்")]
+
+
+def test_past_and_future_markers_are_already_canonical():
+    for tag, want in (("past=த்", "த்"), ("past=ற்", "ற்"), ("fut=வ்", "வ்")):
+        an = MorphAnalysis(lemma="வா", pos="verb", tags=["fin", tag, "3sgm=ஆன்"])
+        forms = {c.part: c.form for c in decoder.decode_formation("x", an).components}
+        assert forms["இடைநிலை"] == want
+
+
+def test_unmapped_marker_passes_through_never_invented():
+    an = MorphAnalysis(lemma="x", pos="verb", tags=["fin", "pres=ZZZ", "3sgm=ஆன்"])
+    forms = {c.part: c.form for c in decoder.decode_formation("x", an).components}
+    assert forms["இடைநிலை"] == "ZZZ"          # honest pass-through, not a guess
+
+
+def test_idainilai_role_names_the_classical_class():
+    an = MorphAnalysis(lemma="வா", pos="verb", tags=["fin", "pres=கிற்", "3sgm=ஆன்"])
+    c = next(c for c in decoder.decode_formation("வருகிறான்", an).components if c.part == "இடைநிலை")
+    assert "நிகழ்கால இடைநிலை" in (c.role or "") and c.authority == "Nannūl"
