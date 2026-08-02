@@ -1,7 +1,8 @@
 {
   "comment": "சாரியை (linking increment) rule table. சாரியை is the உறுப்பு that has no meaning of its own and appears between other உறுப்புகள் so they join comfortably — பெரும்பான்மையாக இடைநிலைக்கும் விகுதிக்கும் இடையில், சிறுபான்மையாகச் சந்திக்கும் விகுதிக்கும் இடையில் (TVA C0212 §5.3.4). This table exists because ThamizhiMorph does not use the classical name: it tags the increment `euph=` (‘euphonic’), which the decoder previously DROPPED entirely, so வந்தனன் lost an உறுப்பு. Same D-014 discipline as idainilai.json / vikuthi.json.",
   "source_priority": {
-    "primary": "split by aspect — see below",
+    "primary": "Tholkappiyam (for சாரியை at a புணர்ச்சி join) / Nannūl (for the உறுப்பு role and the inventory)",
+    "why": "SPLIT BY ASPECT, deliberately. tamil-grammar.md assigns புணர்ச்சி to Tholkappiyam, and Tholkappiyam does name சாரியை (எழுத்ததிகாரம், புணரியல் 10) — so it leads wherever this table describes a சாரியை appearing at a join. But சாரியை is also one of the six பகுபத உறுப்பு, which Tholkappiyam does not enumerate, so Nannūl is the genuine primary for the உறுப்பு role and for the seventeen-item inventory (244). Both halves are spelled out below.",
     "as_pakupada_urupu": {
       "primary": "Nannūl",
       "why": "சாரியை is one of the six பகுபத உறுப்பு (நன்னூல் 133), and Tholkappiyam does not enumerate the six. Nannūl is correctly primary for the உறுப்பு role and for the seventeen-item inventory (244)."

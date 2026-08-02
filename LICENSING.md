@@ -21,7 +21,8 @@ provenance machinery that makes answers auditable also makes licences classifiab
 | Indic-To-Pure-Tamil word lists | MIT | use + redistribution | attribution |
 | Tamil Wiktionary (meanings) | CC BY-SA 4.0 / GFDL | use + public serving | attribution; stays CC BY-SA |
 | foma / flookup | Apache-2.0 | runtime dep (not redistributed) | — |
-| Tholkappiyam / Nannūl | classical, public domain | everything | cite chapter (verse once an edition is pinned) |
+| Tholkappiyam / Nannūl — the *works* | classical, public domain | everything | cite அதிகாரம்/இயல் + நூற்பா |
+| Tholkappiyam / Nannūl — the pinned **Project Madurai etexts** (`data/classical/*.json`) | Project Madurai: free distribution **provided the header is kept intact** | use + redistribution incl. public serving | reproduce the © Project Madurai header + edition credits wherever the text or its verses travel |
 
 ## What this means in practice
 
@@ -31,6 +32,11 @@ provenance machinery that makes answers auditable also makes licences classifiab
    page naming each source.
 3. **Exports (Hugging Face datasets) are classified per source**, so a share-alike subset is labelled
    as such rather than diluting the whole dataset. Publish per-source subsets where licences differ.
+4. **Project Madurai etexts ship in this public repo, unlike the TVA course books.** The distinction
+   is the licence, not the content: Project Madurai explicitly grants free distribution provided its
+   header travels with the file, so `data/classical/*.json` carry that header in an `attribution`
+   field and `data/PINS.md` restates it. The TVA textbooks carry no such grant — they stay in the
+   private design repo and only *derived cited rule tables* ship. See `data/PINS.md`.
 4. **`meaning` stays ENABLED in the public app.** Surfacing meanings — including wrong ones — is a
    *purpose* of the public demo: scholars and users pinpoint errors so we can correct them. Disabling
    it would remove the feedback loop that improves the data.

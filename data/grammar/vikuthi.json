@@ -6,7 +6,7 @@
     "why": "CORRECT AS-IS — not a Tholkappiyam-first violation. விகுதி is one of the six பகுபத உறுப்பு, and tamil-grammar.md records that **Tholkappiyam does not enumerate the six**; the 37→40 விகுதி inventory is Nannūl's (நூற்பா 140). Nannūl is the genuine primary here, not a convenience. Checked 2026-08-02 during the Tholkappiyam-first audit.",
     "citation_format": "நன்னூல் numbering is continuous, so a bare number is unambiguous: ‘நன்னூல், நூற்பா 140’. (தொல்காப்பியம் numbers restart per இயல் and must be qualified — not needed for this table.)"
   },
-  "authority": "Nannūl — பதவியல், விகுதி, நூற்பா 140 (the closed inventory); வினையியல் நூற்பா 336 (இர்/ஈர்); verified against Tamil Virtual Academy courses C0212 எழுத்தின் பிறப்பும் பத இலக்கணமும் (பாடம் 6.1 விகுதி) and A0212 வினைச்சொல் (Government of Tamil Nadu, degree-level accredited material), which quote the நூற்பா and list the inventory directly.",
+  "authority": "Nannūl — பதவியல், விகுதி, நூற்பா 140 (the closed inventory); வினையியல் நூற்பா 337 (இர்/ஈர்); verified against Tamil Virtual Academy courses C0212 எழுத்தின் பிறப்பும் பத இலக்கணமும் (பாடம் 6.1 விகுதி) and A0212 வினைச்சொல் (Government of Tamil Nadu, degree-level accredited material), which quote the நூற்பா and list the inventory directly.",
   "verified_by": "Saran Saravanan (formal TVA A021 coursework)",
   "verified_date": "2026-08-02",
   "inventory": {
@@ -78,8 +78,8 @@
       "class": "முன்னிலைப் பன்மை வினைமுற்று விகுதி",
       "canonical": ["இர்", "ஈர்", "மின்"],
       "examples": {"இர்": "நடந்தனிர்", "ஈர்": "நடந்தீர்", "மின்": "நடமின்"},
-      "verse": "நன்னூல் 336",
-      "nurpa": "இர் ஈர் ஈற்ற இரண்டும் இருதிணைப் பன்மை முன்னிலை (336)",
+      "verse": "நன்னூல் 337",
+      "nurpa": "இர் ஈர் ஈற்ற இரண்டும் இருதிணைப் பன்மை முன்னிலை மின் அவற்று ஏவல் (337)",
       "usage_note": "இன்றைய வழக்கில் ‘நடந்தீர்கள்’ போல ரகர ஒற்றும் ‘கள்’ விகுதியும் சேர்த்துப் பேசுவதே மிகுதி; முற்காலத்தில் இவ்வினைமுற்றுகள் இர், ஈர் என்னும் விகுதிகளை மட்டுமே பெற்றிருந்தன (TVA A0212 §3.2.1). ஆகவே ‘கள்’ இங்குச் செவ்வியல் விகுதியின் பகுதி அன்று."
     },
     "opt": {
@@ -111,7 +111,7 @@
     "2pl=இர்": {"vikuthi": "இர்", "class_key": "2pl"},
     "2pl=ஈர்கள்": {
       "vikuthi": "ஈர்", "class_key": "2pl", "modern_plural": "கள்",
-      "note": "‘கள்’ is the modern பன்மை accretion, emitted as its own உறுப்பு — the classical முன்னிலைப் பன்மை விகுதி is ஈர் alone (நன்னூல் 336; TVA A0212 §3.2.1)."
+      "note": "‘கள்’ is the modern பன்மை accretion, emitted as its own உறுப்பு — the classical முன்னிலைப் பன்மை விகுதி is ஈர் alone (நன்னூல் 337; TVA A0212 §3.2.1)."
     },
     "3pl=ஆர்": {"vikuthi": "ஆர்", "class_key": "3pl"},
     "3pl=அர்": {"vikuthi": "அர்", "class_key": "3pl"},
@@ -131,5 +131,5 @@
     "பெயர் விகுதி, தொழிற்பெயர் விகுதி, பண்புப் பெயர் விகுதி, எச்சவினை விகுதி and பிறவினை விகுதி inventories are listed in TVA C0212 §§6.1.3–6.1.7 but are NOT yet encoded here — the FST does not currently tag them, so there is nothing to normalise. Encode when the noun / non-finite decoders need them.",
     "The FST tags `caus=வி` / `pass=` are currently emitted by the decoder as an இடைநிலை. TVA C0212 §6.1.7 and A0212 both name வி, பி, கு, சு, டு, து, பு, று as பிறவினை **விகுதி**, not இடைநிலை. This naming conflict is FLAGGED, not silently resolved — it needs Saran's ruling before the label changes."
   ],
-  "source_extract": "Verified from the TVA C0212 and A0212 ePUBs (clean Unicode). C0212 §6.1 quotes the நூற்பா-140 inventory in full and A0212 §3.2.1 quotes நூற்பா 336, so these rules carry நூற்பா-level citation (D-011) without a separately pinned edition."
+  "source_extract": "Verified from the TVA C0212 and A0212 ePUBs (clean Unicode). C0212 §6.1 quotes the நூற்பா-140 inventory in full and A0212 §3.2.1 quotes this verse (which it numbers 336; the pinned edition numbers it 337), so these rules carry நூற்பா-level citation (D-011) without a separately pinned edition."
 }
