@@ -77,14 +77,23 @@ it correctly. Runs 24/7 on minnaham via `deploy/thamizh-web.service` (systemd) a
 **http://minnaham:8080** — every word tested there also feeds the `transactions` gold log.
 Also: `scripts/demo.py` (projector-readable CLI view) and a Dockerfile fix (`foma`, not the empty
 transitional `foma-bin` — the container had shipped with no working FST).
-**115 tests pass** (113 without live foma). Design repo at `~/projects/thamizh-mcp-design/` →
+**Classical texts pinned + grammar tables cited (2026-08-02, D-011 + D-014):** `data/classical/`
+holds **Tholkappiyam** (1486 நூற்பா) and **Nannūl** (462) as version-locked, verse-addressable
+artifacts from **Project Madurai**, built by `scripts/build_classical.py` (`--verify` detects
+upstream drift), checksummed in `data/PINS.md`. They ship publicly because Project Madurai grants
+distribution with its header intact — unlike the TVA course books, which stay in the design repo.
+`data/grammar/` now holds five cited rule tables (இடைநிலை, விகுதி, சாரியை, வேற்றுமை உருபு, விகாரம்),
+each carrying a **`source_priority`** block naming its governing authority. `tests/test_citations.py`
+enforces that every cited நூற்பா resolves in the pinned texts.
+**139 tests pass** (137 without live foma). Design repo at `~/projects/thamizh-mcp-design/` →
 `ief-global/thamizh-mcp-design` (blueprint, tamil-grammar.md, DECISIONS, roadmap, CODE-STATUS.md).
+**It is PUBLIC as of 2026-08-02** and follows the same develop→PR→main flow as this repo.
 
 ## Test ladder (run in order, from repo root)
 ```bash
 uv sync                                              # installs deps incl. pytest
 which flookup && echo "மரம்" | flookup data/fst/noun.fst
-uv run pytest -v                                     # expect 115 passed with foma
+uv run pytest -v                                     # expect 139 passed with foma
 uv run python scripts/analyze.py மரத்தில் --include formation  # பகுதி மரம் + சாரியை அத்து + விகுதி இல்
 uv run python scripts/analyze.py ரயில் --include origin       # loanword: முதல் எழுத்து rule
 uv run python scripts/analyze.py ஜோதி --include origin        # வடசொல்: Grantha letter
@@ -122,11 +131,21 @@ Register as an MCP server: `claude mcp add thamizh -- uv --directory ~/projects/
    verified (ஆகு, தா, வை, செல், காண்…).
 6. **▶ GRAMMAR CORRECTNESS (D-014, opened 2026-08-02) — the live thread.** Saran (formal TVA
    coursework) found a SYSTEMIC error: we emitted ThamizhiMorph's *computational* surface morph as if
-   it were the *grammatical* உறுப்பு (வருகிறான் → கிற், should be **கிறு**). Fixed for இடைநிலை via
-   `data/grammar/idainilai.json` + `decoder.map_idainilai`. **The rule generalises: every FST output
-   must be normalised to classical naming before being presented as grammar.** Next: extract the
-   remaining rule inventories from the TVA materials (ePUB) into cited `data/grammar/*.json` tables —
-   விகுதி, சாரியை, வேற்றுமை உருபு, புணர்ச்சி — and audit each existing decoder output the same way.
+   it were the *grammatical* உறுப்பு (வருகிறான் → கிற், should be **கிறு**). **The rule generalises:
+   every FST output must be normalised to classical naming before being presented as grammar.**
+   **DONE — the data half.** Five cited tables in `data/grammar/` (இடைநிலை, விகுதி, சாரியை,
+   வேற்றுமை உருபு, விகாரம்), Tholkappiyam-first with Nannūl as cited fallback, all verse-grounded
+   against the pinned texts. `decoder.map_idainilai` consumes the first one.
+   **▶ NEXT — the decoder half, pending Saran's own verification of the grammar.**
+   `DECODER-AUDIT-D014.md` (design repo) lists **eight** further instances of the same
+   surface-vs-classical confusion, with live FST tag surfaces: `euph=` (a சாரியை) dropped entirely so
+   வந்தனன் loses an உறுப்பு · `கள்` emitted as part of the விகுதி (classical is ஈர்/ஆர் alone) ·
+   `3pln=அன` is சாரியை அன் + விகுதி அ and `3pln` is unmapped · `opt=` (வியங்கோள்) dropped · case
+   உருபு truncated to one form per case · சொல்லுருபு shown as if it were the உருபு · மரம்→மரத்து
+   misnamed திரிதல் (it is கெடுதல் + தோன்றல்) · `SandhiEvent.type` uses a term outside the three.
+   ⚖️ **BLOCKED ON SARAN'S RULING:** is causative `வி` an **இடைநிலை** (what we emit; matches Nannūl's
+   positional definition) or a **விகுதி** (TVA C0212 §6.1.7 lists வி, பி, கு, சு, டு, து, பு, று as
+   பிறவினை விகுதி)? Do not change the label until he rules.
    Known gap: strong-verb PAST doubling (படித்தான்) isn't recoverable from the FST tag.
 7. **Storage backend abstraction (for the public app).** `thamizh-ai.org` (domain bought 2026-07-26)
    is a **separate deliverable** from this MCP product — see D-013. It runs as a container + **Postgres**;
@@ -144,19 +163,30 @@ Register as an MCP server: `claude mcp add thamizh -- uv --directory ~/projects/
    ceiling, so a re-measure is now more meaningful. Prior finding: bare Opus ~97% on BASIC morphology →
    little headroom there; real headroom is on weaker models + harder items.
 10. Lift `classify_origin` (Thamizhi Validator + loanword dataset) · **network session (batch):**
-   Madras Lexicon + TVA கலைச்சொல் snapshots + locate/license Aalamaram (D-008) + pin a digitized
-   Tholkappiyam/Nannūl edition for D-011 நூற்பா citations (**edition chosen: Project Madurai**;
-   `SourceRef.verse` field already exists — NEVER hardcode verse numbers from memory).
+   Madras Lexicon + TVA கலைச்சொல் snapshots + locate/license Aalamaram (D-008).
+   ~~Pin a digitized Tholkappiyam/Nannūl edition for D-011~~ **DONE 2026-08-02** — both pinned from
+   Project Madurai into `data/classical/`. Residual: none blocking.
    Program roadmap: `~/projects/thamizh-mcp-design/DESIGN.md` (supersedes TAMIL-HIGH-RESOURCE-ROADMAP.md).
 
 ## Design rules (do not violate)
-- **Tholkappiyam-first:** cite Tholkappiyam before Nannool for grammar claims.
+- **Tholkappiyam-first:** cite Tholkappiyam before Nannool for grammar claims. This drifted once
+  (2026-08-02) — tables were written citing Nannūl for வேற்றுமை and புணர்ச்சி, which Tholkappiyam
+  governs, simply because the TVA lessons quote Nannūl. The rule on paper did not hold; the
+  **mechanism** does: every `data/grammar/*.json` carries a `source_priority` block, and
+  `tests/test_citations.py` fails without one. Priority table: `tamil-grammar.md` (design repo),
+  restated in `DESIGN.md` §4a.
 - **Self-enriching, no static dictionary:** fill gaps from live sources, cache
   per-claim with provenance (source + tier + retrieved date).
 - **Honesty over guessing:** unknown → return a **gap**, never a fabricated answer.
 
 ## Gotchas
 - Install package **`foma`**, NOT `foma-bin` (empty transitional deb).
+- **NEVER write a நூற்பா number from memory — or from a secondary source.** TVA renumbers: its
+  336/319/136 are **337/320/137** in the pinned edition. All three were wrong in shipped tables
+  before `data/classical/` existed. Look the verse up in `data/classical/*.json`.
+- **தொல்காப்பியம் நூற்பா numbers RESTART in every இயல்** and collide across இயல் and அதிகாரம் — a
+  citation must name அதிகாரம் › இயல் › நூற்பா. நன்னூல் numbering is continuous 1–462, so a bare
+  number is unambiguous there.
 - Wikimedia blocks default UAs → descriptive UA lives in the adapter
   (`THAMIZH_HTTP_UA` overrides).
 - `--include meaning` skips morphology by design (empty lemma there is not a bug).
@@ -174,6 +204,10 @@ Register as an MCP server: `claude mcp add thamizh -- uv --directory ~/projects/
   (the unit runs `.venv/bin/thamizh-web` directly — NOT `uv run`, whose ~/.cache lock is blocked by
   ProtectHome=read-only).
 - CLI: `scripts/demo.py <word>` (readable) · `scripts/analyze.py <word>` (raw JSON)
-- **Design repo (separate, private):** `~/projects/thamizh-mcp-design` → `ief-global/thamizh-mcp-design`
-  — blueprint, DESIGN.md, DECISIONS.md, tamil-grammar.md, CODE-STATUS.md, PRESENTATION-SOURCE.md,
-  thamizh-eval/. NEVER nest it here or commit design docs into this public repo.
+- **Classical texts:** `data/classical/{tholkappiyam,nannul}.json` — verse-addressable, checksummed
+  in `data/PINS.md`. Rebuild/verify: `scripts/build_classical.py`. Guard: `tests/test_citations.py`.
+- **Grammar rule tables:** `data/grammar/*.json` — each with `source_priority` + நூற்பா citations.
+- **Design repo (separate, PUBLIC since 2026-08-02):** `~/projects/thamizh-mcp-design` →
+  `ief-global/thamizh-mcp-design` — blueprint, DESIGN.md, DECISIONS.md, tamil-grammar.md,
+  CODE-STATUS.md, DECODER-AUDIT-D014.md, sources/, thamizh-eval/. Same develop→PR→main flow as here.
+  NEVER nest it inside this repo or commit design docs into this one.
