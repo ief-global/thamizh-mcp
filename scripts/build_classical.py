@@ -39,6 +39,12 @@ THOLKAPPIYAM_URLS = {
     "பொருளதிகாரம்": "https://tamilnation.org/literature/grammar/mp100c",
 }
 NANNUL_URL = "https://www.projectmadurai.org/pm_etexts/utf8/pmuni0147.html"
+# Project Madurai hosts a second, older Nannūl etext. It is NOT the primary source: pmuni0147 was
+# revised 2021-08-31 and carries modern word-split orthography (ஆன ஒன்று ஆதி ஓர் புடை ஒப்பு இனமே),
+# where pmuni0152 dates from 2002-05-15 and keeps the older joined orthography (ஆனஒன் றாதியோர்
+# புடையொப் பினமே). Switching wholesale would downgrade 460 verses to the older revision to gain two.
+# It is used ONLY to fill verses the primary omits, and every filled verse is marked as such.
+NANNUL_SUPPLEMENT_URL = "https://www.projectmadurai.org/pm_etexts/utf8/pmuni0152.html"
 
 PM_HEADER = (
     "© Project Madurai 1999-2001\n\n"
@@ -94,6 +100,26 @@ def _flush(buf: list[str]) -> str:
     return " ".join(x.strip() for x in buf if x.strip())
 
 
+# Trailing junk that the source glues onto the last verse of a section or of the whole work:
+# a run of hyphens used as a section rule, the colophon, and the page footer.
+_TAIL = re.compile(
+    r"\s*(?:-{3,}|நன்னூல்\s*முற்றிற்று|This webpage was last revised|"
+    r"Feel free to send the corrections|webmaster).*$",
+    re.S,
+)
+
+
+def clean_verse(text: str) -> str:
+    """Strip section rules and page boilerplate glued to a verse.
+
+    Eleven verses in the Nannūl source end with a '-----' section rule, and நூற்பா 462 additionally
+    carries the colophon and the webpage footer. Left in, a citation would quote page furniture as
+    scripture. The colophon itself is kept — as metadata, not as a verse: Nannūl has exactly 462
+    நூற்பா, so inventing 463/464 would be worse than dropping the text.
+    """
+    return _TAIL.sub("", text).strip()
+
+
 def parse_tholkappiyam(text: str) -> dict[str, dict[str, str]]:
     """இயல் heading is a bare '<n>. <name>' line; a verse ends at a bare-number line.
 
@@ -138,23 +164,36 @@ def gaps(nums: list[int]) -> list[int]:
 
 
 def parse_nannul(text: str) -> tuple[dict[str, str], list[dict]]:
-    """Body verses are '<n>. <text>' with CONTINUOUS numbering; also parse the TOC section map."""
+    """Body verses are '<n>. <text>' with CONTINUOUS numbering; also parse the TOC section map.
+
+    The table of contents uses the SAME '<n>.' shape as a verse ('1.0 பொதுப்பாயிரம் 1 - 3'), so the
+    body must be cut past it first — the TOC ends at the page's first horizontal rule. Skipping that
+    cut silently turned TOC lines into நூற்பா 1, 2 and 3.
+    """
     body = text
-    if (cut := body.find("சிறப்புப்பாயிரம்")) > 0:
+    if (rule := re.search(r"-{5,}", text)) is not None:
+        body = text[rule.end():]
+    elif (cut := body.find("சிறப்புப்பாயிரம்")) > 0:
         body = body[cut:]
 
     verses: dict[str, str] = {}
     num: str | None = None
     buf: list[str] = []
     for ln in body.split("\n"):
+        # Reject heading furniture that mimics a verse opener: subsection numbers ('1.0 …') and
+        # any line carrying a verse RANGE ('2. எழுத்ததிகாரம் 56 - 257'). Section headings repeat
+        # mid-body, so without this they OVERWRITE the real நூற்பா 2 and 3 parsed earlier.
+        # No genuine நூற்பா contains a digit range.
+        if re.match(r"\s*\d+\.\d", ln) or re.search(r"\d+\s*-\s*\d+", ln):
+            continue
         m = re.match(r"\s*(\d{1,3})\.\s*(.*)", ln)
         if m and 1 <= int(m.group(1)) <= 462:
-            if num and (t := _flush(buf)):
+            if num and (t := clean_verse(_flush(buf))):
                 verses[num] = t
             num, buf = m.group(1), [m.group(2)]
         elif num is not None:
             buf.append(ln)
-    if num and (t := _flush(buf)):
+    if num and (t := clean_verse(_flush(buf))):
         verses[num] = t
 
     sections = [
@@ -162,6 +201,27 @@ def parse_nannul(text: str) -> tuple[dict[str, str], list[dict]]:
         for m in re.finditer(r"([஀-௿][^\n]*?)\s*(\d{1,3})\s*-\s*(\d{1,3})\s*\n", text)
     ]
     return verses, sections
+
+
+def parse_nannul_supplement(doc: str) -> dict[str, str]:
+    """Parse pmuni0152 from its HTML, which is far more reliable than the flattened text.
+
+    Each verse is one table row — `<td valign=top>` holds the verse, `<td valign=bottom>` holds the
+    number — and section headings sit inside `<i>…</i>` within the verse cell. Stripping the italics
+    removes headings exactly, where a text-level heuristic would guess (and did: it glued
+    ‘இகர ஐகார ஈற்றுச் சிறப்புவிதி’ onto நூற்பா 176).
+    """
+    verses: dict[str, str] = {}
+    for row in re.findall(r"<tr\b.*?</tr>", doc, flags=re.S | re.I):
+        m = re.search(r"<td[^>]*valign\s*=\s*[\"']?bottom[\"']?[^>]*>(.*?)(?:</td>|</tr>|$)",
+                      row, flags=re.S | re.I)
+        if not m or not (num := m.group(1).strip()).isdigit():
+            continue
+        body = row[:m.start()]
+        body = re.sub(r"<i\b.*?</i>", " ", body, flags=re.S | re.I)   # drop section headings
+        if text := clean_verse(to_text(body)):
+            verses[num] = " ".join(text.split())
+    return verses
 
 
 def build() -> tuple[dict, dict]:
@@ -177,6 +237,16 @@ def build() -> tuple[dict, dict]:
     doc, sha = fetch(NANNUL_URL)
     nan_text, n_a, n_c = repair(to_text(doc))
     nan_verses, nan_sections = parse_nannul(nan_text)
+
+    # Fill only what the primary omits, and record which verses came from where.
+    doc2, sha2 = fetch(NANNUL_SUPPLEMENT_URL)
+    supp = parse_nannul_supplement(repair(doc2)[0])
+    filled: dict[str, str] = {}
+    for n in (str(x) for x in range(1, 463)):
+        if n not in nan_verses and n in supp:
+            nan_verses[n] = supp[n]
+            filled[n] = NANNUL_SUPPLEMENT_URL
+    nan_verses = {str(k): nan_verses[str(k)] for k in sorted(int(x) for x in nan_verses)}
 
     tholkappiyam = {
         "text": "Tholkappiyam",
@@ -225,14 +295,31 @@ def build() -> tuple[dict, dict]:
                      "is unambiguous — unlike Tholkappiyam. The section map below is for "
                      "readability, not for addressing.",
         "citation_template": "நன்னூல், நூற்பா {verse}",
-        "sources": {"url": NANNUL_URL, "source_sha256": sha},
+        "sources": {
+            "primary": {"url": NANNUL_URL, "source_sha256": sha, "revised": "2021-08-31"},
+            "supplement": {"url": NANNUL_SUPPLEMENT_URL, "source_sha256": sha2,
+                           "revised": "2002-05-15",
+                           "used_for": "gap-fill only — see `supplemented`"},
+        },
+        "supplemented": {
+            "verses": filled,
+            "note": "நூற்பா 73 and 176 are absent from the primary etext (72→74, 175→177) and were "
+                    "filled from Project Madurai's older Nannūl page. The primary is NOT switched: "
+                    "it is the 2021 revision with modern word-split orthography (ஆன ஒன்று ஆதி ஓர் "
+                    "புடை ஒப்பு இனமே), while the supplement is 2002 with the older joined "
+                    "orthography (ஆனஒன் றாதியோர் புடையொப் பினமே). Swapping wholesale would "
+                    "downgrade 460 verses to gain two. These two therefore differ in orthographic "
+                    "style from the rest — deliberate, and recorded here.",
+        },
+        "colophon": "நன்னூல் முற்றிற்று",
+        "colophon_note": "Kept as metadata, not as a verse. Nannūl has exactly 462 நூற்பா; the "
+                         "colophon and the page footer were being glued onto நூற்பா 462 by the "
+                         "source's markup and are now stripped (see clean_verse).",
         "coverage": {
             "count": len(nan_verses),
             "expected": 462,
             "missing": gaps([int(n) for n in nan_verses]),
-            "note": "நூற்பா 73 and 176 are absent from the upstream etext itself — verified by "
-                    "inspecting the raw page, where 72 is followed by 74 and 175 by 177. Recorded, "
-                    "never reconstructed.",
+            "supplemented": sorted(int(n) for n in filled),
         },
         "sections": nan_sections,
         "verses": nan_verses,
@@ -254,7 +341,7 @@ def main() -> int:
         print(f"  {ath}: {len(iyals)} இயல், {sum(len(v) for v in iyals.values())} நூற்பா")
     print(f"Nannūl: {n_nan} நூற்பா (expect 462)")
 
-    if n_nan < 400 or n_thol < 1000:
+    if n_nan < 462 or n_thol < 1000:
         print("REFUSING TO WRITE — extraction looks truncated.", file=sys.stderr)
         return 1
 

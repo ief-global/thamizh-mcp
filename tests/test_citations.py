@@ -47,10 +47,38 @@ def test_classical_artifacts_present():
 
 def test_nannul_artifact_coverage(nannul):
     cov = nannul["coverage"]
-    assert cov["count"] == 460
-    # 73 and 176 are absent from the upstream etext itself — recorded, never reconstructed.
-    assert cov["missing"] == [73, 176]
+    assert cov["count"] == 462, "Nannūl has exactly 462 நூற்பா"
+    assert cov["missing"] == []
+    # 73 and 176 are absent from the primary etext and filled from Project Madurai's older page.
+    assert cov["supplemented"] == [73, 176]
+    assert set(nannul["supplemented"]["verses"]) == {"73", "176"}
     assert nannul["verses"]["244"].startswith("அன் ஆன் இன் அல்")
+
+
+def test_nannul_verses_are_verses_not_page_furniture(nannul):
+    """Guard against the source's own markup leaking into verse text.
+
+    Three separate leaks were found by eyeballing the committed artifact: the table of contents
+    parsed as நூற்பா 1–3, mid-body section headings ('2. எழுத்ததிகாரம் 56 - 257') overwriting the
+    real நூற்பா 2 and 3, and the colophon plus webpage footer glued onto நூற்பா 462. A citation
+    quoting any of these would be quoting page furniture as scripture.
+    """
+    bad = {
+        n: t for n, t in nannul["verses"].items()
+        if re.search(r"[A-Za-z]{3,}", t)          # English footer text
+        or re.search(r"-{3,}", t)                 # section rule
+        or re.search(r"\d+\s*-\s*\d+", t)         # a TOC verse range
+        or "முற்றிற்று" in t                       # colophon
+    }
+    assert not bad, f"page furniture leaked into verses: {sorted(bad)}"
+
+
+def test_nannul_boundary_verses_exact(nannul):
+    """The first and last verses — where TOC and footer contamination lands."""
+    v = nannul["verses"]
+    assert v["1"] == "முகவுரை பதிகம் அணிந்துரை நூன்முகம் புறவுரை தந்துரை புனைந்துரை பாயிரம்"
+    assert v["462"] == "பழையன கழிதலும் புதியன புகுதலும் வழு அல கால வகையின் ஆனே"
+    assert nannul["colophon"] == "நன்னூல் முற்றிற்று", "colophon kept as metadata, not as a verse"
 
 
 def test_tholkappiyam_artifact_grammar_iyal_complete(tholkappiyam):
