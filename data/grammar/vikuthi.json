@@ -1,0 +1,129 @@
+{
+  "comment": "விகுதி (terminal suffix / இறுதிநிலை) rule table — the canonical Nannūl inventory, and how ThamizhiMorph's SURFACE PNG suffix maps onto it. Same discipline as idainilai.json (D-014): the FST hands over the string where the word splits, not the grammatical உறுப்பு. Two systemic instances this table fixes: (1) the FST reports `2pl=ஈர்கள்` / `3ple=ஆர்கள்`, but the விகுதி is ஈர் / ஆர் — கள் is a MODERN plural accretion, not part of the classical விகுதி; (2) the FST reports `3pln=அன` as one suffix, but Nannūl analyses it as சாரியை அன் + விகுதி அ.",
+  "authority": "Nannūl — பதவியல், விகுதி, நூற்பா 140 (the closed inventory); வினையியல் நூற்பா 336 (இர்/ஈர்); verified against Tamil Virtual Academy courses C0212 எழுத்தின் பிறப்பும் பத இலக்கணமும் (பாடம் 6.1 விகுதி) and A0212 வினைச்சொல் (Government of Tamil Nadu, degree-level accredited material), which quote the நூற்பா and list the inventory directly.",
+  "verified_by": "Saran Saravanan (formal TVA A021 coursework)",
+  "verified_date": "2026-08-02",
+  "inventory": {
+    "verse": "நன்னூல் 140",
+    "count_listed": 37,
+    "count_total": 40,
+    "count_note": "நன்னூல் lists 37 விகுதி from ‘அன்’ to ‘உம்’. Of these, கு, டு, து, று are தன்மை ஒருமை விகுதி, and து, று, டு are ALSO அஃறிணை ஒன்றன்பால் விகுதி — counting those three twice gives the traditional total of 40. (TVA C0212 §6.1.)",
+    "canonical": [
+      "அன்", "ஆன்", "அள்", "ஆள்", "அர்", "ஆர்", "ப", "மார்",
+      "அ", "ஆ", "கு", "டு", "து", "று", "என்", "ஏன்", "அல்", "அன்",
+      "அம்", "ஆம்", "எம்", "ஏம்", "ஓம்",
+      "கும்", "டும்", "தும்", "றும்",
+      "ஐ", "ஆய்", "இ", "மின்", "இர்", "ஈர்", "ஈயர்",
+      "க", "ய", "உம்"
+    ]
+  },
+  "classes": {
+    "3sgm": {
+      "class": "படர்க்கை ஆண்பால் வினைமுற்று விகுதி",
+      "canonical": ["அன்", "ஆன்"],
+      "examples": {"அன்": "நடந்தனன்", "ஆன்": "நடந்தான்"}
+    },
+    "3sgf": {
+      "class": "படர்க்கைப் பெண்பால் வினைமுற்று விகுதி",
+      "canonical": ["அள்", "ஆள்"],
+      "examples": {"அள்": "நடந்தனள்", "ஆள்": "நடந்தாள்"},
+      "note": "‘இ’ does NOT occur as a படர்க்கைப் பெண்பால் வினைமுற்று விகுதி (TVA A0212, A02124 தன்மதிப்பீடு)."
+    },
+    "3pl": {
+      "class": "படர்க்கைப் பலர்பால் வினைமுற்று விகுதி",
+      "canonical": ["அர்", "ஆர்", "ப", "மார்"],
+      "examples": {"அர்": "நடந்தனர்", "ஆர்": "நடந்தார்", "ப": "நடப்ப", "மார்": "நடமார்"}
+    },
+    "3pln": {
+      "class": "படர்க்கைப் பலவின்பால் வினைமுற்று விகுதி",
+      "canonical": ["அ", "ஆ"],
+      "examples": {"அ": "நடந்தன", "ஆ": "நடவா"},
+      "note": "‘ஆ’ வருவது எதிர்மறைப் பொருளில் (TVA A0212, A02124)."
+    },
+    "3sgn": {
+      "class": "படர்க்கை ஒன்றன்பால் வினைமுற்று விகுதி",
+      "canonical": ["டு", "து", "று"],
+      "examples": {"து": "நடந்தது", "று": "போயிற்று", "டு": "குறுந்தாட்டு"}
+    },
+    "1sg": {
+      "class": "தன்மை ஒருமை வினைமுற்று விகுதி",
+      "canonical": ["கு", "டு", "து", "று", "என்", "ஏன்", "அல்", "அன்"],
+      "examples": {
+        "ஏன்": "நடந்தேன்", "என்": "நடந்தனென்", "அன்": "நடப்பன்", "அல்": "நடப்பல்",
+        "கு": "உண்கு யான்", "டு": "கண்டு யான்", "து": "செய்து யான்", "று": "சென்று யான்"
+      },
+      "usage_note": "கு, டு, து, று ஆகிய தன்மை ஒருமை விகுதிகள் இன்று வழக்கில் இல்லை; இன்றைய பேச்சு வழக்கில் மிகுதியாக வழங்குவது ‘ஏன்’ (TVA A0212)."
+    },
+    "1pl": {
+      "class": "தன்மைப் பன்மை வினைமுற்று விகுதி",
+      "canonical": ["அம்", "ஆம்", "எம்", "ஏம்", "ஓம்", "கும்", "டும்", "தும்", "றும்"],
+      "examples": {
+        "ஓம்": "நடப்போம்", "ஆம்": "நடப்பாம்", "ஏம்": "நடப்பேம்",
+        "கும்": "தின்கும் யாம்", "டும்": "கண்டும் யாம்", "தும்": "வந்தும் யாம்", "றும்": "வென்றும் யாம்"
+      }
+    },
+    "2sg": {
+      "class": "முன்னிலை ஒருமை வினைமுற்று விகுதி",
+      "canonical": ["ஐ", "ஆய்", "இ"],
+      "examples": {"ஐ": "நடந்தனை", "ஆய்": "நடந்தாய்", "இ": "நடத்தி"},
+      "note": "ஐ, ஆய், இ ஆகியவை ஏவல் வினைமுற்று விகுதிகளாகவும் வரும் (TVA A0212, A02123)."
+    },
+    "2pl": {
+      "class": "முன்னிலைப் பன்மை வினைமுற்று விகுதி",
+      "canonical": ["இர்", "ஈர்", "மின்"],
+      "examples": {"இர்": "நடந்தனிர்", "ஈர்": "நடந்தீர்", "மின்": "நடமின்"},
+      "verse": "நன்னூல் 336",
+      "nurpa": "இர் ஈர் ஈற்ற இரண்டும் இருதிணைப் பன்மை முன்னிலை (336)",
+      "usage_note": "இன்றைய வழக்கில் ‘நடந்தீர்கள்’ போல ரகர ஒற்றும் ‘கள்’ விகுதியும் சேர்த்துப் பேசுவதே மிகுதி; முற்காலத்தில் இவ்வினைமுற்றுகள் இர், ஈர் என்னும் விகுதிகளை மட்டுமே பெற்றிருந்தன (TVA A0212 §3.2.1). ஆகவே ‘கள்’ இங்குச் செவ்வியல் விகுதியின் பகுதி அன்று."
+    },
+    "opt": {
+      "class": "வியங்கோள் வினைமுற்று விகுதி",
+      "canonical": ["க", "ய", "ஈயர்"],
+      "examples": {"க": "வாழ்க / நிற்க", "ய": "வாழிய", "ஈயர்": "நிலீயர்"},
+      "note": "வியங்கோள் மூவிடத்திற்கும் உரியது; ஒருமை-பன்மை வேறுபாடு இல்லை. வாழ்த்தல், வைதல், விதித்தல், வேண்டல் ஆகிய நான்கு பொருள்களில் வரும் (TVA A0212, A02123)."
+    },
+    "seyyum": {
+      "class": "‘செய்யும்’ வாய்பாட்டு வினைமுற்று விகுதி",
+      "canonical": ["உம்"],
+      "examples": {"உம்": "அவன் நடக்கும்"},
+      "note": "நிகழ்காலமும் எதிர்காலமும் காட்டும்: ‘அவன் உண்ணும்’ = உண்கிறான் (நிகழ்); ‘அவள் உண்ணும்’ = உண்பாள் (எதிர்) — TVA C0212 §6.3."
+    }
+  },
+  "from_fst": {
+    "3sgm=ஆன்": {"vikuthi": "ஆன்", "class_key": "3sgm"},
+    "3sgm=அன்": {"vikuthi": "அன்", "class_key": "3sgm"},
+    "3sgf=ஆள்": {"vikuthi": "ஆள்", "class_key": "3sgf"},
+    "3sgf=அள்": {"vikuthi": "அள்", "class_key": "3sgf"},
+    "1sg=ஏன்": {"vikuthi": "ஏன்", "class_key": "1sg"},
+    "1sg=என்": {"vikuthi": "என்", "class_key": "1sg"},
+    "1sg=அன்": {"vikuthi": "அன்", "class_key": "1sg"},
+    "2sg=ஆய்": {"vikuthi": "ஆய்", "class_key": "2sg"},
+    "2sg=ஐ": {"vikuthi": "ஐ", "class_key": "2sg"},
+    "1pl=ஓம்": {"vikuthi": "ஓம்", "class_key": "1pl"},
+    "1pl=ஆம்": {"vikuthi": "ஆம்", "class_key": "1pl"},
+    "2pl=ஈர்": {"vikuthi": "ஈர்", "class_key": "2pl"},
+    "2pl=இர்": {"vikuthi": "இர்", "class_key": "2pl"},
+    "2pl=ஈர்கள்": {
+      "vikuthi": "ஈர்", "class_key": "2pl", "modern_plural": "கள்",
+      "note": "‘கள்’ is the modern பன்மை accretion, emitted as its own உறுப்பு — the classical முன்னிலைப் பன்மை விகுதி is ஈர் alone (நன்னூல் 336; TVA A0212 §3.2.1)."
+    },
+    "3pl=ஆர்": {"vikuthi": "ஆர்", "class_key": "3pl"},
+    "3pl=அர்": {"vikuthi": "அர்", "class_key": "3pl"},
+    "3ple=ஆர்கள்": {"vikuthi": "ஆர்", "class_key": "3pl", "modern_plural": "கள்"},
+    "3sghe=ஆர்கள்": {"vikuthi": "ஆர்", "class_key": "3pl", "modern_plural": "கள்"},
+    "3plh=ஆர்கள்": {"vikuthi": "ஆர்", "class_key": "3pl", "modern_plural": "கள்"},
+    "3pln=அன": {
+      "vikuthi": "அ", "class_key": "3pln", "sariyai": "அன்",
+      "note": "நடந்தன = நட + த்(ந்) சந்தி + த் இடைநிலை + அன் சாரியை + அ விகுதி — TVA C0214 §4.2.1 verbatim. The FST's single `3pln=அன` surface is TWO உறுப்புகள்."
+    },
+    "opt=க": {"vikuthi": "க", "class_key": "opt"},
+    "opt=ய": {"vikuthi": "ய", "class_key": "opt"},
+    "opt=ஈயர்": {"vikuthi": "ஈயர்", "class_key": "opt"}
+  },
+  "known_gaps": [
+    "`3sgn=அது` (நடந்தது) is left UNMAPPED. நன்னூல் 140 names the ஒன்றன்பால் விகுதி as து/று/டு, and both ‘அ’ and ‘து’ are separately in the inventory, but neither TVA C0212 §6.1.1 nor A0212 states whether the ‘அ’ in ‘அது’ is a சாரியை, so the split is not asserted. The surface passes through unchanged rather than being guessed.",
+    "பெயர் விகுதி, தொழிற்பெயர் விகுதி, பண்புப் பெயர் விகுதி, எச்சவினை விகுதி and பிறவினை விகுதி inventories are listed in TVA C0212 §§6.1.3–6.1.7 but are NOT yet encoded here — the FST does not currently tag them, so there is nothing to normalise. Encode when the noun / non-finite decoders need them.",
+    "The FST tags `caus=வி` / `pass=` are currently emitted by the decoder as an இடைநிலை. TVA C0212 §6.1.7 and A0212 both name வி, பி, கு, சு, டு, து, பு, று as பிறவினை **விகுதி**, not இடைநிலை. This naming conflict is FLAGGED, not silently resolved — it needs Saran's ruling before the label changes."
+  ],
+  "source_extract": "Verified from the TVA C0212 and A0212 ePUBs (clean Unicode). C0212 §6.1 quotes the நூற்பா-140 inventory in full and A0212 §3.2.1 quotes நூற்பா 336, so these rules carry நூற்பா-level citation (D-011) without a separately pinned edition."
+}

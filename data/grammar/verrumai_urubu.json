@@ -1,0 +1,143 @@
+{
+  "comment": "வேற்றுமை உருபு (case-marker) rule table — the eight வேற்றுமை, their உருபு inventories, their பொருள், and their நூற்பா. This table exists for the D-014 reason: the decoder's hardcoded case map listed ONE உருபு per case and mixed சொல்லுருபு (word-postpositions like ‘உடைய’, ‘இலிருந்து’) in with real உருபு. Nannūl gives ஐந்தாம் வேற்றுமை TWO உருபு (இன், இல்), மூன்றாம் FOUR (ஆல், ஆன், ஒடு, ஓடு), ஆறாம் THREE (அது, ஆது, அ), and ஏழாம் an open list headed by கண். A சொல்லுருபு is a SEPARATE category and must never be presented as the உருபு.",
+  "authority": "Nannūl — சொல்லதிகாரம், பெயரியல், நூற்பா 291–303 (வேற்றுமை and their உருபு/பொருள்) and 315 (முதல்/சினை உருபு); எழுத்ததிகாரம், உருபு புணரியல், நூற்பா 240–242 (the eight உருபு, their count of forty, and their புணர்ச்சி); verified against Tamil Virtual Academy courses A0211 பெயர்ச்சொல் (பாடம் 5–6 வேற்றுமை 1–2) and C0214 புணர்ச்சி–2 (பாடம் 4) (Government of Tamil Nadu, degree-level accredited material), which quote the நூற்பா verbatim.",
+  "verified_by": "Saran Saravanan (formal TVA A021 coursework)",
+  "verified_date": "2026-08-02",
+  "definition": {
+    "verse": "நன்னூல் 291",
+    "nurpa": "ஏற்கும் எவ்வகைப் பெயர்க்கும் ஈறாய்ப் பொருள் வேற்றுமை செய்வன எட்டே வேற்றுமை (291)",
+    "gloss": "வேற்றுமை = what differentiates the meaning of a பெயர்ச்சொல்; the உருபு is the mark added at its ஈறு to do so. There are eight.",
+    "urubu_headline": "ஐ, ஆல், கு, இன், அது, கண் — the six cases that carry a distinct உருபு (TVA A0211 §5.1, C0214 §4.1).",
+    "eight_as_urubu": {
+      "verse": "நன்னூல் 293",
+      "nurpa": "ஆறன் உருபும் ஏற்கும் அவ்வுருபே (293)",
+      "gloss": "Nannūl counts all eight as உருபு: பெயர் (எழுவாய்), ஐ, ஆல், கு, இன், அது, கண், விளி — the எழுவாய் உருபு being the plain பெயர், which itself takes the other six."
+    },
+    "forty_forms": {
+      "verse": "நன்னூல் 240",
+      "nurpa": "ஒருவன் ஒருத்தி பலர்ஒன்று பல என வருபெயர் ஐந்தொடு பெயர்முதல் இருநான்கு உருபும் உறழ்தர நாற்பதாம் உருபே (240)",
+      "gloss": "Five பால் × eight உருபு = forty உருபு forms."
+    },
+    "placement": {
+      "verse": "நன்னூல் 241",
+      "nurpa": "பெயர்வழித் தம்பொருள் தரவரும் உருபே (241)",
+      "gloss": "The உருபு follows the பெயர், delivering its own பொருள்."
+    }
+  },
+  "cases": {
+    "nom": {
+      "number": 1,
+      "name": "முதல் வேற்றுமை (எழுவாய் வேற்றுமை)",
+      "urubu": [],
+      "urubu_note": "உருபு இல்லை — திரிபு இல்லாத பெயரே உருபு.",
+      "porul": ["எழுவாய்ப் பொருள் (கருத்தா / வினைமுதல்)"],
+      "sollurubu": ["ஆனவன்", "ஆனவள்", "ஆனவர்", "ஆனது", "ஆனவை", "என்பவன்", "என்பவள்", "என்பவர்", "என்பது", "என்பவை"],
+      "sollurubu_note": "இக்காலத்தே உரையாசிரியர் கூறுவன (TVA A0211 §5.2) — NOT Nannūl உருபு.",
+      "verse": "நன்னூல் 295",
+      "nurpa": "எழுவாய் உருபு திரிபுஇல் பெயரே வினை பெயர் வினாக்கொளல் அதன் பயனிலையே (295)",
+      "example": "முல்லை மலர்ந்தது"
+    },
+    "acc": {
+      "number": 2,
+      "name": "இரண்டாம் வேற்றுமை (ஐ)",
+      "urubu": ["ஐ"],
+      "urubu_note": "‘ஐ’ ஒன்றே — இரண்டாம் வேற்றுமைக்கு வேறு உருபு இல்லை.",
+      "porul": ["செயப்படுபொருள்", "ஆக்கல்", "அழித்தல்", "அடைதல்", "நீத்தல்", "ஒத்தல்", "உடைமை"],
+      "sollurubu": [],
+      "verse": "நன்னூல் 296",
+      "nurpa": "இரண்டாவதன் உருபு ஐயே ; அதன் பொருள் ஆக்கல் அழித்தல் அடைதல் நீத்தல் ஒத்தல் உடைமை ஆதி ஆகும் (296)",
+      "example": "அவள் முல்லையைச் சூடினாள்"
+    },
+    "inst": {
+      "number": 3,
+      "name": "மூன்றாம் வேற்றுமை (ஆல்)",
+      "urubu": ["ஆல்", "ஆன்"],
+      "urubu_note": "ஆல், ஆன் ஆகிய இரண்டும் கருவிப் பொருளுக்கும் கருத்தாப் பொருளுக்கும் பெரும்பாலும் பயன்படுகின்றன. ஒடு, ஓடு are the same case but the உடன்நிகழ்ச்சி (sociative) sense — see `soc`.",
+      "porul": ["கருவிப்பொருள்", "கருத்தாப்பொருள்"],
+      "sollurubu": ["கொண்டு"],
+      "verse": "நன்னூல் 297",
+      "nurpa": "மூன்றாவதன் உருபு ஆல்ஆன் ஒடு ஓடு கருவி கருத்தா உடன்நிகழ்வு அதன் பொருள் (297)",
+      "example": "கத்தியால் வெட்டினான்"
+    },
+    "soc": {
+      "number": 3,
+      "name": "மூன்றாம் வேற்றுமை (ஒடு/ஓடு)",
+      "urubu": ["ஒடு", "ஓடு"],
+      "urubu_note": "The sociative sits INSIDE the third case; it is not a ninth வேற்றுமை.",
+      "porul": ["உடன்நிகழ்ச்சிப் பொருள்"],
+      "sollurubu": ["உடன்"],
+      "verse": "நன்னூல் 297",
+      "nurpa": "மூன்றாவதன் உருபு ஆல்ஆன் ஒடு ஓடு கருவி கருத்தா உடன்நிகழ்வு அதன் பொருள் (297)",
+      "example": "கோவலனொடு கண்ணகி வந்தாள்"
+    },
+    "dat": {
+      "number": 4,
+      "name": "நான்காம் வேற்றுமை (கு)",
+      "urubu": ["கு"],
+      "urubu_note": "‘கு’ ஒன்றே.",
+      "porul": ["கோடல்பொருள்", "கொடை", "பகை", "நட்பு", "தகுதி", "அதுவாதல்", "பொருட்டு", "முறை"],
+      "sollurubu": ["பொருட்டு", "நிமித்தம்", "ஆக"],
+      "sollurubu_note": "‘ஆக’ வருவது ‘கு’ உருபோடு சேர்ந்துதான் — ஊருக்கு + ஆக (TVA A0211 §5.5).",
+      "verse": null,
+      "verse_note": "HONEST GAP: TVA A0211 §5.5 states the உருபு and the seven பொருள் but does NOT quote the நான்காம் வேற்றுமை நூற்பா. The number is not asserted from memory — see D-011 / the ‘never hardcode verse numbers’ rule.",
+      "example": "முல்லைக்கு நீர் ஊற்று"
+    },
+    "abl": {
+      "number": 5,
+      "name": "ஐந்தாம் வேற்றுமை (இன்/இல்)",
+      "urubu": ["இன்", "இல்"],
+      "urubu_note": "TWO உருபு, not one. Both differentiate the பெயர்ப்பொருள் in all four senses below.",
+      "porul": ["நீங்கல் பொருள்", "ஒப்புப் பொருள் (உவமை)", "எல்லைப் பொருள்", "ஏதுப் பொருள்"],
+      "sollurubu": ["விட", "காட்டிலும்", "பார்க்கிலும்"],
+      "sollurubu_note": "எல்லைப்பொருளில் ‘காட்டிலும்’, ‘பார்க்கிலும்’ ஐகாரம் பெற்று வரும் (TVA A0211 §6.1). The modern ‘இலிருந்து’ is NOT a Nannūl உருபு and must not be presented as one.",
+      "verse": "நன்னூல் 299",
+      "nurpa": "ஐந்தாவதன் உருபு இல்லும் இன்னும் நீங்கல் ஒப்பு எல்லை ஏதுப் பொருளே (299)",
+      "example": "முல்லையின் எடுத்த இதழ்"
+    },
+    "gen": {
+      "number": 6,
+      "name": "ஆறாம் வேற்றுமை (அது/ஆது/அ)",
+      "urubu": ["அது", "ஆது", "அ"],
+      "urubu_note": "வருமொழி ஒருமையானால் அது, ஆது; பன்மையானால் அ. THREE உருபு, number-conditioned.",
+      "porul": ["தற்கிழமைப் பொருள்", "பிறிதின் கிழமைப் பொருள்"],
+      "sollurubu": ["உடைய"],
+      "sollurubu_note": "‘உடைய’ is a சொல்லுருபு (TVA A0211 §6.2), NOT the உருபு.",
+      "verse": "நன்னூல் 300",
+      "nurpa": "ஆறன் ஒருமைக்கு அதுவும் ஆதுவும் பன்மைக்கு அவ்வும் உருபாம்; …… தற்கிழமையும் பிறிதின் கிழமையும் பேணுதல் பொருளே! (300)",
+      "example": "முல்லையினது நறுமணம்"
+    },
+    "loc": {
+      "number": 7,
+      "name": "ஏழாம் வேற்றுமை (கண்)",
+      "urubu": ["கண்", "கால்", "கடை", "இடை", "தலை", "வாய்", "திசை", "வயின்", "முன்", "சார்", "வலம்", "இடம்", "மேல்", "கீழ்", "புடை", "பின்", "பாடு", "அளை", "தேம்", "உழை", "வளி", "உழி", "உளி", "உள்", "அகம்", "புறம்", "இல்"],
+      "urubu_note": "‘கண்’ ஆதியாக வரும் பலவற்றுள் ஒன்று — an OPEN, கண்-headed list, not a single உருபு. ‘இல்’ is a member of it (நன்னூல் 302), so the common modern locative is grounded, but ‘கண்’ is the head name of the case.",
+      "porul": ["இடப்பொருள்", "பொருள் முதல் ஆறும் ஓரிரு கிழமையின் இடனாய் நிற்றல்"],
+      "sollurubu": [],
+      "verse": "நன்னூல் 301, 302",
+      "nurpa": "ஏழன் உருபு கண் ஆதியாகும் பொருள் முதல் ஆறும் ஓரிரு கிழமையின் இடனாய் நிற்றல் இதன்பொருள் என்ப (301) · கண்கால் கடைஇடை தலைவாய் திசைவயின் முன்சார் வலமிடம் மேல்கீழ் புடைமுதல் பின்பாடுஅளைதேம் உழைவளி உழி உளி உள்அகம் புறம் இல் இடப்பொருள் உருபே (302)",
+      "example": "முல்லைக்கண் வண்டுகள் மொய்த்தன"
+    },
+    "voc": {
+      "number": 8,
+      "name": "எட்டாம் வேற்றுமை (விளிவேற்றுமை)",
+      "urubu": [],
+      "urubu_note": "தனி உருபு இல்லை — பெயரின் திரிபே விளியுருபு (இராமன் > இராமா; அரசன் > அரசே). ஈற்றின் திரிபு, குன்றல், மிகுதல், இயல்பு, அயல் திரிபு ஆகியவற்றால் அமையும்.",
+      "porul": ["விளிப்பொருள் (அழைப்பு)"],
+      "sollurubu": [],
+      "verse": "நன்னூல் 303",
+      "nurpa": "எட்டன் உருபே எய்து பெயர் ஈற்றின் திரிபு குன்றல் மிகுதல் இயல்பு அயல் திரிபுமாம் : பொருள் படர்க்கை யோரைத் தன்முகமாகத் தான்அழைப் பதுவே (303)",
+      "example": "முல்லையே! நீ மாலையில் மலர்கிறாய்!"
+    }
+  },
+  "mutal_sinai": {
+    "verse": "நன்னூல் 315",
+    "nurpa": "முதலை ஐயுறின் சினையைக் கண் உறும் அதுமுதற்கு ஆயின் சினைக்கை ஆகும் (315)",
+    "gloss": "முதற்பொருள் and சினைப்பொருள் take DIFFERENT உருபு in the same தொடர்: முதல் ஐ → சினை கண்; முதல் கண் → சினை ஐ; முதல் அது → சினை ஐ. (TVA A0211 §6.5.)"
+  },
+  "known_gaps": [
+    "நான்காம் வேற்றுமை has no verse recorded — TVA A0211 does not quote its நூற்பா. Fill it only from a pinned edition (D-011), never from memory.",
+    "The decoder currently picks ONE உருபு per case by longest surface suffix match. With multi-உருபு cases now encoded (inst ஆல்/ஆன், abl இன்/இல், gen அது/ஆது/அ, loc கண்-headed open list) the selector should match against every listed உருபு for the tagged case, and fall back to the FIRST listed form only when nothing matches.",
+    "ஏழாம் வேற்றுமை's உருபு list is declared open by நன்னூல் 302 (‘…முதல்’). Treat non-matches as unclassified, not as errors."
+  ],
+  "source_extract": "Verified from the TVA A0211 and C0214 ePUBs (clean Unicode). A0211 §§5.1–6.5 quotes நூற்பா 291, 295, 296, 297, 299, 300, 301, 302, 303 and 315; C0214 §4.1 quotes 240, 241, 242 and 293 — so these rules carry நூற்பா-level citation (D-011) without a separately pinned edition."
+}

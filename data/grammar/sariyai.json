@@ -1,0 +1,70 @@
+{
+  "comment": "சாரியை (linking increment) rule table. சாரியை is the உறுப்பு that has no meaning of its own and appears between other உறுப்புகள் so they join comfortably — பெரும்பான்மையாக இடைநிலைக்கும் விகுதிக்கும் இடையில், சிறுபான்மையாகச் சந்திக்கும் விகுதிக்கும் இடையில் (TVA C0212 §5.3.4). This table exists because ThamizhiMorph does not use the classical name: it tags the increment `euph=` (‘euphonic’), which the decoder previously DROPPED entirely, so வந்தனன் lost an உறுப்பு. Same D-014 discipline as idainilai.json / vikuthi.json.",
+  "authority": "Nannūl — உருபு புணரியல், நூற்பா 243 (when a சாரியை appears) and நூற்பா 244 (the seventeen பொதுச் சாரியை); பதவியல் நூற்பா 133 (சாரியை as one of the six பகுபத உறுப்பு); verified against Tamil Virtual Academy courses C0214 புணர்ச்சி–2 (பாடம் 4 உருபு புணர்ச்சி–I) and C0212 எழுத்தின் பிறப்பும் பத இலக்கணமும் (§5.3.4) (Government of Tamil Nadu, degree-level accredited material), which quote the நூற்பா verbatim.",
+  "verified_by": "Saran Saravanan (formal TVA A021 coursework)",
+  "verified_date": "2026-08-02",
+  "definition": "சாரியை = சார்ந்து இயைந்து நிற்பது. தனக்கெனப் பொருள் எதுவும் இன்றிப் பிற உறுப்புகள் இணையும்போது இடையில் வருவது. (TVA C0212 §5.3.4)",
+  "occurrence": {
+    "verse": "நன்னூல் 243",
+    "nurpa": "பதம்முன் விகுதியும் பதமும் உருபும் புணர்வழி ஒன்றும் பலவும் சாரியை வருதலும், தவிர்தலும், விகற்பமும் ஆகும் (243)",
+    "gloss": "When a விகுதி, a பதம், or a வேற்றுமை உருபு joins a பதம், one சாரியை or several may appear, may be absent, or may be optional (விகற்பம்) in the same join.",
+    "contexts": [
+      {"name": "விகுதிப் புணர்ச்சி", "example": "நடந்தனன் = நட(பகுதி) + த்→ந்(சந்தி, விகாரம்) + த்(இடைநிலை) + அன்(சாரியை) + அன்(விகுதி)", "contrast": "நடந்தான் = நட + த்(ந்) + த் + ஆன் — சாரியை வரவில்லை"},
+      {"name": "பதப் புணர்ச்சி", "example": "புளியம்பழம் = புளி + அம்(சாரியை) + பழம்", "contrast": "புளிச்சோறு — வல்லினம் மிக்கதே தவிர, சாரியை வரவில்லை"},
+      {"name": "உருபு புணர்ச்சி", "example": "மரத்தை = மரம் + அத்து(சாரியை) + ஐ(உருபு)", "contrast": "என்னை = யான் + ஐ — சாரியை வரவில்லை"}
+    ],
+    "vikarpam_note": "விகற்பம் = the same join may take the சாரியை or not: நெல்லின்குப்பை (இன் சாரியை) ~ நெற்குப்பை (none). ஆனை = ஆ + ன்(சாரியை) + ஐ ~ ஆவை = ஆ + வ்(உடம்படுமெய், NOT a சாரியை) + ஐ."
+  },
+  "pothu_sariyai": {
+    "verse": "நன்னூல் 244",
+    "count": 17,
+    "nurpa": "அன்ஆன் இன்அல் அற்றுஇற்று அத்துஅம் தம்நம் நும்ஏ அஉ ஐகுன இன்ன பிறவும் பொதுச் சாரியையே (244)",
+    "canonical": ["அன்", "ஆன்", "இன்", "அல்", "அற்று", "இற்று", "அத்து", "அம்", "தம்", "நம்", "நும்", "ஏ", "அ", "உ", "ஐ", "கு", "ன்"],
+    "open_set_note": "‘இன்ன பிறவும்’ — the நூற்பா itself declares the list open, so an unlisted increment is not automatically wrong. Do NOT treat this as a closed inventory the way நன்னூல் 143 (இடைநிலை) or 140 (விகுதி) are closed.",
+    "examples": {
+      "அன்": {"word": "ஒன்றன் கூட்டம்", "split": "ஒன்று + அன் + கூட்டம்", "context": "பதப்புணர்ச்சி"},
+      "ஆன்": {"word": "ஒருபாற்கு", "split": "ஒருபது + ஆன் + கு", "context": "உருபு புணர்ச்சி", "note": "இப்போது இது வழக்கில் இல்லை"},
+      "இன்": {"word": "வண்டின்கால்", "split": "வண்டு + இன் + கால்", "context": "பதப்புணர்ச்சி"},
+      "அல்": {"word": "தொடையல்", "split": "தொடை + அல்", "context": "தனிமொழி", "note": "தொடையல் = மாலை"},
+      "அற்று": {"word": "பலவற்றை", "split": "பல + அற்று + ஐ", "context": "உருபு புணர்ச்சி"},
+      "இற்று": {"word": "பதிற்றுப்பத்து", "split": "பத்து + இற்று + பத்து", "context": "பதப்புணர்ச்சி"},
+      "அத்து": {"word": "மரத்துக்கிளை", "split": "மரம் + அத்து + கிளை", "context": "பதப்புணர்ச்சி"},
+      "அம்": {"word": "புளியம்பழம்", "split": "புளி + அம் + பழம்", "context": "பதப்புணர்ச்சி"},
+      "தம்": {"word": "எல்லார்தம்மையும்", "split": "எல்லார் + தம் + ஐ + உம்", "context": "உருபு புணர்ச்சி"},
+      "நம்": {"word": "எல்லா நம்மையும்", "split": "எல்லா + நம் + ஐ + உம்", "context": "உருபு புணர்ச்சி"},
+      "நும்": {"word": "எல்லீர் நும்மையும்", "split": "எல்லீர் + நும் + ஐ + உம்", "context": "உருபு புணர்ச்சி"},
+      "ஏ": {"word": "ஒன்றே கால்", "split": "ஒன்று + ஏ + கால்", "context": "பதப்புணர்ச்சி"},
+      "அ": {"word": "புளியமரம்", "split": "புளி + அ + மரம்", "context": "பதப்புணர்ச்சி"},
+      "உ": {"word": "அவனுக்கு", "split": "அவன் + உ + கு", "context": "உருபு புணர்ச்சி"},
+      "ஐ": {"word": "பண்டைக்காலம்", "split": "பண்டு + ஐ + காலம்", "context": "பதப்புணர்ச்சி"},
+      "கு": {"word": "செய்குவாய்", "split": "செய் + கு + ஆய்", "context": "விகுதிப்புணர்ச்சி"},
+      "ன்": {"word": "ஆனை", "split": "ஆ + ன் + ஐ", "context": "உருபு புணர்ச்சி", "note": "ஆனை, ஆவை = பசுவை"}
+    }
+  },
+  "from_fst": {
+    "euph=அன்": {
+      "sariyai": "அன்",
+      "note": "ThamizhiMorph tags this ‘euphonic’; Nannūl names it the சாரியை அன். வந்தனன் = வா + த்(ந்) சந்தி + த் இடைநிலை + அன் சாரியை + அன் விகுதி (TVA C0212 §5.3.4, C0214 §4.2.1). Before this table the decoder had no `euph` handler at all, so the உறுப்பு was silently dropped."
+    },
+    "euph=இன்": {"sariyai": "இன்"},
+    "euph=அத்து": {"sariyai": "அத்து"}
+  },
+  "oblique_increment": {
+    "rule": "-அம் ஈற்றுப் பெயர் (மரம், வீடம் …) takes the அத்து சாரியை before a வேற்றுமை உருபு.",
+    "examples": [
+      {"surface": "மரத்தை", "split": "மரம் + அத்து + ஐ", "sariyai_count": 1},
+      {"surface": "மரத்தினை", "split": "மரம் + அத்து + இன் + ஐ", "sariyai_count": 2},
+      {"surface": "மரத்தினுக்கு", "split": "மரம் + அத்து + இன் + உ + கு", "sariyai_count": 3}
+    ],
+    "vikaram": {
+      "correct": "The நிலைமொழி ‘மரம்’ loses its ஈற்று ‘ம்’ (கெடுதல் விகாரம்) and the அத்து சாரியை appears (தோன்றல் விகாரம்): மரம் + ஐ > மர + அத்து + ஐ = மரத்தை.",
+      "incorrect": "It is NOT ‘ம் திரிந்து த் ஆயிற்று’. The த் belongs to the சாரியை அத்து; the ம் simply drops. (TVA C0214 §4.2.1 writes the join as ‘மரம் + ஐ > மர + அத்து + ஐ’.)"
+    },
+    "known_gap": "The decoder currently emits at most ONE சாரியை. மரத்தினுக்கு needs three (அத்து + இன் + உ), and the FST does not hand the stack over. Multi-சாரியை decomposition is a recorded gap — do NOT fabricate the extra உறுப்புகள்."
+  },
+  "known_gaps": [
+    "The சாரியை that specific stems take in specific புணர்ச்சி environments (அகரச் சாரியை for தமிழ்/சாதிப்பெயர், ஐகாரச் சாரியை / ஆகாரச் சாரியை for இல், ஐகாரச் சாரியை for குற்றியலுகரம், இன்/இற்று for பத்து and ஒன்பது) is set out at length in TVA C0213 and C0214 but is NOT encoded here — it belongs with the புணர்ச்சி engine (the recorded product goal), not with the பகுபத உறுப்பு decoder.",
+    "The FST supplies no சாரியை signal for nouns beyond `infInc`, so noun சாரியை stays limited to the -அம் declension rule above."
+  ],
+  "source_extract": "Verified from the TVA C0212 and C0214 ePUBs (clean Unicode). C0214 §4.2 quotes நூற்பா 243 and 244 verbatim with a worked example for all seventeen சாரியை, so these rules carry நூற்பா-level citation (D-011) without a separately pinned edition."
+}
