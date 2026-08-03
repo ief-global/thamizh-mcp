@@ -24,7 +24,18 @@ Pos = Literal["பெயர்ச்சொல்", "வினைச்சொல�
 WordClass = Literal["பெயர்", "வினை", "இடை", "உரிச்சொல்", "unknown"]
 WordType = Literal["பகுபதம்", "பகாப்பதம்", "unknown"]
 ComponentPart = Literal["பகுதி", "விகுதி", "இடைநிலை", "சாரியை", "சந்தி", "விகாரம்"]
-SandhiType = Literal["தோன்றல்", "திரிதல்", "கெடுதல்", "வல்லினம்மிகுதல்", "வல்லினம்மிகாமை"]
+# The three விகாரம், under BOTH authorities' names. Tholkappiyam (எழுத்ததிகாரம், புணரியல் 7) names
+# them மிகுதல் / குன்றல் / பிறிது ஆதல்; Nannūl 154 restates them as தோன்றல் / கெடுதல் / திரிதல்.
+# Same three events. The decoder emits the **Tholkappiyam** name (Saran's ruling, 2026-08-02 —
+# Tholkappiyam-first, and it nudges readers to the older authority); the Nannūl names stay valid so
+# a caller or an older record is not rejected. 'வல்லினம்மிகுதல்'/'வல்லினம்மிகாமை' are DESCRIPTIONS
+# of an event, not classical விகாரம் names — retained for back-compatibility only; new code should
+# put that wording in `detail` and set `type` to மிகுதல்.
+SandhiType = Literal[
+    "மிகுதல்", "குன்றல்", "பிறிது ஆதல்",              # Tholkappiyam — preferred
+    "தோன்றல்", "கெடுதல்", "திரிதல்",                  # Nannūl — equivalent
+    "வல்லினம்மிகுதல்", "வல்லினம்மிகாமை",              # descriptive, legacy
+]
 Adaptation = Literal["தற்சமம்", "தற்பவம்"]
 Register = Literal["technical", "literary", "everyday"]
 Attestation = Literal["attested", "proposed"]

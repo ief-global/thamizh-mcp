@@ -45,6 +45,14 @@ VERB_PARADIGMS_FILE = Path(os.environ.get(
 # Cited grammar rule tables (Nannūl / TVA-verified) — the canonical உறுப்பு names the FST does not give.
 GRAMMAR_IDAINILAI_FILE = Path(os.environ.get(
     "THAMIZH_IDAINILAI", REPO_ROOT / "data" / "grammar" / "idainilai.json"))
+GRAMMAR_VIKUTHI_FILE = Path(os.environ.get(
+    "THAMIZH_VIKUTHI", REPO_ROOT / "data" / "grammar" / "vikuthi.json"))
+GRAMMAR_SARIYAI_FILE = Path(os.environ.get(
+    "THAMIZH_SARIYAI", REPO_ROOT / "data" / "grammar" / "sariyai.json"))
+GRAMMAR_VERRUMAI_FILE = Path(os.environ.get(
+    "THAMIZH_VERRUMAI", REPO_ROOT / "data" / "grammar" / "verrumai_urubu.json"))
+GRAMMAR_VIKARAM_FILE = Path(os.environ.get(
+    "THAMIZH_VIKARAM", REPO_ROOT / "data" / "grammar" / "vikaram.json"))
 
 
 def flookup_available() -> bool:
