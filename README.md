@@ -22,7 +22,7 @@ Design, decisions and roadmap live in the companion repo
 ## Status
 
 **Working server, in active development.** Nine MCP tools over one engine, plus REST and CLI heads.
-139 tests pass.
+149 tests pass.
 
 | | |
 |---|---|
@@ -62,7 +62,7 @@ in `data/PINS.md`.
 uv run thamizh-mcp                      # MCP server, stdio transport
 uv run thamizh-web                      # web + REST head on :8080
 uv run python scripts/demo.py மரத்தில்   # readable CLI view
-uv run pytest                           # 139 tests
+uv run pytest                           # 149 tests
 ```
 
 Register with Claude Code:

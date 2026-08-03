@@ -85,7 +85,7 @@ distribution with its header intact — unlike the TVA course books, which stay 
 `data/grammar/` now holds five cited rule tables (இடைநிலை, விகுதி, சாரியை, வேற்றுமை உருபு, விகாரம்),
 each carrying a **`source_priority`** block naming its governing authority. `tests/test_citations.py`
 enforces that every cited நூற்பா resolves in the pinned texts.
-**139 tests pass** (137 without live foma). Design repo at `~/projects/thamizh-mcp-design/` →
+**149 tests pass** (147 without live foma). Design repo at `~/projects/thamizh-mcp-design/` →
 `ief-global/thamizh-mcp-design` (blueprint, tamil-grammar.md, DECISIONS, roadmap, CODE-STATUS.md).
 **It is PUBLIC as of 2026-08-02** and follows the same develop→PR→main flow as this repo.
 
@@ -93,7 +93,7 @@ enforces that every cited நூற்பா resolves in the pinned texts.
 ```bash
 uv sync                                              # installs deps incl. pytest
 which flookup && echo "மரம்" | flookup data/fst/noun.fst
-uv run pytest -v                                     # expect 139 passed with foma
+uv run pytest -v                                     # expect 149 passed with foma
 uv run python scripts/analyze.py மரத்தில் --include formation  # பகுதி மரம் + சாரியை அத்து + விகுதி இல்
 uv run python scripts/analyze.py ரயில் --include origin       # loanword: முதல் எழுத்து rule
 uv run python scripts/analyze.py ஜோதி --include origin        # வடசொல்: Grantha letter
@@ -136,17 +136,19 @@ Register as an MCP server: `claude mcp add thamizh -- uv --directory ~/projects/
    **DONE — the data half.** Five cited tables in `data/grammar/` (இடைநிலை, விகுதி, சாரியை,
    வேற்றுமை உருபு, விகாரம்), Tholkappiyam-first with Nannūl as cited fallback, all verse-grounded
    against the pinned texts. `decoder.map_idainilai` consumes the first one.
-   **▶ NEXT — the decoder half, pending Saran's own verification of the grammar.**
-   `DECODER-AUDIT-D014.md` (design repo) lists **eight** further instances of the same
-   surface-vs-classical confusion, with live FST tag surfaces: `euph=` (a சாரியை) dropped entirely so
-   வந்தனன் loses an உறுப்பு · `கள்` emitted as part of the விகுதி (classical is ஈர்/ஆர் alone) ·
-   `3pln=அன` is சாரியை அன் + விகுதி அ and `3pln` is unmapped · `opt=` (வியங்கோள்) dropped · case
-   உருபு truncated to one form per case · சொல்லுருபு shown as if it were the உருபு · மரம்→மரத்து
-   misnamed திரிதல் (it is கெடுதல் + தோன்றல்) · `SandhiEvent.type` uses a term outside the three.
-   ⚖️ **BLOCKED ON SARAN'S RULING:** is causative `வி` an **இடைநிலை** (what we emit; matches Nannūl's
-   positional definition) or a **விகுதி** (TVA C0212 §6.1.7 lists வி, பி, கு, சு, டு, து, பு, று as
-   பிறவினை விகுதி)? Do not change the label until he rules.
-   Known gap: strong-verb PAST doubling (படித்தான்) isn't recoverable from the FST tag.
+   **DONE — the decoder half too (2026-08-02).** All eight audit findings fixed, each with a
+   regression test (`tests/test_formation.py`, A1–A8 + B1): `euph=` now decodes as a **சாரியை**
+   (வந்தனன் no longer loses an உறுப்பு) · `கள்` split off the விகுதி as a modern accretion,
+   `authority=None` because no classical authority sanctions it · `3pln=அன` → சாரியை அன் + விகுதி அ ·
+   `opt=` → வியங்கோள் விகுதி · per-case உருபு **lists** with surface matching that handles the fused
+   vowel (மரம்+இல் → மரத்**தில்**) · சொல்லுருபு removed from the case names · மரம்→மரத்து is
+   **குன்றல் + மிகுதல்** · `SandhiEvent.type` is now a classical விகாரம் name.
+   ⚖️ **RULINGS (Saran, 2026-08-02) — settled, do not re-open:**
+   (1) causative `வி` **IS an இடைநிலை** — Nannūl's positional definition governs over TVA's
+   பிறவினை-விகுதி listing; (2) `கள்` is a modern plural accretion and is labelled as such;
+   (3) விகாரம் are emitted under **Tholkappiyam's** names (மிகுதல்/குன்றல்/பிறிது ஆதல்) to nudge
+   readers to Tholkappiyam first — Nannūl's names stay valid in the schema.
+   Known gap: strong-verb PAST doubling (படித்தான்) still isn't recoverable from the FST tag.
 7. **Storage backend abstraction (for the public app).** `thamizh-ai.org` (domain bought 2026-07-26)
    is a **separate deliverable** from this MCP product — see D-013. It runs as a container + **Postgres**;
    **the MCP product keeps zero-config SQLite and must NEVER require containers or Postgres.** So

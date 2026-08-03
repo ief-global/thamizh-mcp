@@ -12,7 +12,7 @@ A join we cannot classify is left unnamed, never invented.
 """
 from __future__ import annotations
 
-from typing import Optional
+from typing import NamedTuple, Optional
 
 from thamizh_mcp import config
 from thamizh_mcp.schema import (
@@ -49,16 +49,20 @@ _WORD_CLASS: dict[Pos, WordClass] = {
 
 # FST case tag → (number, name, function). Eight வேற்றுமை per Tholkappiyam;
 # sociative ஒடு/உடன் sits inside the third case.
+# The parenthesised form is the உருபு and ONLY the உருபு. A சொல்லுருபு (உடன், உடைய, கொண்டு …) is a
+# separate category and must never appear here — the earlier map showed "அது/உடைய" and
+# "இன்/இலிருந்து", presenting a word-postposition (and, for இலிருந்து, a modern form in neither
+# authority) as if it were the case marker. Tholkappiyam's form leads where the two differ.
 _CASE_MAP: dict[str, tuple[int, str, str]] = {
-    "nom": (1, "முதல் வேற்றுமை (எழுவாய்)", "subject"),
+    "nom": (1, "முதல் வேற்றுமை (எழுவாய் — உருபு இல்லை)", "subject"),
     "acc": (2, "இரண்டாம் வேற்றுமை (ஐ)", "direct object"),
-    "inst": (3, "மூன்றாம் வேற்றுமை (ஆல்)", "instrument/agency"),
-    "soc": (3, "மூன்றாம் வேற்றுமை (ஒடு/உடன்)", "sociative/accompaniment"),
+    "inst": (3, "மூன்றாம் வேற்றுமை (ஒடு/ஆல்/ஆன்)", "instrument/agency"),
+    "soc": (3, "மூன்றாம் வேற்றுமை (ஒடு/ஓடு)", "sociative/accompaniment"),
     "dat": (4, "நான்காம் வேற்றுமை (கு)", "dative/recipient"),
-    "abl": (5, "ஐந்தாம் வேற்றுமை (இன்/இலிருந்து)", "ablative/comparison"),
-    "gen": (6, "ஆறாம் வேற்றுமை (அது/உடைய)", "genitive/possession"),
-    "loc": (7, "ஏழாம் வேற்றுமை (கண்/இல்)", "locative/இடப்பொருள்"),
-    "voc": (8, "எட்டாம் வேற்றுமை (விளி)", "vocative/address"),
+    "abl": (5, "ஐந்தாம் வேற்றுமை (இன்/இல்)", "ablative/comparison"),
+    "gen": (6, "ஆறாம் வேற்றுமை (அது/ஆது/அ)", "genitive/possession"),
+    "loc": (7, "ஏழாம் வேற்றுமை (கண் ஆதி)", "locative/இடப்பொருள்"),
+    "voc": (8, "எட்டாம் வேற்றுமை (விளி — உருபு இல்லை)", "vocative/address"),
 }
 
 
@@ -89,17 +93,27 @@ _TENSE_ROLE: dict[str, str] = {
 }
 
 
-def _load_idainilai() -> dict:
-    """Load the cited இடைநிலை rule table (best-effort: a missing file must not break analysis)."""
+def _load_table(path, key: Optional[str] = None) -> dict:
+    """Load a cited rule table (best-effort: a missing file must never break analysis)."""
     import json
     try:
-        data = json.loads(config.GRAMMAR_IDAINILAI_FILE.read_text("utf-8"))
-        return data.get("idainilai", {})
+        data = json.loads(path.read_text("utf-8"))
     except (OSError, ValueError):
         return {}
+    return data.get(key, {}) if key else data
 
 
-_IDAINILAI = _load_idainilai()
+_IDAINILAI = _load_table(config.GRAMMAR_IDAINILAI_FILE, "idainilai")
+_VIKUTHI = _load_table(config.GRAMMAR_VIKUTHI_FILE)
+_SARIYAI = _load_table(config.GRAMMAR_SARIYAI_FILE)
+_VERRUMAI = _load_table(config.GRAMMAR_VERRUMAI_FILE)
+
+# Nannūl 154 names the three விகாரம் தோன்றல்/திரிதல்/கெடுதல்; Tholkappiyam (எழுத்ததிகாரம், புணரியல் 7)
+# names them மிகுதல்/பிறிது ஆதல்/குன்றல் and is the primary authority for புணர்ச்சி. Saran's ruling
+# (2026-08-02): emit the **Tholkappiyam** name, to nudge readers to Tholkappiyam first.
+VIKARAM_MIKUTHAL = "மிகுதல்"      # Nannūl: தோன்றல் — something appears at the join
+VIKARAM_KUNDRAL = "குன்றல்"       # Nannūl: கெடுதல் — something drops
+VIKARAM_PIRITHU = "பிறிது ஆதல்"   # Nannūl: திரிதல் — something becomes another letter
 
 
 def map_idainilai(tense_code: str, fst_surface: str) -> tuple[str, Optional[str], str]:
@@ -116,8 +130,64 @@ def map_idainilai(tense_code: str, fst_surface: str) -> tuple[str, Optional[str]
     if not hit:
         return fst_surface, None, cls
     return hit.get("idainilai", fst_surface), hit.get("sandhi"), cls
+
+
+class Vikuthi(NamedTuple):
+    """One விகுதி, decomposed the way Nannūl names it rather than the way the FST splits it."""
+    vikuthi: str
+    role: str
+    sariyai: Optional[str] = None          # e.g. 3pln=அன is சாரியை அன் + விகுதி அ
+    modern_plural: Optional[str] = None    # ‘கள்’ — modern accretion, NOT a classical விகுதி
+
+
+def map_vikuthi(png_code: str, fst_surface: str) -> Vikuthi:
+    """FST PNG suffix → the classical விகுதி, splitting off what is not part of it.
+
+    Two things the FST's surface hides (D-014):
+      · `2pl=ஈர்கள்` / `3ple=ஆர்கள்` — the classical விகுதி is ஈர்/ஆர் (நன்னூல் 337). ‘கள்’ is a
+        MODERN plural accretion; per Saran's ruling (2026-08-02) it is emitted as its own component
+        and labelled as modern, rather than silently dropped or folded into the விகுதி.
+      · `3pln=அன` — Nannūl analyses நடந்தன as சாரியை அன் + விகுதி அ, i.e. TWO உறுப்புகள்.
+
+    An unmapped surface passes through unchanged, never guessed.
+    """
+    role = _PNG_ROLE.get(png_code, "")
+    hit = _VIKUTHI.get("from_fst", {}).get(f"{png_code}={fst_surface}")
+    if not hit:
+        return Vikuthi(fst_surface, role)
+    cls = _VIKUTHI.get("classes", {}).get(hit.get("class_key", ""), {}).get("class", "")
+    return Vikuthi(
+        hit.get("vikuthi", fst_surface), role or cls,
+        sariyai=hit.get("sariyai"), modern_plural=hit.get("modern_plural"),
+    )
+
+
+def map_sariyai(fst_tag: str, fst_surface: str) -> Optional[str]:
+    """FST increment tag → the classical சாரியை, or None if unmapped.
+
+    ThamizhiMorph tags this `euph` (‘euphonic’); Nannūl names it சாரியை — one of the six
+    பகுபத உறுப்பு (133), with அன் among the seventeen பொதுச் சாரியை (244). The decoder previously
+    had no handler at all, so வந்தனன் silently lost an உறுப்பு.
+    """
+    hit = _SARIYAI.get("from_fst", {}).get(f"{fst_tag}={fst_surface}")
+    return hit.get("sariyai") if hit else None
+
+
+def case_urubu_forms(case_tag: str) -> list[str]:
+    """Every உருபு the cited table lists for a case, Tholkappiyam's form first.
+
+    Replaces a one-form-per-case dict that could not represent inst ஒடு/ஆல்/ஆன், abl இன்/இல்,
+    gen அது/ஆது/அ, or the கண்-headed open locative list.
+    """
+    return list(_VERRUMAI.get("cases", {}).get(case_tag, {}).get("urubu", []))
+
+
 # Voice/derivation இடைநிலை that sit BETWEEN பகுதி and the tense marker (செய்+வி+த்+ஆன்).
 # The FST supplies the surface form (caus=வி); order here is the surface order.
+#
+# RULING (Saran, 2026-08-02): causative வி is an **இடைநிலை**, not a பிறவினை விகுதி. TVA C0212 §6.1.7
+# lists வி/பி among the பிறவினை விகுதி, but Nannūl's positional definition governs — இடைநிலை is what
+# stands between முதனிலை and இறுதிநிலை (C0212 §5.3.3), and வி does. Settled; do not re-open.
 _MID_ROLE: dict[str, str] = {
     "caus": "பிறவினை (causative)", "pass": "செயப்பாட்டு வினை (passive)",
 }
@@ -126,15 +196,12 @@ _PNG_ROLE: dict[str, str] = {
     "1sg": "தன்மை ஒருமை", "2sg": "முன்னிலை ஒருமை",
     "3sgm": "படர்க்கை ஆண்பால் ஒருமை", "3sgf": "படர்க்கை பெண்பால் ஒருமை",
     "3sgn": "படர்க்கை ஒன்றன்பால் ஒருமை",
+    "3pln": "படர்க்கை பலவின்பால்",
     "1pl": "தன்மை பன்மை", "2pl": "முன்னிலை பன்மை",
     "3pl": "படர்க்கை பலர்பால்", "3ple": "படர்க்கை பலர்பால்",
     "3sgh": "படர்க்கை உயர்திணை ஒருமை (மரியாதை)", "3sghe": "படர்க்கை உயர்திணை (மரியாதை)",
     "3plh": "படர்க்கை உயர்திணை பன்மை",
-}
-# Noun case tag → canonical உருபு form (the விகுதி). Surface-matched, so an ambiguous case
-# (loc|soc both surface as இல்) yields the actual suffix; the case *function* stays in grammar.case.
-_CASE_URUBU: dict[str, str] = {
-    "acc": "ஐ", "inst": "ஆல்", "soc": "ஒடு", "dat": "கு", "abl": "இன்", "gen": "அது", "loc": "இல்",
+    "opt": "வியங்கோள்",
 }
 _PULLI = "்"
 
@@ -181,15 +248,22 @@ def _decode_noun(lemma: str, word: str, bare: list[str],
         inflected = True
         comps.append(FormationComponent(
             part="சாரியை", form="அத்து", role="oblique increment (சாரியை)", authority="Nannūl"))
+        # மரம் + ஐ > மர + அத்து + ஐ (TVA C0214 §4.2.1). The ம் DROPS and the அத்து சாரியை APPEARS —
+        # two விகாரம். It is not ‘ம் becomes த்’: the த் belongs to the சாரியை, nothing transforms.
         sandhi.append(SandhiEvent(
-            type="திரிதல்", detail=f"{lemma} → {stem}த் — ம் changes to த் before the சாரியை",
+            type=VIKARAM_KUNDRAL,
+            detail=f"{lemma} → {stem} — ஈற்று ‘ம்’ கெட்டது before the சாரியை",
+            authority="Tholkappiyam"))
+        sandhi.append(SandhiEvent(
+            type=VIKARAM_MIKUTHAL,
+            detail="‘அத்து’ சாரியை தோன்றியது — the ‘த்’ in மரத்து- belongs to it",
             authority="Tholkappiyam"))
     # விகுதி — plural கள் and/or the case உருபு.
     if "pl" in bare:
         inflected = True
         if stem is not None:
             sandhi.append(SandhiEvent(
-                type="திரிதல்", detail=f"{lemma} → {stem}ங் before the பன்மை விகுதி கள்",
+                type=VIKARAM_PIRITHU, detail=f"{lemma} → {stem}ங் before the பன்மை விகுதி கள்",
                 authority="Tholkappiyam"))
         comps.append(FormationComponent(
             part="விகுதி", form="கள்", role="பன்மை விகுதி (plural)", authority="Nannūl"))
@@ -202,19 +276,54 @@ def _decode_noun(lemma: str, word: str, bare: list[str],
             part="விகுதி", form=urubu, role=(" / ".join(names) + " உருபு"), authority="Nannūl"))
         if urubu == "கு" and "க்கு" in word:
             sandhi.append(SandhiEvent(
-                type="வல்லினம்மிகுதல்", detail="க் doubles at the dative join (க்கு)",
+                type=VIKARAM_MIKUTHAL,
+                detail="வல்லினம் மிகுதல் — க் doubles at the dative join (க்கு)",
                 authority="Tholkappiyam"))
     return inflected
 
 
+# An உருபு is listed in its standalone form (இல், இன், அது), but on the surface its initial uyir
+# fuses into the preceding mei as a vowel sign — மரம்+இல் surfaces as மரத்த்+ில் = மரத்தில். Matching
+# the standalone form against the surface therefore NEVER succeeds for a vowel-initial உருபு, which
+# silently pushed every such case onto the fallback. These are the combining signs; அ is inherent in
+# the consonant and so has no sign of its own.
+_UYIR_SIGN: dict[str, str] = {
+    "அ": "", "ஆ": "ா", "இ": "ி", "ஈ": "ீ", "உ": "ு", "ஊ": "ூ",
+    "எ": "ெ", "ஏ": "ே", "ஐ": "ை", "ஒ": "ொ", "ஓ": "ோ", "ஔ": "ௌ",
+}
+
+
+def _surface_forms(urubu: str) -> list[str]:
+    """The உருபு as written, plus how it actually appears once joined to a stem."""
+    forms = [urubu]
+    if urubu and urubu[0] in _UYIR_SIGN:
+        forms.append(_UYIR_SIGN[urubu[0]] + urubu[1:])
+    return [f for f in forms if f]
+
+
 def _select_urubu(word: str, case_tags: list[str]) -> Optional[str]:
-    """Pick the case உருபு that the surface actually ends with (longest match); fall back to the
-    first tagged case's canonical form so an attested case still surfaces its suffix."""
-    forms = [_CASE_URUBU[c] for c in case_tags if c in _CASE_URUBU]
-    if not forms:
+    """Pick the case உருபு the surface actually ends with, across EVERY form the case allows.
+
+    Each case may carry several உருபு (inst ஒடு/ஆல்/ஆன், abl இன்/இல், gen அது/ஆது/அ, and a
+    கண்-headed open list for loc), so the match runs over all of them, longest first. Falling back
+    to the first listed form yields Tholkappiyam's, since the tables are ordered Tholkappiyam-first.
+    """
+    per_case = [(c, case_urubu_forms(c)) for c in case_tags]
+    per_case = [(c, fs) for c, fs in per_case if fs]
+    if not per_case:
         return None
-    matched = [f for f in forms if word.endswith(f)]
-    return max(matched, key=len) if matched else forms[0]
+    # Match on the SURFACE realisation, then report the canonical (standalone) உருபு.
+    matched = [
+        (len(sf), f)
+        for _, fs in per_case for f in fs
+        for sf in _surface_forms(f) if word.endswith(sf)
+    ]
+    if matched:
+        return max(matched)[1]
+    # No surface match — fall back to the FIRST TAGGED CASE's first form (Tholkappiyam's, since the
+    # tables are ordered Tholkappiyam-first). Never to a merged list: for an ambiguous tag like
+    # loc|abl that would hand back another case's உருபு entirely.
+    return per_case[0][1][0]
 
 
 def decode_formation(word: str, analysis: MorphAnalysis) -> Formation:
@@ -245,18 +354,43 @@ def decode_formation(word: str, analysis: MorphAnalysis) -> Formation:
                         part="சந்தி", form=sandhi_form,
                         role="வல்லினம் மிகுதல் (strong-verb doubling)", authority="Tholkappiyam"))
                     sandhi.append(SandhiEvent(
-                        type="வல்லினம்மிகுதல்",
-                        detail=f"‘{sandhi_form}’ doubles before the {cls or 'இடைநிலை'}",
+                        type=VIKARAM_MIKUTHAL,
+                        detail=f"வல்லினம் மிகுதல் — ‘{sandhi_form}’ doubles before the "
+                               f"{cls or 'இடைநிலை'}",
                         authority="Tholkappiyam"))
                 comps.append(FormationComponent(
                     part="இடைநிலை", form=marker, role=f"{trole} ({cls})" if cls else trole,
                     authority="Nannūl"))
                 break
-        for pcode, prole in _PNG_ROLE.items():
-            if feats.get(pcode) not in (None, "", "∅"):
+        # சாரியை — the FST tags it `euph` (‘euphonic’); Nannūl names it சாரியை and places it
+        # between the இடைநிலை and the விகுதி (வந்தனன் = வா+த்+த்+அன்+அன்). Previously dropped.
+        for scode in ("euph",):
+            if (surface := feats.get(scode)) not in (None, "", "∅"):
+                if form := map_sariyai(scode, surface):
+                    inflected = True
+                    comps.append(FormationComponent(
+                        part="சாரியை", form=form,
+                        role="இடைநிலைக்கும் விகுதிக்கும் இடையில் (சாரியை)", authority="Nannūl"))
+                break
+        for pcode in _PNG_ROLE:
+            if (surface := feats.get(pcode)) not in (None, "", "∅"):
                 inflected = True
+                vk = map_vikuthi(pcode, surface)
+                # A single FST suffix may hide a சாரியை in front of the விகுதி (3pln=அன).
+                if vk.sariyai and not any(c.part == "சாரியை" for c in comps):
+                    comps.append(FormationComponent(
+                        part="சாரியை", form=vk.sariyai,
+                        role="இடைநிலைக்கும் விகுதிக்கும் இடையில் (சாரியை)", authority="Nannūl"))
                 comps.append(FormationComponent(
-                    part="விகுதி", form=feats[pcode], role=prole, authority="Nannūl"))
+                    part="விகுதி", form=vk.vikuthi, role=vk.role, authority="Nannūl"))
+                # ‘கள்’ is a modern accretion, not part of the classical விகுதி (நன்னூல் 337).
+                # Emitted as its own component and labelled so, per Saran's ruling 2026-08-02.
+                if vk.modern_plural:
+                    comps.append(FormationComponent(
+                        part="விகுதி", form=vk.modern_plural,
+                        role="நவீன பன்மை விகுதி — modern plural accretion, NOT part of the "
+                             "classical விகுதி (நன்னூல் 337 gives இர்/ஈர் alone)",
+                        authority=None))  # deliberately none: no classical authority sanctions it
                 break
     else:
         inflected = _decode_noun(lemma, word, bare, comps, sandhi)
