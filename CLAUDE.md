@@ -24,160 +24,77 @@ integration. Loop: work on `develop` here → push → open PR `develop → main
 milestones. After any history rewrite, other clones must `git reset --hard origin/main`
 (not merge/rebase).
 
-## Current state (2026-07-17)
-**Phase 1 core DONE.** FastMCP server with `analyze_word` end-to-end: ThamizhiMorph
-FST anchor (foma), SQLite per-claim knowledge store + self-enriching
-pull→write-back→cache loop, Wiktionary adapter (descriptive UA + real ta.wiktionary
-template-style parser).
-**Native equivalents live (2026-07-17):** `IndicToPureTamilAdapter` over the vendored I2PT
-sub-lists (per-candidate attestation, attested-only), wired into the engine
-(`_fill_native_equivalent`) and exposed as the `suggest_native_equivalent` MCP tool.
-**Origin classifier live (2026-07-17):** `core/classifier.py` — rule-based, Tholkappiyam-grounded
-(Grantha letters via open-tamil; முதல்/இறுதி எழுத்து phonotactics) fused with the FST native-parse
-and I2PT attestation. Classes இயற்சொல்/வடசொல்/loanword; honest `unknown` for திரிசொல்/திசைச்சொல் and
-language-undetermined borrowings (never guessed). Exposed as `classify_origin`; origin now gates
-`native_equivalent` (native word → not applicable).
-**Root + meaning + enrich tools live (2026-07-17):** thin `get_root` (FST lemma/POS, keeps all
-analyses), `get_meaning` (self-enriching store → Wiktionary pull, provenance-tagged), and
-`enrich_word` (forces the pull→write-back loop, reports what the store now caches; the one
-non-readOnly tool) MCP heads over the existing engine paths.
-**Formation decoder live (2026-07-18):** `core/decoder.py` `decode_formation` — FST tags →
-பகுபத உறுப்பு (Nannūl six parts) + Tholkappiyam சந்தி. Verbs read பகுதி/இடைநிலை/விகுதி straight from
-the FST `=forms`; nouns get சாரியை/உருபு surface-grounded; joins classified only where a confident
-classical rule applies (no invented split). Grammar now also carries verb tense + முற்று. Exposed as
-`explain_formation` and `explain_grammar`.
-**refresh_sources live (2026-07-18):** batch coverage-growth tool — force-refreshes evolving claims
-(explicit `words` and/or `stale_days` sweep of the store), bounded by `limit`, overwriting the cache;
-per-word report with honest errors. Adds a `force_refresh` path to the engine + `KnowledgeStore.stale_words`.
-**Nine MCP tools now** (only optional `validate_pure_tamil`/`generate_forms`/`transliterate` left from §6).
-**FST coverage gaps fixed (2026-07-20):** the primary FSTs miss ~25% of everyday past-tense verbs
-(போனான், சொன்னான், கொடுத்தான், கற்றான், விற்றான், தூங்கினான்) — those lemmas/irregular past stems aren't in
-the lexicon. Guessers stay excluded (they return WRONG lemmas: கொடுத் for கொடு). Instead
-`adapters/paradigms.py` + `data/verb_paradigms.json` = a curated ANCHOR rule table (irregular past stem
-× regular PNG suffixes), used ONLY on an FST miss, emitting the FST's own tag shape so decoder/grammar
-work unchanged. Surface forms are GENERATED with a proper Tamil mei+uyir join (போன்+ஆன்→போனான், not
-string concat). Table is closed (unlisted word → honest gap).
-Also fixed: causative இடைநிலை was dropped by the decoder (செய்வித்தான் → செய்+**வி**+த்+ஆன்).
-**Extended to all three tenses (2026-07-20):** paradigms are keyed by tense (`past`/`pres`/`fut`) using
-ThamizhiMorph's own marker convention (`pres=க்கிற்`, `fut=ப்ப்`…), incl. the literary `கின்ற்` variant.
-Future **excludes 3sgn** — Tamil future neuter is `-உம்` (வரும்), which the FST itself tags NONFINITE
-`futANDadjpart`, so it is not invented as a finite form. Coverage on the common-verb sweep:
-past 18/24 → **24/24**, present 12/18 → **18/18**, future 12/18 → **18/18**.
-**Transaction logging live (2026-07-18):** every resolved `analyze()` is logged to a `transactions`
-table as gold data (blueprint §12) — full WordAnalysis + tool label + `eval_fixture` contamination flag
-(from `data/eval_fixtures.json`). On by default (`THAMIZH_TXN_LOG=0` disables); a non-fatal background
-side-output. Captures the FST/rule-based segmentation+origin gold the `claims` cache never held. The
-`thamizh-data-curation` skill reads this table directly. `KnowledgeStore.transaction_stats()` for growth.
-**Web/REST head live (2026-07-26):** `src/thamizh_mcp/web.py` + `static/index.html` — FastAPI head over
-the SAME engine (blueprint §8 "heads: MCP | REST | CLI over one engine"; zero engine changes were
-needed, which validates that design). `GET /` UI · `GET /api/analyze?word=…&meaning=…` · `GET /healthz`.
-**Network/meaning is OFF by default** so a demo or test can never hang. **Why it exists:** terminals do
-NOT shape Tamil script (vowel signs detach/reorder) — CLI output is unreadable for demos; browsers shape
-it correctly. Runs 24/7 on minnaham via `deploy/thamizh-web.service` (systemd) at
-**http://minnaham:8080** — every word tested there also feeds the `transactions` gold log.
-Also: `scripts/demo.py` (projector-readable CLI view) and a Dockerfile fix (`foma`, not the empty
-transitional `foma-bin` — the container had shipped with no working FST).
-**Classical texts pinned + grammar tables cited (2026-08-02, D-011 + D-014):** `data/classical/`
-holds **Tholkappiyam** (1486 நூற்பா) and **Nannūl** (462) as version-locked, verse-addressable
-artifacts from **Project Madurai**, built by `scripts/build_classical.py` (`--verify` detects
-upstream drift), checksummed in `data/PINS.md`. They ship publicly because Project Madurai grants
-distribution with its header intact — unlike the TVA course books, which stay in the design repo.
-`data/grammar/` now holds five cited rule tables (இடைநிலை, விகுதி, சாரியை, வேற்றுமை உருபு, விகாரம்),
-each carrying a **`source_priority`** block naming its governing authority. `tests/test_citations.py`
-enforces that every cited நூற்பா resolves in the pinned texts.
-**Etymology adapter live (2026-08-05):** `adapters/etymology.py` — en.wiktionary's MACHINE-READABLE
-etymology templates (`{{bor+|ta|pt|janela}}`, `{{inh|ta|dra-pro|*maran}}`) resolve the SOURCE
-LANGUAGE, which orthography never could. This is what took origin from "honest but useless" to
-usable: on a 108-word everyday sweep, **correct 50 → 82, unknown 51 → 23, wrong 5 → 1**. Evolving
-tier (crowd-edited — evidence, not authority), cached per-claim, pulled only under
-`allow_enrichment`, falls back to the offline rules when absent.
-Two traps it must keep handling: **homographs** (கால் = leg/inherited AND time/Sanskrit — reported as
-ambiguous, never picked) and **Dravidian sub-family codes** (`dra-sdo-pro` etc. — matched by prefix,
-not an enumerated list).
-**171 tests pass** (169 without live foma). Design repo at `~/projects/thamizh-mcp-design/` →
-`ief-global/thamizh-mcp-design` (blueprint, tamil-grammar.md, DECISIONS, roadmap, CODE-STATUS.md).
-**It is PUBLIC as of 2026-08-02** and follows the same develop→PR→main flow as this repo.
+## Current state (2026-08-05) — 171 tests pass (169 without live foma)
 
-## Test ladder (run in order, from repo root)
-```bash
-uv sync                                              # installs deps incl. pytest
-which flookup && echo "மரம்" | flookup data/fst/noun.fst
-uv run pytest -v                                     # expect 149 passed with foma
-uv run python scripts/analyze.py மரத்தில் --include formation  # பகுதி மரம் + சாரியை அத்து + விகுதி இல்
-uv run python scripts/analyze.py ரயில் --include origin       # loanword: முதல் எழுத்து rule
-uv run python scripts/analyze.py ஜோதி --include origin        # வடசொல்: Grantha letter
-uv run python scripts/analyze.py மரத்தில்            # lemma மரம், loc|soc kept, Tholkappiyam cites
-uv run python scripts/analyze.py புத்தகம் --include meaning   # first live Wiktionary pull
-uv run python scripts/analyze.py புத்தகம் --include meaning   # again → must serve from cache
-sqlite3 data/knowledge.sqlite3 'select word,field,source,tier,retrieved from claims;'
-```
-Register as an MCP server: `claude mcp add thamizh -- uv --directory ~/projects/thamizh-mcp run thamizh-mcp`
+**Everything below is live and merged to `main`.** Nine MCP tools + web/REST + CLI over ONE engine
+(blueprint §8 — the web head needed zero engine changes, which validated that design).
+
+| Layer | What |
+|---|---|
+| Anchors | ThamizhiMorph FST via `flookup` · curated verb paradigms (`data/verb_paradigms.json`) · pinned Tholkappiyam + Nannūl (`data/classical/`) · cited grammar tables (`data/grammar/`) |
+| Evolving | ta.wiktionary (meanings) · **en.wiktionary (etymology → source language)** · I2PT (native equivalents) |
+| Store | zero-config SQLite, per-claim provenance + `transactions` gold log (on by default) |
+
+**Tools:** `analyze_word` `classify_origin` `get_root` `get_meaning` `suggest_native_equivalent`
+`enrich_word` `explain_formation` `explain_grammar` `refresh_sources`. Only optional
+`validate_pure_tamil`/`generate_forms`/`transliterate` remain from blueprint §6.
+
+### Measured quality (108-word everyday sweep, 2026-08-05)
+
+| | result |
+|---|---|
+| **Origin** | 82 correct · 23 honest `unknown` · **1 wrong** (was 59/30/17 before the D-011/D-014 work) |
+| **Formation** | 26/30 decoded · 4 gaps (`கொடுக்க` `கொடுத்து` `கொடுக்கும்` non-finite; `வீட்டிற்கு` noun dative) |
+
+Re-run: `uv run python scripts/quality_sweep.py` (network on; ~3 min). It is the only honest
+read on quality — expected labels inside are ASSESSMENTS, not authority, and need Saran's eye.
+⚠️ It MUST use `default_engine()`: a hand-built `Engine` omits `morph_fallback=VerbParadigmAdapter()`
+and 12 covered irregular verbs then look like FST gaps.
+
+### How origin works now (the hard-won part)
+
+Orthography proves a word is **not native**; it can NEVER say which language it came from.
+- **Grantha (ஸ ஷ ஜ ஹ ஶ) marks a non-native SOUND, not Sanskrit.** Reading it as Sanskrit labelled
+  பஸ்/ஸ்கூல்/ஹோட்டல்/ஜன்னல் as வடசொல் — 11 confident-wrong at 0.9. Same for the முதல் எழுத்து rule
+  (ரூபம் is Sanskrit). Both now return "borrowed, source undetermined".
+- **இறுதி எழுத்து is different and still asserts `loanword`** — it turns on morphological
+  assimilation, not letters; Sanskrit borrowings take Tamil endings, so a bare vallinam final really
+  does indicate a non-Sanskrit loan. Reviewable, reasoning in code.
+- **`adapters/etymology.py`** resolves the source from en.wiktionary's machine-readable templates
+  (`{{bor+|ta|pt|janela}}`, `{{inh+|ta|dra-pro|*maran}}`). Evolving tier — evidence, not authority;
+  confidence caps at 0.8, competing class stays in `alternatives`, citation always travels.
+  Cached per-claim, pulled only under `allow_enrichment`, falls back to offline rules when absent.
 
 ## Next tasks (build order)
-1. ~~**Kalaichol / equivalents adapter** over the pinned I2PT CSVs →
-   `suggest_native_equivalent`.~~ **DONE (2026-07-17):** local I2PT adapter +
-   engine wiring + MCP tool + tests. **Remaining under this objective:** (a) mine
-   ta.wiktionary `{{சொல்வளம்N|...}}` synonym templates as a second *network* evolving
-   source (must honor `allow_enrichment`); (b) TVA govt கலைச்சொல் **anchor** glossary
-   (`kalaichol.py` still a stub — network snapshot, see task 5).
-2. ~~**Origin classifier** → four Tholkappiyam classes.~~ **DONE (2026-07-17):**
-   `core/classifier.py` (open-tamil Grantha + Tholkappiyam முதல்/இறுதி எழுத்து rules +
-   FST parse + I2PT), `classify_origin` tool, gates `native_equivalent`. **Remaining/deferred:**
-   திரிசொல்/திசைச்சொல் need a lexical/dialectal corpus (return `unknown` for now, never guessed);
-   Thamizhi Validator + a real loanword dataset can slot in later as stronger signals to lift
-   the many honest `unknown`s (e.g. புத்தகம், கம்ப்யூட்டர்).
-3. ~~**Remaining MCP tools:** classify_origin, get_root, get_meaning,
-   suggest_native_equivalent, enrich_word, explain_formation, explain_grammar.~~
-   **DONE + `refresh_sources` (2026-07-18) → 9 tools.** Only optional
-   `validate_pure_tamil`/`generate_forms`/`transliterate` remain from blueprint §6.
-4. ~~**Formation decoder** (FST tags → பகுபத உறுப்பு) — Phase 3.~~ **DONE (2026-07-18):**
-   `decode_formation` + verb tense/முற்று grammar. **Deferred (honest boundary):** precise
-   விகாரம்/சந்தி naming beyond the confident rules (e.g. verb root வா→வந்) — the FST doesn't hand
-   the join over, so it's left unnamed for now, never invented.
-5. ~~FST coverage gaps~~ **DONE (2026-07-20)** — see Current state. Remaining coverage work:
-   **non-finite forms** (infinitive கொடுக்க, verbal participle கொடுத்து, adjectival கொடுக்கும்) — very
-   common in running text and still gapping for the curated lemmas; and **more lemmas** beyond the ~11
-   verified (ஆகு, தா, வை, செல், காண்…).
-6. **▶ GRAMMAR CORRECTNESS (D-014, opened 2026-08-02) — the live thread.** Saran (formal TVA
-   coursework) found a SYSTEMIC error: we emitted ThamizhiMorph's *computational* surface morph as if
-   it were the *grammatical* உறுப்பு (வருகிறான் → கிற், should be **கிறு**). **The rule generalises:
-   every FST output must be normalised to classical naming before being presented as grammar.**
-   **DONE — the data half.** Five cited tables in `data/grammar/` (இடைநிலை, விகுதி, சாரியை,
-   வேற்றுமை உருபு, விகாரம்), Tholkappiyam-first with Nannūl as cited fallback, all verse-grounded
-   against the pinned texts. `decoder.map_idainilai` consumes the first one.
-   **DONE — the decoder half too (2026-08-02).** All eight audit findings fixed, each with a
-   regression test (`tests/test_formation.py`, A1–A8 + B1): `euph=` now decodes as a **சாரியை**
-   (வந்தனன் no longer loses an உறுப்பு) · `கள்` split off the விகுதி as a modern accretion,
-   `authority=None` because no classical authority sanctions it · `3pln=அன` → சாரியை அன் + விகுதி அ ·
-   `opt=` → வியங்கோள் விகுதி · per-case உருபு **lists** with surface matching that handles the fused
-   vowel (மரம்+இல் → மரத்**தில்**) · சொல்லுருபு removed from the case names · மரம்→மரத்து is
-   **குன்றல் + மிகுதல்** · `SandhiEvent.type` is now a classical விகாரம் name.
-   ⚖️ **RULINGS (Saran, 2026-08-02) — settled, do not re-open:**
-   (1) causative `வி` **IS an இடைநிலை** — Nannūl's positional definition governs over TVA's
-   பிறவினை-விகுதி listing; (2) `கள்` is a modern plural accretion and is labelled as such;
-   (3) விகாரம் are emitted under **Tholkappiyam's** names (மிகுதல்/குன்றல்/பிறிது ஆதல்) to nudge
-   readers to Tholkappiyam first — Nannūl's names stay valid in the schema.
-   Known gap: strong-verb PAST doubling (படித்தான்) still isn't recoverable from the FST tag.
-7. **Storage backend abstraction (for the public app).** `thamizh-ai.org` (domain bought 2026-07-26)
-   is a **separate deliverable** from this MCP product — see D-013. It runs as a container + **Postgres**;
-   **the MCP product keeps zero-config SQLite and must NEVER require containers or Postgres.** So
-   `store/knowledge.py` needs a thin backend abstraction (it is SQLite-coupled today: `import sqlite3`,
-   `INSERT OR REPLACE`, `AUTOINCREMENT` in `schema.sql`), with both backends tested and SQLite the default.
-   App layers: browser UI → FastAPI head → same engine → Postgres (growing data) + pinned anchor data in
-   the image. Hosting stays on minnaham; public access via Tailscale Funnel when needed.
-8. **▶ NEXT (2026-07-26, Saran's direction): TESTING-DRIVEN development from the web app.**
-   Saran is testing at http://minnaham:8080 and will bring back observed gaps + questions + UI tweaks.
-   Those findings drive what we build next — fix what real use exposes, rather than working the backlog
-   blind. Expect: web-UI tweaks, clarification questions, and code fixes to already-delivered features.
-9. **Phase 4 eval** (morphological lift, `thamizh-eval` — D-005). Paused mid-run; harness is resumable
-   (`--model`/`--max-new`/`--grounded`, budget-spaced). Note the coverage fixes raised the achievable
-   ceiling, so a re-measure is now more meaningful. Prior finding: bare Opus ~97% on BASIC morphology →
-   little headroom there; real headroom is on weaker models + harder items.
-10. Lift `classify_origin` (Thamizhi Validator + loanword dataset) · **network session (batch):**
-   Madras Lexicon + TVA கலைச்சொல் snapshots + locate/license Aalamaram (D-008).
-   ~~Pin a digitized Tholkappiyam/Nannūl edition for D-011~~ **DONE 2026-08-02** — both pinned from
-   Project Madurai into `data/classical/`. Residual: none blocking.
-   Program roadmap: `~/projects/thamizh-mcp-design/DESIGN.md` (supersedes TAMIL-HIGH-RESOURCE-ROADMAP.md).
+
+1. **▶ SESSION 3 FOCUS — Tamil/Sanskrit homographs.** A headword can carry different origins per
+   SENSE: கால் = leg (inherited, dra-pro *kāl) AND time (Skt காល); பூ = flower AND earth (Skt भू);
+   பசு = cow (Skt पशु) AND green (dra-pro *pac-); சாலை = road (native சால்+ஐ) AND hall (Skt शाला);
+   கார் = black (native) AND car (English). We currently return `unknown` + both alternatives, which
+   is honest but throws away real information — 5 of the 23 unknowns are this.
+   **The fix is architectural, not a rule tweak:** origin is currently per-HEADWORD but is really
+   per-SENSE. Options to weigh: (a) `Origin.senses[]` so the response carries one origin per sense,
+   (b) keep headword-level but return a `senses` breakdown alongside, (c) let the caller pass a sense
+   hint. Note the schema already has `Meaning.senses` — aligning origin to it is the natural move.
+   The adapter already parses both senses (`relation: "ambiguous"` + `senses[]`), so the data is
+   there; only the schema and the presentation need deciding.
+2. **Loanword lexicon** — the last unprincipled branch is native-by-default (no Grantha + legal
+   phonotactics + no attestation ⇒ assumed native). It is the 1 remaining wrong (பட்டன், English
+   button, no en.wiktionary page) and part of the 23 unknowns. Needs a lexicon, not a rule.
+   **Madras Tamil Lexicon** (dsal.uchicago.edu) is the intended ANCHOR upgrade over Wiktionary.
+3. **FST coverage:** non-finite forms (infinitive கொடுக்க, verbal participle கொடுத்து, adjectival
+   கொடுக்கும்) + noun dative வீட்டிற்கு + more lemmas beyond the ~11 curated.
+4. **Storage backend abstraction (D-013)** — `store/knowledge.py` is SQLite-coupled (`import sqlite3`,
+   `INSERT OR REPLACE`, `AUTOINCREMENT`). `thamizh-ai.org` runs Postgres; **the MCP product keeps
+   zero-config SQLite and must NEVER require containers or Postgres.** Both backends tested,
+   SQLite default.
+5. **Phase 4 eval** (`thamizh-eval`, D-005) — paused, harness resumable. Coverage fixes raised the
+   ceiling so a re-measure is now meaningful. Prior finding: bare Opus ~97% on BASIC morphology, so
+   headroom is in weaker models + harder items.
+6. **Release rungs** — no CI exists yet (`.github/workflows/` absent); version still `0.1.0`.
+   uvx → PyPI + Docker/GHCR. Registry + tamil-nlp-catalog listings after.
+7. Network session (batch): TVA கலைச்சொல் snapshot · locate/license Aalamaram (D-008).
+8. Lift `classify_origin` further with Thamizhi Validator.
 
 ## Design rules (do not violate)
 - **Tholkappiyam-first:** cite Tholkappiyam before Nannool for grammar claims. This drifted once
