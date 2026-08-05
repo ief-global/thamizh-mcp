@@ -64,14 +64,7 @@ def test_grantha_does_not_call_english_loans_sanskrit():
         assert o.is_native is False, f"{word} is certainly borrowed"
 
 
-def test_forbidden_initial_proves_borrowed_not_the_source():
-    """A முதல் எழுத்து violation proves non-nativeness, not WHICH language.
-
-    Sanskrit borrowings break the rule as readily as English ones — ரூபம் (Skt rūpa) and ராஜா sit
-    beside ரயில் and லாரி. Calling them all `loanword` (which in the Tholkappiyam frame means a
-    NON-Sanskrit borrowing) got the English ones right and ரூபம் wrong, by the same ungrounded
-    inference. Lucky hits are still guesses.
-    """
+def test_forbidden_initial_is_loanword():
     o = classify_origin("ரயில்", fst_native_parse=None, in_i2pt=False)
     assert o.is_native is False, "the rule DOES prove the word is not native"
     assert o.class_ == "unknown", "but it does NOT prove the source language"
