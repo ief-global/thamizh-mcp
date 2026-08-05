@@ -66,8 +66,26 @@ def test_grantha_does_not_call_english_loans_sanskrit():
 
 def test_forbidden_initial_is_loanword():
     o = classify_origin("ரயில்", fst_native_parse=None, in_i2pt=False)
-    assert o.class_ == "loanword" and o.is_native is False
+    assert o.is_native is False, "the rule DOES prove the word is not native"
+    assert o.class_ == "unknown", "but it does NOT prove the source language"
     assert "முதல் எழுத்து" in o.evidence
+    assert {a["class"] for a in o.alternatives} == {"வடசொல்", "loanword"}
+
+    # The word that exposed it: Sanskrit, and it must no longer be called a non-Sanskrit loan.
+    r = classify_origin("ரூபம்", fst_native_parse=None, in_i2pt=False)
+    assert r.class_ != "loanword" and r.is_native is False
+
+
+def test_bare_vallinam_final_still_asserts_loanword():
+    """Deliberately NOT changed with the other two — a different signal, not the same defect.
+
+    Those rules turn on which letters appear, which is source-neutral. This one turns on
+    morphological assimilation: Sanskrit borrowings are adapted and take Tamil endings (ரூபம்,
+    யோகம், மனிதன்), so they never surface with a bare vallinam final. An unadapted final really is
+    evidence of a non-Sanskrit loan.
+    """
+    o = classify_origin("கேக்", fst_native_parse=None, in_i2pt=False)   # cake
+    assert o.class_ == "loanword" and o.is_native is False
 
 
 def test_forbidden_final_is_loanword():
