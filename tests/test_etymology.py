@@ -85,6 +85,23 @@ def test_der_is_weaker_than_a_stated_borrowing():
     assert ety["certainty"] == "derived"
 
 
+def test_plus_variants_state_the_relation_as_firmly_as_the_bare_form():
+    """`der`/`der+` are the ONLY weaker relation — the rest of the `+` forms are not a hedge.
+
+    en.wiktionary's inh+/bor+/lbor+ differ from inh/bor/lbor only in rendering a leading
+    "Inherited from" / "Borrowed from"; the claim is identical. inh+ and lbor+ were missing from
+    the `stated` list while bor+ was in it, so every {{inh+}} word — மழை and much of the native
+    sweep — scored 0.65 while Sanskrit and English {{bor+}} borrowings scored 0.8.
+    """
+    for tmpl in ("bor", "bor+", "lbor", "lbor+", "inh", "inh+"):
+        ety = parse_etymology(f"==Tamil==\n===Etymology===\n{{{{{tmpl}|ta|dra-pro|*maẓay}}}}.\n")
+        assert ety["template"] == tmpl
+        assert ety["certainty"] == "stated", tmpl
+    for tmpl in ("der", "der+"):
+        ety = parse_etymology(f"==Tamil==\n===Etymology===\n{{{{{tmpl}|ta|sa|रूप}}}}.\n")
+        assert ety["certainty"] == "derived", tmpl
+
+
 def test_no_etymology_returns_none():
     assert parse_etymology("==Tamil==\n===Noun===\n{{ta-noun}}\n# a word\n") is None
     assert parse_etymology("==Malayalam==\n{{bor|ml|en|bus}}\n") is None

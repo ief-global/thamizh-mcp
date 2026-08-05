@@ -163,8 +163,12 @@ def _parse_block(block: str) -> dict | None:
             "source_lang_name": language_name(code),
             "source_word": body.split("|")[0].strip() or None,
             "template": tmpl,
-            # `der` is weaker than an outright borrowing statement -- say so rather than flatten it.
-            "certainty": "stated" if tmpl in ("bor", "bor+", "lbor", "inh") else "derived",
+            # Only `der`/`der+` are weaker -- "derived from" may run through unnamed intermediaries.
+            # The `+` variants of the others are NOT a weaker claim: en.wiktionary's inh+/bor+/lbor+
+            # differ from the bare forms only in rendering a leading "Inherited from"/"Borrowed
+            # from". Omitting inh+ and lbor+ here scored every {{inh+}} word (மழை and much of the
+            # native sweep) at 0.65 while {{bor+}} borrowings got 0.8 -- a tilt against native words.
+            "certainty": "derived" if tmpl.startswith("der") else "stated",
             "sense": _sense_label(block, body),
         }
 
