@@ -175,12 +175,18 @@ async def classify_origin(params: ClassifyOriginInput) -> str:
     origin.class is "unknown" with an evidence note and a matching gap. Each claim carries its
     source; competing readings are kept in origin.alternatives.
 
+    HOMOGRAPHS: origin is really a property of a WORD, and one Tamil headword can carry several —
+    கால் is leg (inherited) AND time (Sanskrit); கார் is blackness (native) AND car (English). Those
+    come back with origin.senses[] holding one entry per sense. The headword class leads with the
+    TAMIL sense; the borrowed sense is never suppressed — it is in the evidence, in alternatives,
+    and in senses[]. Read senses[] when the user's question is about a specific meaning.
+
     Args:
         params: word (required, Tamil script).
 
     Returns:
         str: JSON { word, normalized, origin{class, is_native, evidence, confidence,
-        alternatives[], sources[]}, gaps[] }.
+        alternatives[], senses[], sources[]}, gaps[] }.
 
     Error handling:
         Non-Tamil / multi-word / empty input returns "Error: ..." with what to fix.

@@ -12,12 +12,28 @@
       "required": ["class", "is_native", "sources"],
       "properties": {
         "class": { "type": "string", "enum": ["இயற்சொல்", "திரிசொல்", "திசைச்சொல்", "வடசொல்", "loanword", "unknown"] },
-        "is_native": { "type": "boolean" },
+        "is_native": { "type": ["boolean", "null"], "description": "null = genuinely undetermined, not false." },
         "borrowed_from": { "type": ["string", "null"], "description": "Source language, e.g. Sanskrit, English, Portuguese, Urdu, Marathi." },
         "adaptation": { "type": ["string", "null"], "enum": ["தற்சமம்", "தற்பவம்", null] },
         "evidence": { "type": "string" },
         "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
         "alternatives": { "type": "array", "items": { "type": "object" }, "description": "Competing origin claims when authorities disagree." },
+        "senses": {
+          "type": "array",
+          "description": "Origin per SENSE, mirroring meaning.senses. Populated when one headword carries more than one word — கால் is leg (inherited) AND time (Sanskrit). Empty for an ordinary single-origin word. The headword class above leads with the Tamil sense; every sense, borrowed included, is listed here.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "sense": { "type": ["string", "null"], "description": "Which sense this origin belongs to, e.g. leg, time." },
+              "class": { "type": "string", "enum": ["இயற்சொல்", "திரிசொல்", "திசைச்சொல்", "வடசொல்", "loanword", "unknown"] },
+              "is_native": { "type": ["boolean", "null"] },
+              "borrowed_from": { "type": ["string", "null"] },
+              "source_word": { "type": ["string", "null"], "description": "The etymon itself — *kāl, काल, car." },
+              "relation": { "type": ["string", "null"], "enum": ["inherited", "borrowed", "derived", null] },
+              "evidence": { "type": "string" }
+            }
+          }
+        },
         "sources": { "$ref": "#/definitions/sources" }
       }
     },

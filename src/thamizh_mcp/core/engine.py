@@ -56,7 +56,8 @@ class Engine:
         # Origin is computed before native_equivalent so it can gate it (native word → no equivalent).
         origin = None
         if {"origin", "native_equivalent"} & wants:
-            origin = await self._classify_origin(a, normalized, morph_ran, allow_enrichment)
+            origin = await self._classify_origin(a, normalized, morph_ran, allow_enrichment,
+                                                 force_refresh)
             if "origin" in wants:
                 a.origin = origin
                 a.sources.extend(origin.sources)
@@ -201,7 +202,8 @@ class Engine:
         a.gaps.append(Gap(field="meaning", note=note))
 
     async def _classify_origin(
-        self, a: WordAnalysis, normalized: str, morph_ran: bool, allow_enrichment: bool = True
+        self, a: WordAnalysis, normalized: str, morph_ran: bool, allow_enrichment: bool = True,
+        force_refresh: bool = False,
     ) -> Origin:
         """Gather offline signals and classify origin (core/classifier.py holds the rules).
 
@@ -222,7 +224,7 @@ class Engine:
         else:
             fst_native = None
         in_i2pt = await self._word_in_i2pt(normalized)
-        etymology = await self._etymology(normalized, allow_enrichment)
+        etymology = await self._etymology(normalized, allow_enrichment, force_refresh)
         if etymology is not None:
             a.sources.append(SourceRef(
                 name="English Wiktionary (etymology)", tier="evolving",
@@ -230,14 +232,18 @@ class Engine:
         return classifier.classify_origin(normalized, fst_native_parse=fst_native,
                                           in_i2pt=in_i2pt, etymology=etymology)
 
-    async def _etymology(self, normalized: str, allow_enrichment: bool) -> Optional[dict]:
+    async def _etymology(self, normalized: str, allow_enrichment: bool,
+                         force_refresh: bool = False) -> Optional[dict]:
         """Cached-then-pulled source-language evidence; None when unavailable.
 
         Same self-enriching shape as meaning: serve the cached claim, else pull once and write back,
         so the store gets better with use and a repeat query costs no network. Absence is never an
         error — the classifier simply falls back to the offline orthographic rules.
         """
-        if self.store is not None:
+        # force_refresh must reach here, not just meaning: a cached etymology is a PARSE of the
+        # page, so an adapter upgrade (per-sense parsing, D-015) leaves old-shape dicts served
+        # forever. refresh_sources silently did nothing for origin before this.
+        if self.store is not None and not force_refresh:
             cached = await self.store.get_claims(normalized, "etymology")
             if cached:
                 ety = dict(cached[0].value.get("etymology", {}))
@@ -278,7 +284,12 @@ class Engine:
         (future ta.wiktionary synonym mining) must honor allow_enrichment; the local I2PT CSVs do
         not touch the network, so they always run.
         """
-        if origin is not None and origin.is_native:
+        # A homograph is the exception: its headword class is native by the Thamizh-first ruling
+        # (D-015), but a borrowed SENSE still has attested equivalents — கார் leads as native
+        # (blackness) yet its English 'car' sense has மகிழுந்து. Short-circuiting on is_native
+        # alone would silently drop those, so only a wholly native word skips the lookup.
+        has_borrowed_sense = any(s.is_native is False for s in origin.senses) if origin else False
+        if origin is not None and origin.is_native and not has_borrowed_sense:
             a.native_equivalent = NativeEquivalent(
                 applicable=False,
                 note=f"word classified native ({origin.class_}) — no borrowed equivalent applies")

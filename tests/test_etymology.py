@@ -157,18 +157,131 @@ def test_inherited_etymology_gives_iyarchol():
     assert o.class_ == "இயற்சொல்" and o.is_native is True
 
 
-def test_ambiguous_etymology_stays_unknown_with_both_senses():
+def test_homograph_leads_with_the_tamil_sense_and_still_cites_the_borrowing():
+    """Saran's ruling, 2026-08-05: where a Tamil sense and a borrowed sense share a form, the
+    Tamil sense leads -- this is a Thamizh server -- and the borrowing is cited, never suppressed.
+
+    This replaces the earlier `unknown` answer, which was honest but discarded evidence we held
+    and made five everyday words look like coverage gaps.
+    """
     o = classify_origin("கால்", fst_native_parse=True, in_i2pt=False, etymology={
         "relation": "ambiguous", "is_native": None, "citation": "u",
         "senses": [
-            {"relation": "inherited", "source_lang": "dra-pro",
+            {"relation": "inherited", "source_lang": "dra-pro", "sense": "leg",
              "source_lang_name": "Proto-Dravidian", "source_word": "*kāl"},
-            {"relation": "borrowed", "source_lang": "sa",
+            {"relation": "borrowed", "source_lang": "sa", "sense": "time",
              "source_lang_name": "Sanskrit", "source_word": "काल"},
         ]})
-    assert o.class_ == "unknown" and o.is_native is None
-    assert {a["class"] for a in o.alternatives} == {"இயற்சொல்", "வடசொல்"}
-    assert "sense" in o.evidence
+    assert o.class_ == "இயற்சொல்" and o.is_native is True
+    assert o.confidence < 0.8, "a reporting ruling on top of evidence, not evidence alone"
+
+    # the borrowing survives in all three places it must
+    assert "Sanskrit" in o.evidence and "time" in o.evidence
+    assert {a["class"] for a in o.alternatives} == {"வடசொல்"}
+    assert [s.sense for s in o.senses] == ["leg", "time"]
+    assert [s.class_ for s in o.senses] == ["இயற்சொல்", "வடசொல்"]
+    assert o.senses[1].borrowed_from == "Sanskrit" and o.senses[1].source_word == "काल"
+
+
+def test_homograph_borrowed_in_every_sense_stays_unknown():
+    """The ruling only picks a winner when a TAMIL sense exists. Senses that merely disagree about
+    which foreign language is the source have no Tamil word to lead with."""
+    o = classify_origin("x", fst_native_parse=None, in_i2pt=False, etymology={
+        "relation": "ambiguous", "is_native": None, "citation": "u",
+        "senses": [
+            {"relation": "borrowed", "source_lang": "sa", "sense": "a",
+             "source_lang_name": "Sanskrit", "source_word": "क"},
+            {"relation": "borrowed", "source_lang": "en", "sense": "b",
+             "source_lang_name": "English", "source_word": "b"},
+        ]})
+    assert o.class_ == "unknown"
+    assert [s.class_ for s in o.senses] == ["வடசொல்", "loanword"]
+
+
+def test_single_origin_word_carries_no_sense_breakdown():
+    """senses[] is the homograph affordance -- an ordinary word must not sprout a one-item list."""
+    o = classify_origin("ஜன்னல்", fst_native_parse=None, in_i2pt=False, etymology=_ety())
+    assert o.senses == []
+
+
+# --- per-sense parsing (the structural fix) ---------------------------------------------------
+
+_KAL = """==Tamil==
+
+===Pronunciation===
+{{ta-IPA}}
+
+===Etymology 1===
+{{ety|ta|id=leg|:inh|dra-pro:*kāl<id:leg>}}
+{{inh+|ta|dra-pro|*kāl||[[leg]]}}. Cognate with {{cog|kn|ಕಾಲು}}.
+
+====Noun====
+# {{lb|ta|anatomy}} [[leg]]
+
+===Etymology 4===
+Cognate with {{cog|kn|ಗಾಳಿ}}. Related to {{m|ta|காற்று||wind, air}}.
+
+====Noun====
+# [[wind]], [[air]]
+
+===Etymology 5===
+{{ety|ta|id=time|:bor|sa:काल<id:time>}}
+From {{bor|ta|sa|काल|t=time}}.
+
+====Noun====
+# [[time]]
+"""
+
+
+def test_each_etymology_section_is_parsed_as_its_own_sense():
+    """The structural defect: templates were ranked across the WHOLE Tamil section, mixing
+    unrelated senses into one answer. Each ===Etymology N=== block is one sense."""
+    ety = parse_etymology(_KAL)
+    assert ety["relation"] == "ambiguous"
+    assert [s["sense"] for s in ety["senses"]] == ["leg", "time"]
+    assert ety["senses"][0]["source_word"] == "*kāl"
+    assert ety["senses"][1]["source_lang"] == "sa"
+
+
+def test_a_sense_stating_no_etymology_is_omitted():
+    """Saran's ruling: kal 'wind' has bare cognates and no relation template, so it is left out
+    rather than padded in as an unknown sense."""
+    assert all(s["sense"] != "wind, air" for s in parse_etymology(_KAL)["senses"])
+
+
+def test_tamil_senses_are_ordered_first():
+    """Presentation follows the ruling: the reader meets the Tamil word before the borrowing."""
+    wt = ("==Tamil==\n===Etymology 1===\n{{bor+|ta|sa|पशु}}.\n\n====Noun====\n# [[cow]]\n"
+          "===Etymology 2===\n{{inh+|ta|dra-pro|*pac-}}.\n\n====Noun====\n# [[green]]\n")
+    senses = parse_etymology(wt)["senses"]
+    assert [s["relation"] for s in senses] == ["inherited", "borrowed"], \
+        "pasu lists the Sanskrit sense FIRST on the page -- section order is not a primacy signal"
+
+
+def test_nested_templates_never_leak_wikitext_into_a_sense_label():
+    """Wiktionary nests templates: {{ng|... {{m|ta|x}} ...}}. Stripping in one pass removed the
+    INNER template and left `{{ng|the alphasyllabic combination of` in a user-facing field."""
+    wt = ("==Tamil==\n===Etymology===\n{{inh+|ta|dra-pro|*x}}.\n\n====Noun====\n"
+          "# {{ng|the alphasyllabic combination of {{m|ta|\u0bb5\u0bcd}} and {{m|ta|\u0b86}}}}\n"
+          "# [[a real gloss]]\n")
+    label = parse_etymology(wt)["sense"]
+    assert label is None or "{{" not in label, f"raw wikitext leaked: {label!r}"
+
+
+def test_sense_label_falls_back_from_id_to_template_gloss_to_definition():
+    by_id = parse_etymology("==Tamil==\n===Etymology 1===\n{{ety|ta|id=leg|:inh|x}}\n"
+                            "{{inh+|ta|dra-pro|*kāl}}.\n")
+    assert by_id["sense"] == "leg"
+
+    by_gloss = parse_etymology("==Tamil==\n===Etymology===\n{{inh+|ta|dra-pro|*kār||black}}.\n")
+    assert by_gloss["sense"] == "black"
+
+    by_def = parse_etymology("==Tamil==\n===Etymology===\n{{suffix|ta|சால்|ஐ}}.\n"
+                             "\n====Noun====\n# [[road]], [[path]]\n")
+    assert by_def["sense"] == "road, path"
+
+    by_t_param = parse_etymology("==Tamil==\n===Etymology===\n{{bor|ta|sa|काल|t=time}}.\n")
+    assert by_t_param["sense"] == "time"
 
 
 def test_derived_scores_lower_than_stated():

@@ -170,6 +170,18 @@ function render(word, d, ok){
     if(O.confidence) r.appendChild(el("span","badge","confidence "+O.confidence));
     kids.push(r);
     if(O.evidence) kids.push(el("div","ev",O.evidence));
+    // per-sense origin (D-015): a homograph is one form carrying more than one word. The Tamil
+    // sense leads above; every sense — including the borrowed one — is listed here in full.
+    if(O.senses?.length){
+      kids.push(el("div","ev","சொல்லுக்குச் சொல் — origin by sense"));
+      O.senses.forEach(sn=>{
+        const r=el("div","row");
+        r.appendChild(el("span",null, sn.sense || "—"));
+        r.appendChild(el("span","badge", sn.class));
+        r.appendChild(el("div","src", sn.evidence || ""));
+        kids.push(r);
+      });
+    }
     out.appendChild(card(null,kids));
   }
 

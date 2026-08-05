@@ -23,7 +23,7 @@ from typing import Optional
 
 from tamil import utf8
 
-from thamizh_mcp.schema import Origin, SourceRef
+from thamizh_mcp.schema import Origin, SenseOrigin, SourceRef
 
 # --- citable rule sources ---
 # Tholkappiyam-first (design rule): the எழுத்து / மொழிமரபு rules are Tholkappiyam's; Nannūl codifies
@@ -88,35 +88,100 @@ def _etymology_source(ety: dict) -> SourceRef:
                      ref=ety.get("citation"), retrieved=ety.get("retrieved"))
 
 
+def _sense_class(s: dict) -> str:
+    """The Tholkappiyam origin class for ONE sense."""
+    if s["relation"] == "inherited":
+        return "இயற்சொல்"
+    # vadasol is precisely "borrowed from Sanskrit"; any other source language is a loanword.
+    return "வடசொல்" if s.get("source_lang") == "sa" else "loanword"
+
+
+def _sense_phrase(s: dict) -> str:
+    lang, word = s.get("source_lang_name", "?"), s.get("source_word")
+    return f"{lang} {word}" if word else lang
+
+
+def _sense_origins(senses: list[dict]) -> list[SenseOrigin]:
+    """The per-sense breakdown carried on every multi-sense answer (D-015, Session 3)."""
+    out = []
+    for s in senses:
+        native = s["relation"] == "inherited"
+        verb = "inherited from" if native else "borrowed from"
+        out.append(SenseOrigin(
+            sense=s.get("sense"),
+            class_=_sense_class(s),
+            is_native=native,
+            borrowed_from=None if native else s.get("source_lang_name"),
+            source_word=s.get("source_word"),
+            relation=s["relation"],
+            evidence=f"{verb} {_sense_phrase(s)}",
+        ))
+    return out
+
+
 def _from_etymology(normalized: str, ety: dict, fst_native_parse: Optional[bool]) -> Origin:
     """Turn a stated source language into a Tholkappiyam origin class.
 
     Confidence is deliberately capped below the orthographic rules' certainty about NON-nativeness,
     because this source is `evolving`: Wiktionary etymologies are crowd-edited and some are
-    genuinely contested (பசு is given as Sanskrit paśu while a Dravidian *pacu is also argued). The
+    genuinely contested (pasu is given as Sanskrit pasu while a Dravidian *pacu is also argued). The
     competing class therefore always stays in `alternatives`, and the citation is always attached so
     a scholar can check the claim rather than take our word for it. A `der` template ("derived from",
     possibly through intermediaries) is weaker than an outright borrowing statement and scores lower.
     """
+    all_senses = ety.get("senses") or []
+    sense_origins = _sense_origins(all_senses) if len(all_senses) > 1 else []
+
     if ety.get("relation") == "ambiguous":
-        # A homograph whose senses have different origins (கால் = leg, inherited / time, Sanskrit).
-        # Picking one would be a coin-flip dressed as an answer; which applies depends on the sense,
-        # and sense disambiguation is downstream (blueprint §2). Report both and stay honest.
-        senses = ety.get("senses", [])
-        parts = "; ".join(
-            f"{s['relation']} from {s['source_lang_name']}"
-            + (f" {s['source_word']}" if s.get("source_word") else "")
-            for s in senses)
+        # HOMOGRAPH -- one form, two or more words, with different origins per sense.
+        #
+        # This used to return `unknown`: honest, but it threw away evidence we already held, and it
+        # made five everyday words (kal, pu, pasu, salai, kar) look like coverage gaps.
+        #
+        # **Saran's ruling, 2026-08-05: the Tamil sense leads.** This is a Thamizh server, so the
+        # reader is pointed at the Tamil word first; the borrowed sense is never suppressed -- it is
+        # cited in the evidence, in `alternatives`, and in full under `senses`. Confidence sits
+        # below a clean single-etymology answer (0.8) because the headword class is a reporting
+        # ruling layered on the evidence, not the evidence alone.
+        native = [s for s in all_senses if s["relation"] == "inherited"]
+        borrowed = [s for s in all_senses if s["relation"] != "inherited"]
+
+        if native:
+            lead = native[0]
+            others = ", ".join(
+                (f"'{s['sense']}', " if s.get("sense") else "") + f"borrowed from {_sense_phrase(s)}"
+                for s in borrowed)
+            lead_label = f"'{lead['sense']}', " if lead.get("sense") else ""
+            more_native = (f" The same Tamil word also covers "
+                           + ", ".join(f"'{s['sense']}'" for s in native[1:] if s.get("sense")) + "."
+                           ) if len(native) > 1 and any(s.get("sense") for s in native[1:]) else ""
+            return Origin(
+                class_="இயற்சொல்", is_native=True,
+                confidence=0.7,
+                evidence=(f"homograph -- one form, more than one word. The Tamil sense leads: "
+                          f"{lead_label}inherited from {_sense_phrase(lead)}.{more_native} "
+                          f"The same form is separately {others}; that is a different word sharing "
+                          f"the spelling, listed in full under senses. English Wiktionary "
+                          f"(evolving source -- evidence, not authority); see the citation."),
+                senses=sense_origins,
+                alternatives=[{"class": _sense_class(s), "sense": s.get("sense"),
+                               "note": f"the distinct sense borrowed from {_sense_phrase(s)}"}
+                              for s in borrowed],
+                sources=[_etymology_source(ety), THOLKAPPIYAM_MOZIMARABU])
+
+        # No Tamil sense at all -- the senses just disagree about WHICH foreign language. Nothing
+        # in the ruling picks a winner there, so the headword stays honest and the senses carry it.
         return Origin(
-            class_="unknown", is_native=None, confidence=0.4,
-            evidence=("this headword has more than one etymology, one per sense — " + parts
-                      + ". Which applies depends on the sense meant, and sense disambiguation is "
-                        "downstream of this server. English Wiktionary; see the citation."),
-            alternatives=[{"class": "இயற்சொல்" if s["relation"] == "inherited" else
-                           ("வடசொல்" if s["source_lang"] == "sa" else "loanword"),
-                           "note": f"{s['relation']} from {s['source_lang_name']}"}
-                          for s in senses],
-            sources=[_etymology_source(ety)])
+            class_="unknown", is_native=False, confidence=0.5,
+            evidence=("this form is borrowed in every sense, but the senses name different source "
+                      "languages: "
+                      + "; ".join((f"'{s['sense']}' " if s.get("sense") else "")
+                                  + f"from {_sense_phrase(s)}" for s in borrowed)
+                      + ". Which applies depends on the sense meant. English Wiktionary; "
+                        "see the citation."),
+            senses=sense_origins,
+            alternatives=[{"class": _sense_class(s), "sense": s.get("sense")} for s in borrowed],
+            sources=[_etymology_source(ety), THOLKAPPIYAM_MOZIMARABU])
 
     stated = ety.get("certainty") == "stated"
     conf = 0.8 if stated else 0.65
@@ -125,31 +190,35 @@ def _from_etymology(normalized: str, ety: dict, fst_native_parse: Optional[bool]
     origin_phrase = f"{lang} {src_word}" if src_word else lang
     verb = "borrowed from" if ety.get("relation") == "borrowed" else "inherited from"
     evidence = (f"English Wiktionary states the Tamil word is {verb} {origin_phrase} "
-                f"({{{{{ety.get('template')}}}}} template). Evolving source — evidence, not "
+                f"({{{{{ety.get('template')}}}}} template). Evolving source -- evidence, not "
                 f"authority; see the citation.")
 
     if ety.get("is_native"):
-        # Positive evidence of nativeness — the one thing the FST parse alone could never give.
+        # Positive evidence of nativeness -- the one thing the FST parse alone could never give.
         return Origin(
-            class_="இயற்சொல்", is_native=True, confidence=conf, evidence=evidence,
-            alternatives=[{"class": "வடசொல்", "adaptation": "தற்பவம்",
+            class_="இயற்சொல்", is_native=True,
+            confidence=conf, evidence=evidence, senses=sense_origins,
+            alternatives=[{"class": "வடசொல்",
+                           "adaptation": "தற்பவம்",
                            "note": "a fully naturalized borrowing can be recorded as inherited"}],
             sources=[_etymology_source(ety), THAMIZHIMORPH_PARSE] if fst_native_parse
             else [_etymology_source(ety)])
 
     if code == "sa":
-        # வடசொல் is precisely "borrowed from Sanskrit" in the Tholkappiyam frame.
+        # vadasol is precisely "borrowed from Sanskrit" in the Tholkappiyam frame.
         return Origin(
-            class_="வடசொல்", is_native=False, borrowed_from="Sanskrit", confidence=conf,
-            evidence=evidence,
+            class_="வடசொல்", is_native=False,
+            borrowed_from="Sanskrit", confidence=conf, evidence=evidence, senses=sense_origins,
             alternatives=[{"class": "loanword",
                            "note": "if the Sanskrit derivation is disputed"}],
             sources=[_etymology_source(ety), THOLKAPPIYAM_MOZIMARABU])
 
-    # Any other language: a borrowing that is NOT Sanskrit — `loanword`, with the source named.
+    # Any other language: a borrowing that is NOT Sanskrit -- `loanword`, with the source named.
     return Origin(
         class_="loanword", is_native=False, borrowed_from=lang, confidence=conf, evidence=evidence,
-        alternatives=[{"class": "வடசொல்", "note": "if the source is ultimately Sanskrit"}],
+        senses=sense_origins,
+        alternatives=[{"class": "வடசொல்",
+                       "note": "if the source is ultimately Sanskrit"}],
         sources=[_etymology_source(ety), THOLKAPPIYAM_MOZIMARABU])
 
 
