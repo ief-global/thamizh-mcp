@@ -40,10 +40,28 @@ def test_forbidden_final_rule():
 
 # --- classification decisions (signals injected) ---
 
-def test_grantha_word_is_vadasol():
+def test_grantha_proves_borrowed_not_sanskrit():
+    """Grantha marks a non-native SOUND, not a source language.
+
+    Reading it as a Sanskrit signal produced eleven confident-wrong answers in a 108-word everyday
+    sweep — பஸ், ஸ்கூல், ஹோட்டல், ஆபீஸ், நர்ஸ், ஸ்டேஷன், கிளாஸ், ஹாஸ்பிட்டல் (English), ஜன்னல்
+    (Portuguese janela), ஜாமீன் and ஜில்லா (Urdu) — every one labelled வடசொல் at 0.9. What the
+    orthography licenses is `is_native=False`; the source needs a lexicon we do not have offline.
+    """
     o = classify_origin("ஜோதி", fst_native_parse=None, in_i2pt=False)  # ஜ is a Grantha letter
-    assert o.class_ == "வடசொல்" and o.is_native is False and o.borrowed_from == "Sanskrit"
+    assert o.is_native is False, "Grantha DOES prove the word is not native"
+    assert o.class_ == "unknown", "but it does NOT prove the source is Sanskrit"
+    assert o.borrowed_from is None
+    assert {a["class"] for a in o.alternatives} == {"வடசொல்", "loanword"}
     assert any("Grantha" in (s.ref or "") or "எழுத்து" in (s.ref or "") for s in o.sources)
+
+
+def test_grantha_does_not_call_english_loans_sanskrit():
+    """The regression that motivated the change — these are English, Portuguese and Urdu."""
+    for word in ("பஸ்", "ஸ்கூல்", "ஹோட்டல்", "ஆபீஸ்", "நர்ஸ்", "ஜன்னல்", "ஜாமீன்", "ஜில்லா"):
+        o = classify_origin(word, fst_native_parse=None, in_i2pt=False)
+        assert o.class_ != "வடசொல்", f"{word} is not Sanskrit"
+        assert o.is_native is False, f"{word} is certainly borrowed"
 
 
 def test_forbidden_initial_is_loanword():
@@ -95,10 +113,16 @@ def test_engine_native_word_gates_equivalent_off():
     assert not any(g.field == "native_equivalent" for g in a.gaps)  # native = resolved, not a gap
 
 
-def test_engine_grantha_word_is_vadasol():
+def test_engine_grantha_word_is_borrowed_source_undetermined():
+    """The engine surfaces the undetermined source as an explicit gap — the design rule working.
+
+    A Grantha word used to resolve to வடசொல் with no gap. It now reports what is actually known
+    (not native) and records a gap for what is not (which language), so a consumer can see the
+    difference between an answer and a guess.
+    """
     a = asyncio.run(Engine(morph=_FakeMorph()).analyze("ஜோதி", "ஜோதி", include=["origin"]))
-    assert a.origin.class_ == "வடசொல்"
-    assert not any(g.field == "origin" for g in a.gaps)
+    assert a.origin.class_ == "unknown" and a.origin.is_native is False
+    assert any(g.field == "origin" for g in a.gaps), "an undetermined source must be an honest gap"
 
 
 needs_fst = pytest.mark.skipif(not config.flookup_available(),

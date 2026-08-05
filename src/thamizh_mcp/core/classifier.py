@@ -8,7 +8,9 @@ so they are NEVER auto-asserted here. When the offline signals cannot ground a c
 `unknown` with an explicit evidence note — never a fabricated class.
 
 Signals, strongest first:
-  1. Grantha/Sanskrit letters (ஶ ஜ ஷ ஸ ஹ க்ஷ) — outside the native Tamil எழுத்து set → வடசொல்.
+  1. Grantha letters (ஶ ஜ ஷ ஸ ஹ க்ஷ) — outside the native Tamil எழுத்து set → certainly BORROWED,
+     source undetermined. Grantha marks a non-native sound, NOT a source language; it writes
+     English, Portuguese and Urdu loans as readily as Sanskrit ones.
   2. முதல் எழுத்து violation — a mei that cannot begin a native word (Tholkappiyam மொழிமரபு).
   3. இறுதி எழுத்து violation — a bare vallinam final, which native words never take.
   4. I2PT attestation as a borrowed word (no orthographic marker → source language undetermined).
@@ -92,12 +94,27 @@ def classify_origin(
     """
     grantha = grantha_letters_in(normalized)
     if grantha:
+        # Grantha proves the word is NOT NATIVE. It does NOT prove the word is Sanskrit.
+        #
+        # Grantha is simply how Tamil writes sounds its own எழுத்து set lacks — whatever language
+        # they came from. Treating it as a Sanskrit signal labelled பஸ் (bus), ஸ்கூல் (school),
+        # ஹோட்டல் (hotel), ஆபீஸ் (office), நர்ஸ் (nurse), ஸ்டேஷன் (station), கிளாஸ் (class),
+        # ஹாஸ்பிட்டல் (hospital), ஜன்னல் (Portuguese janela), ஜாமீன் and ஜில்லா (Urdu) as வடசொல் —
+        # eleven confident-wrong answers in a 108-word everyday sweep, every one at 0.9.
+        #
+        # So: assert what the orthography actually licenses (is_native=False) and leave the SOURCE
+        # language undetermined, exactly as the I2PT branch below does. Promoting to வடசொல் needs a
+        # positive Sanskrit signal — a lexicon — which we do not have offline. Honest gap over a
+        # confident guess (blueprint §2).
         return Origin(
-            class_="வடசொல்", is_native=False, borrowed_from="Sanskrit", confidence=0.9,
-            evidence=f"contains Grantha/Sanskrit letter(s) {' '.join(grantha)} — outside the native "
-                     "Tamil எழுத்து set (Tholkappiyam எழுத்ததிகாரம்)",
-            alternatives=[{"class": "loanword",
-                           "note": "a non-Sanskrit loan transliterated with Grantha letters"}],
+            class_="unknown", is_native=False, confidence=0.5,
+            evidence=f"contains Grantha letter(s) {' '.join(grantha)} — outside the native Tamil "
+                     "எழுத்து set (Tholkappiyam எழுத்ததிகாரம்), so the word is certainly borrowed. "
+                     "Grantha marks a non-native SOUND, not a source language: it is used for "
+                     "Sanskrit, English, Portuguese and Urdu borrowings alike, so the source is "
+                     "undetermined without a lexicon.",
+            alternatives=[{"class": "வடசொல்", "note": "if the source is Sanskrit"},
+                          {"class": "loanword", "note": "if the source is any other language"}],
             sources=[THOLKAPPIYAM_MOZIMARABU, OPEN_TAMIL_LETTERSET])
 
     bad_initial = forbidden_initial(normalized)
