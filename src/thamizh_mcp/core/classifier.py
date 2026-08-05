@@ -119,15 +119,34 @@ def classify_origin(
 
     bad_initial = forbidden_initial(normalized)
     if bad_initial:
+        # Same defect as the Grantha branch above: a முதல் எழுத்து violation proves the word is NOT
+        # NATIVE; it says nothing about WHICH language it came from. Sanskrit borrowings break this
+        # rule as readily as English ones — ரூபம் (Skt rūpa) and ராஜா sit beside ரயில் and லாரி.
+        #
+        # Calling them all `loanword` (which in the Tholkappiyam frame means a NON-Sanskrit borrowing)
+        # got ரயில்/ரேடியோ/லாரி right and ரூபம் wrong — but all four by the same ungrounded
+        # inference. Three lucky hits are still guesses, so they go too.
         return Origin(
-            class_="loanword", is_native=False, confidence=0.85,
+            class_="unknown", is_native=False, confidence=0.5,
             evidence=f"word-initial ‘{bad_initial}’ cannot begin a native Tamil word "
-                     "(Tholkappiyam மொழிமரபு, முதல் எழுத்து rule)",
-            alternatives=[{"class": "வடசொல்", "note": "some வடசொல் also break this rule"}],
+                     "(Tholkappiyam மொழிமரபு, முதல் எழுத்து rule), so the word is certainly "
+                     "borrowed — but the rule marks non-nativeness, not a source language: "
+                     "Sanskrit borrowings break it too (ரூபம், ராஜா), so the source is "
+                     "undetermined without a lexicon.",
+            alternatives=[{"class": "வடசொல்", "note": "if the source is Sanskrit"},
+                          {"class": "loanword", "note": "if the source is any other language"}],
             sources=[THOLKAPPIYAM_MOZIMARABU])
 
     bad_final = forbidden_final(normalized)
     if bad_final:
+        # NOT the same defect as the two rules above, and deliberately left asserting `loanword`.
+        # Those two turn on WHICH LETTERS appear, which is neutral about the source language. This
+        # one turns on MORPHOLOGICAL ASSIMILATION: a word ending in a bare vallinam has not been
+        # adapted to Tamil at all. Sanskrit borrowings are adapted — தற்சமம்/தற்பவம் — and take Tamil
+        # endings (ரூபம், யோகம், மந்திரம், மனிதன்), so they do not surface this way. An unadapted
+        # final really is evidence of a non-Sanskrit (typically modern European) loan.
+        # Reviewable: if Saran knows a Sanskrit borrowing that keeps a bare vallinam final, this
+        # branch should join the other two in returning `unknown`.
         return Origin(
             class_="loanword", is_native=False, confidence=0.75,
             evidence=f"ends in bare vallinam ‘{bad_final}’ — native Tamil words do not end in "
