@@ -28,11 +28,15 @@ class Engine:
         equivalent_sources: Sequence[SourceAdapter] = (),
         store: Optional[KnowledgeStore] = None,
         morph_fallback: Optional[SourceAdapter] = None,
+        etymology_sources: Sequence[SourceAdapter] = (),
     ):
         self.morph = morph
         self.morph_fallback = morph_fallback   # curated paradigms — used only on an FST miss
         self.meaning_sources = list(meaning_sources)
         self.equivalent_sources = list(equivalent_sources)
+        # Source-language evidence — the only signal that can name a provenance. Evolving tier, so
+        # it is pulled under allow_enrichment and cached, exactly like meaning.
+        self.etymology_sources = list(etymology_sources)
         self.store = store
         self._fixtures: Optional[frozenset] = None   # eval-fixture words, loaded lazily
 
@@ -52,7 +56,7 @@ class Engine:
         # Origin is computed before native_equivalent so it can gate it (native word → no equivalent).
         origin = None
         if {"origin", "native_equivalent"} & wants:
-            origin = await self._classify_origin(a, normalized, morph_ran)
+            origin = await self._classify_origin(a, normalized, morph_ran, allow_enrichment)
             if "origin" in wants:
                 a.origin = origin
                 a.sources.extend(origin.sources)
@@ -197,7 +201,7 @@ class Engine:
         a.gaps.append(Gap(field="meaning", note=note))
 
     async def _classify_origin(
-        self, a: WordAnalysis, normalized: str, morph_ran: bool
+        self, a: WordAnalysis, normalized: str, morph_ran: bool, allow_enrichment: bool = True
     ) -> Origin:
         """Gather offline signals and classify origin (core/classifier.py holds the rules).
 
@@ -218,7 +222,41 @@ class Engine:
         else:
             fst_native = None
         in_i2pt = await self._word_in_i2pt(normalized)
-        return classifier.classify_origin(normalized, fst_native_parse=fst_native, in_i2pt=in_i2pt)
+        etymology = await self._etymology(normalized, allow_enrichment)
+        if etymology is not None:
+            a.sources.append(SourceRef(
+                name="English Wiktionary (etymology)", tier="evolving",
+                ref=etymology.get("citation"), retrieved=etymology.get("retrieved")))
+        return classifier.classify_origin(normalized, fst_native_parse=fst_native,
+                                          in_i2pt=in_i2pt, etymology=etymology)
+
+    async def _etymology(self, normalized: str, allow_enrichment: bool) -> Optional[dict]:
+        """Cached-then-pulled source-language evidence; None when unavailable.
+
+        Same self-enriching shape as meaning: serve the cached claim, else pull once and write back,
+        so the store gets better with use and a repeat query costs no network. Absence is never an
+        error — the classifier simply falls back to the offline orthographic rules.
+        """
+        if self.store is not None:
+            cached = await self.store.get_claims(normalized, "etymology")
+            if cached:
+                ety = dict(cached[0].value.get("etymology", {}))
+                ety.setdefault("retrieved", cached[0].retrieved)
+                return ety or None
+        if not (allow_enrichment and self.etymology_sources):
+            return None
+        for src in self.etymology_sources:
+            res = await src.lookup(normalized)
+            if isinstance(res, AdapterResult):
+                ety = res.fields["etymology"]
+                ref = res.sources[0]
+                ety.setdefault("retrieved", ref.retrieved)
+                if self.store is not None:
+                    await self.store.put_claims(normalized, [Claim(
+                        field="etymology", value=res.fields, source=ref.name, tier=res.tier,
+                        retrieved=ref.retrieved or _dt.date.today().isoformat())])
+                return ety
+        return None
 
     async def _word_in_i2pt(self, normalized: str) -> bool:
         """Is the word an attested borrowed headword in any configured equivalent source?"""
@@ -329,6 +367,7 @@ def default_engine() -> Engine:
     global _default
     if _default is None:
         from thamizh_mcp.adapters.equivalents import IndicToPureTamilAdapter
+        from thamizh_mcp.adapters.etymology import EnWiktionaryEtymologyAdapter
         from thamizh_mcp.adapters.paradigms import VerbParadigmAdapter
         from thamizh_mcp.adapters.thamizhimorph import ThamizhiMorphAdapter
         from thamizh_mcp.adapters.wiktionary import TamilWiktionaryAdapter
@@ -336,6 +375,7 @@ def default_engine() -> Engine:
             morph=ThamizhiMorphAdapter() if config.flookup_available() else None,
             morph_fallback=VerbParadigmAdapter(),
             meaning_sources=[TamilWiktionaryAdapter()],
+            etymology_sources=[EnWiktionaryEtymologyAdapter()],
             equivalent_sources=[IndicToPureTamilAdapter()],
             store=KnowledgeStore(config.DEFAULT_DB),
         )

@@ -85,7 +85,16 @@ distribution with its header intact — unlike the TVA course books, which stay 
 `data/grammar/` now holds five cited rule tables (இடைநிலை, விகுதி, சாரியை, வேற்றுமை உருபு, விகாரம்),
 each carrying a **`source_priority`** block naming its governing authority. `tests/test_citations.py`
 enforces that every cited நூற்பா resolves in the pinned texts.
-**149 tests pass** (147 without live foma). Design repo at `~/projects/thamizh-mcp-design/` →
+**Etymology adapter live (2026-08-05):** `adapters/etymology.py` — en.wiktionary's MACHINE-READABLE
+etymology templates (`{{bor+|ta|pt|janela}}`, `{{inh|ta|dra-pro|*maran}}`) resolve the SOURCE
+LANGUAGE, which orthography never could. This is what took origin from "honest but useless" to
+usable: on a 108-word everyday sweep, **correct 50 → 82, unknown 51 → 23, wrong 5 → 1**. Evolving
+tier (crowd-edited — evidence, not authority), cached per-claim, pulled only under
+`allow_enrichment`, falls back to the offline rules when absent.
+Two traps it must keep handling: **homographs** (கால் = leg/inherited AND time/Sanskrit — reported as
+ambiguous, never picked) and **Dravidian sub-family codes** (`dra-sdo-pro` etc. — matched by prefix,
+not an enumerated list).
+**171 tests pass** (169 without live foma). Design repo at `~/projects/thamizh-mcp-design/` →
 `ief-global/thamizh-mcp-design` (blueprint, tamil-grammar.md, DECISIONS, roadmap, CODE-STATUS.md).
 **It is PUBLIC as of 2026-08-02** and follows the same develop→PR→main flow as this repo.
 
@@ -206,6 +215,7 @@ Register as an MCP server: `claude mcp add thamizh -- uv --directory ~/projects/
   (the unit runs `.venv/bin/thamizh-web` directly — NOT `uv run`, whose ~/.cache lock is blocked by
   ProtectHome=read-only).
 - CLI: `scripts/demo.py <word>` (readable) · `scripts/analyze.py <word>` (raw JSON)
+- **Etymology:** `adapters/etymology.py` → source language; feeds `classifier.classify_origin`.
 - **Classical texts:** `data/classical/{tholkappiyam,nannul}.json` — verse-addressable, checksummed
   in `data/PINS.md`. Rebuild/verify: `scripts/build_classical.py`. Guard: `tests/test_citations.py`.
 - **Grammar rule tables:** `data/grammar/*.json` — each with `source_priority` + நூற்பா citations.

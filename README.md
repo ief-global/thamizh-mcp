@@ -22,17 +22,23 @@ Design, decisions and roadmap live in the companion repo
 ## Status
 
 **Working server, in active development.** Nine MCP tools over one engine, plus REST and CLI heads.
-149 tests pass.
+171 tests pass.
 
 | | |
 |---|---|
 | MCP tools | `analyze_word` · `classify_origin` · `get_root` · `get_meaning` · `suggest_native_equivalent` · `enrich_word` · `explain_formation` · `explain_grammar` · `refresh_sources` |
 | Heads | MCP (stdio) · REST/web (FastAPI) · CLI |
 | Anchors | ThamizhiMorph FST (foma) · curated verb paradigms · pinned Tholkappiyam + Nannūl |
+| Evolving | Tamil Wiktionary (meanings) · English Wiktionary (etymology → source language) |
 | Store | zero-config SQLite, per-claim provenance |
 
-Not done yet: non-finite verb forms, a full புணர்ச்சி sandhi engine, and lifting the many honest
-`unknown` origin results. See the design repo's roadmap.
+Not done yet: non-finite verb forms and a full புணர்ச்சி sandhi engine. See the design repo's roadmap.
+
+**Origin accuracy** on a 108-word everyday sweep: 82 correct, 23 honest `unknown`, 1 wrong. Origin
+resolves the source language from etymology evidence rather than guessing it from spelling — Grantha
+letters mark a non-native *sound*, not a source language, so ஜன்னல் is Portuguese and பஸ் is English,
+not வடசொல். A headword whose senses differ in origin (கால் = leg, inherited / time, Sanskrit) is
+reported as ambiguous rather than resolved to one.
 
 ## Install
 
@@ -62,7 +68,7 @@ in `data/PINS.md`.
 uv run thamizh-mcp                      # MCP server, stdio transport
 uv run thamizh-web                      # web + REST head on :8080
 uv run python scripts/demo.py மரத்தில்   # readable CLI view
-uv run pytest                           # 149 tests
+uv run pytest                           # 171 tests
 ```
 
 Register with Claude Code:

@@ -57,7 +57,10 @@ class Origin(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
     class_: OriginClass = Field(default="unknown", alias="class")
-    is_native: bool = False
+    # None = genuinely undetermined, not False. A homograph whose senses differ in origin (கால் =
+    # leg, inherited / time, Sanskrit) is neither native nor non-native as a headword; reporting
+    # False there would assert non-nativeness we have not established.
+    is_native: Optional[bool] = False
     borrowed_from: Optional[str] = None
     adaptation: Optional[Adaptation] = None
     evidence: str = ""
