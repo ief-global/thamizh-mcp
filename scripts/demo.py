@@ -72,6 +72,9 @@ async def show(word: str, with_meaning: bool) -> None:
         print("\n  சொல்லுக்குச் சொல் (origin by sense)")
         for sn in a.origin.senses:
             print(f"     {sn.sense or '—'}: {sn.class_} — {sn.evidence}")
+            if sn.tamil_alternatives:
+                eq = ", ".join(c.equivalent for c in sn.tamil_alternatives)
+                print(f"        → Tamil alternatives for this sense: {eq}")
 
     ne = a.native_equivalent
     if ne.candidates:

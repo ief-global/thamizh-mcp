@@ -53,6 +53,20 @@ class SourceRef(BaseModel):
     #                               (the honest interim). Additive, non-breaking.
 
 
+class EquivalentCandidate(BaseModel):
+    """Attested-only: `source` + `attestation` are REQUIRED. The merge layer drops any
+    candidate lacking an attestation source — an invented coinage can never surface."""
+    model_config = ConfigDict(populate_by_name=True)
+
+    equivalent: str
+    source: str
+    tier: Optional[Tier] = None
+    register_: Optional[Register] = Field(default=None, alias="register")
+    attestation: Attestation
+    confidence: Optional[float] = Field(default=None, ge=0.0, le=1.0)
+    citation: Optional[str] = None
+
+
 class SenseOrigin(BaseModel):
     """Origin of ONE sense of a headword (D-015, Session 3).
 
@@ -70,6 +84,17 @@ class SenseOrigin(BaseModel):
     source_word: Optional[str] = None      # the etymon itself — *kāl, काल, car
     relation: Optional[str] = None         # inherited | borrowed | derived
     evidence: str = ""
+    # Tamil alternatives for THIS sense — populated only when the sense is borrowed (a native
+    # sense already IS the Tamil word). Saran's ruling, 2026-08-05: a reader who meant the English
+    # word should still be handed the Tamil one — கார்'s 'car' sense carries மகிழுந்து / சீருந்து /
+    # தானுந்து. Same attested-only contract as NativeEquivalent (source + attestation required).
+    #
+    # NOT called `native_equivalents`, deliberately. These come from the page's own {{syn|ta|…}}
+    # list filtered through the orthographic rules, which prove NON-nativeness only — so obvious
+    # borrowings (ரோடு) are excluded but naturalized Sanskrit still passes (தானம் 'place' offers
+    # சுவர்க்கம் < स्वर्ग). Calling them "pure Tamil" would over-claim. The curated I2PT lists behind
+    # `NativeEquivalent` are the anchor-tier answer; these are `evolving` evidence at 0.6.
+    tamil_alternatives: list[EquivalentCandidate] = Field(default_factory=list)
 
 
 class Origin(BaseModel):
@@ -147,20 +172,6 @@ class Grammar(BaseModel):
     authority: Optional[Authority] = None
     notes: Optional[str] = None
     sources: list[SourceRef] = Field(default_factory=list)
-
-
-class EquivalentCandidate(BaseModel):
-    """Attested-only: `source` + `attestation` are REQUIRED. The merge layer drops any
-    candidate lacking an attestation source — an invented coinage can never surface."""
-    model_config = ConfigDict(populate_by_name=True)
-
-    equivalent: str
-    source: str
-    tier: Optional[Tier] = None
-    register_: Optional[Register] = Field(default=None, alias="register")
-    attestation: Attestation
-    confidence: Optional[float] = Field(default=None, ge=0.0, le=1.0)
-    citation: Optional[str] = None
 
 
 class NativeEquivalent(BaseModel):

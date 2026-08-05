@@ -158,3 +158,20 @@ def test_wholly_native_word_still_skips_the_equivalent_lookup(tmp_path):
     assert a.origin.is_native is True and a.origin.senses == []
     assert a.native_equivalent.applicable is False
     assert "no borrowed equivalent applies" in a.native_equivalent.note
+
+
+def test_homograph_headword_falls_back_to_its_borrowed_senses_equivalents(tmp_path):
+    """I2PT is keyed on borrowed HEADWORDS, so it has no கார் row — கார் is a native word that
+    merely shares its form with English 'car'. suggest_native_equivalent must still answer, from
+    the synonyms listed under that borrowed sense (Saran's ruling, 2026-08-05)."""
+    ety = dict(_AMBIGUOUS)
+    ety["senses"] = [dict(_AMBIGUOUS["senses"][0], synonyms=[]),
+                     dict(_AMBIGUOUS["senses"][1], synonyms=["மகிழுந்து", "ரோடு"])]
+    # "மரம்" is deliberately NOT in the I2PT fixture, so the fallback is what answers
+    a = asyncio.run(_engine(tmp_path, ety).analyze(
+        "மரம்", "மரம்", include=["origin", "native_equivalent"]))
+    assert a.origin.class_ == "இயற்சொல்"
+    assert a.native_equivalent.applicable is True
+    assert [c.equivalent for c in a.native_equivalent.candidates] == ["மகிழுந்து"], \
+        "ரோடு is itself English and must not surface"
+    assert not any(g.field == "native_equivalent" for g in a.gaps)

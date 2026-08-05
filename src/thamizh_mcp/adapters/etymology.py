@@ -59,6 +59,11 @@ _ETY_HEADING = re.compile(r"(?m)^===\s*Etymology(?:\s+\d+)?\s*===\s*$")
 # the relation template and then the first definition line are the fallbacks.
 _SENSE_ID = re.compile(r"\{\{ety(?:mon)?\|ta\|id=([^|}]+)")
 _DEF_LINE = re.compile(r"(?m)^#\s+(.+)$")
+
+# The page lists synonyms per SENSE: `#: {{syn|ta|மகிழுந்து|சீருந்து|தானுந்து}}` sits under கார்'s
+# English 'car' sense. For a BORROWED sense those are exactly the native alternative Saran wants
+# surfaced -- "the user meant the English word, but now he knows the Tamil one".
+_SYNONYMS = re.compile(r"\{\{syn\|ta\|([^}]*)\}\}")
 _WIKILINK = re.compile(r"\[\[(?:[^\]|]*\|)?([^\]|]*)\]\]")
 _ANY_TEMPLATE = re.compile(r"\{\{[^{}]*\}\}")
 
@@ -141,6 +146,24 @@ def _sense_label(block: str, body: str | None) -> str | None:
     return None
 
 
+def _synonyms_in(block: str) -> list[str]:
+    """Tamil synonyms this etymology block lists, deduped in page order.
+
+    Reported as-is -- whether a synonym is itself native is NOT decided here. It cannot be: சாலை's
+    road sense lists ரோடு, which is English. The classifier filters these through the orthographic
+    rules before ever calling one a native equivalent.
+    """
+    out: list[str] = []
+    for group in _SYNONYMS.findall(block):
+        for raw in group.split("|"):
+            w = raw.strip()
+            # skip template params (tr=…), Thesaurus:/Appendix: namespace links, and empties
+            if not w or "=" in w or ":" in w or w in out:
+                continue
+            out.append(w)
+    return out
+
+
 def _parse_block(block: str) -> dict | None:
     """One `===Etymology N===` block -> its origin, or None if it states no etymology.
 
@@ -170,6 +193,7 @@ def _parse_block(block: str) -> dict | None:
             # native sweep) at 0.65 while {{bor+}} borrowings got 0.8 -- a tilt against native words.
             "certainty": "derived" if tmpl.startswith("der") else "stated",
             "sense": _sense_label(block, body),
+            "synonyms": _synonyms_in(block),
         }
 
     # Only native word-formation stated: built from Tamil parts, so it is native.
@@ -177,7 +201,7 @@ def _parse_block(block: str) -> dict | None:
     return {"relation": "inherited", "is_native": True, "source_lang": "ta",
             "source_lang_name": "Tamil", "source_word": parts or None,
             "template": formations[0][0], "certainty": "stated",
-            "sense": _sense_label(block, None)}
+            "sense": _sense_label(block, None), "synonyms": _synonyms_in(block)}
 
 
 def parse_etymology(wikitext: str) -> dict | None:

@@ -180,6 +180,11 @@ function render(word, d, ok){
         r.appendChild(el("span","badge", sn.class));
         r.appendChild(el("div","src", sn.evidence || ""));
         kids.push(r);
+        // a borrowed sense hands back the Tamil word for it (Saran's ruling): கார் 'car' → மகிழுந்து
+        if(sn.tamil_alternatives?.length){
+          kids.push(el("div","src","    → Tamil alternatives for this sense: "
+            + sn.tamil_alternatives.map(c=>c.equivalent).join(", ")));
+        }
       });
     }
     out.appendChild(card(null,kids));

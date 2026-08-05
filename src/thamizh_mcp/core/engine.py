@@ -308,6 +308,27 @@ class Engine:
                     return
             else:
                 misses.append(f"{res.source}: {res.reason} — {res.note}")
+        # Fall back to the per-sense equivalents the origin pass already resolved. I2PT is keyed on
+        # borrowed HEADWORDS, so it misses a homograph entirely — it has no கார் row, because கார்
+        # is a native word that merely happens to share its form with English 'car'. The page's own
+        # synonyms under that borrowed sense do carry மகிழுந்து / சீருந்து / தானுந்து, and Saran's
+        # ruling is that the reader should be handed them (2026-08-05).
+        if origin is not None:
+            from_senses = [c for sn in origin.senses for c in sn.tamil_alternatives]
+            if from_senses:
+                senses_named = ", ".join(f"'{sn.sense}'" for sn in origin.senses
+                                         if sn.tamil_alternatives and sn.sense)
+                a.native_equivalent = NativeEquivalent(
+                    applicable=True, candidates=from_senses,
+                    note=("Tamil alternatives for the BORROWED sense"
+                          + (f" ({senses_named})" if senses_named else "")
+                          + f" of a headword classed {origin.class_}; from en.wiktionary's own "
+                            "synonym list, filtered by the orthographic rules. Those prove "
+                            "non-nativeness only, so these are candidates at evolving tier — not "
+                            "a curated தனித்தமிழ் list"),
+                    sources=[SourceRef(name="English Wiktionary (synonyms)", tier="evolving")])
+                return
+
         note = "no attested native equivalent found"
         if misses:
             note += " (" + " | ".join(misses) + ")"

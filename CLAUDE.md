@@ -24,7 +24,7 @@ integration. Loop: work on `develop` here → push → open PR `develop → main
 milestones. After any history rewrite, other clones must `git reset --hard origin/main`
 (not merge/rebase).
 
-## Current state (2026-08-05) — 180 tests pass (175 + 5 skipped without live foma)
+## Current state (2026-08-05) — 187 tests pass (182 + 5 skipped without live foma)
 
 **Everything below is live and merged to `main`.** Nine MCP tools + web/REST + CLI over ONE engine
 (blueprint §8 — the web head needed zero engine changes, which validated that design).
@@ -43,7 +43,7 @@ milestones. After any history rewrite, other clones must `git reset --hard origi
 
 | | result |
 |---|---|
-| **Origin** | 86 correct · 18 honest `unknown` · **1 wrong** (was 59/30/17 before D-011/D-014, 82/23/1 before per-sense origin) |
+| **Origin** | 87 correct · 18 honest `unknown` · **1 wrong** (was 59/30/17 before D-011/D-014, 82/23/1 before per-sense origin) |
 | **Formation** | 26/30 decoded · 4 gaps (`கொடுக்க` `கொடுத்து` `கொடுக்கும்` non-finite; `வீட்டிற்கு` noun dative) |
 
 Re-run: `uv run python scripts/quality_sweep.py` (network on; ~3 min). It is the only honest
@@ -66,13 +66,28 @@ Orthography proves a word is **not native**; it can NEVER say which language it 
   blackness AND English car. The parser reads each block on its own — ranking templates across the
   whole section picked `bor` over `inh` every time and labelled four core native words வடசொல் at
   0.8. Each sense's origin lands in `Origin.senses[]`, mirroring `Meaning.senses`.
-  **Saran's ruling (2026-08-05): the Tamil sense LEADS at headword level** — this is a Thamizh
-  server, so the reader is pointed at the Tamil word first — and the borrowed sense is never
-  suppressed: it rides in the evidence, in `alternatives`, and in full in `senses[]`. Confidence
-  0.7, below a clean single-etymology 0.8, because the headword class is a reporting ruling layered
-  on the evidence. A sense whose block states no relation at all is omitted, not padded in.
-  16 of the 108 sweep words now carry a breakdown. `Origin.is_native` stays `Optional` for the
-  case no Tamil sense exists (senses differ only in WHICH foreign language).
+  **Saran's ruling (2026-08-05): the Tamil sense LEADS at headword level — for EVERY source
+  language**, Sanskrit, English, Urdu, Marathi, Telugu alike. This is a Thamizh server, so the
+  reader is pointed at the Tamil word first; the borrowed sense is never suppressed — it rides in
+  the evidence, in `alternatives`, and in full in `senses[]`. Confidence 0.7, below a clean
+  single-etymology 0.8, because the headword class is a reporting ruling layered on the evidence.
+  A sense whose block states no relation at all is omitted, not padded in. 16 of the 108 sweep
+  words carry a breakdown. `Origin.is_native` stays `Optional` for the case no Tamil sense exists
+  (senses differ only in WHICH foreign language, e.g. கிளாஸ் = class AND glass).
+- **A borrowed sense hands back the Tamil word for it.** `SenseOrigin.tamil_alternatives` —
+  கார்'s English 'car' sense returns மகிழுந்து/சீருந்து/தானுந்து; கிளாஸ் returns வகுப்பு for its
+  'class' sense and கண்ணாடி for 'glass'. Saran's reasoning: the reader may well have meant the
+  borrowed sense, and now they also know the Tamil word for it. Sourced from the page's own
+  `{{syn|ta|…}}` under that sense, **filtered by `classifier.looks_orthographically_native`** —
+  en.wiktionary lists ரோடு (English) as a synonym of சாலை's road sense, so an unfiltered list would
+  hand back a borrowing.
+  ⚠️ **Named `tamil_alternatives`, NOT `native_equivalents`, on purpose.** The orthographic rules
+  prove non-nativeness only, so naturalized Sanskrit passes them — தானம் 'place' yields சுவர்க்கம்
+  (< स्वर्ग) and சக்தி (< शक्ति), மந்திரம் yields மண்டபம் (< मण्डप). Do not re-label these "pure Tamil"
+  until the loanword lexicon lands; that is the same native-by-default weakness as build rung 1.
+  Evolving tier, confidence 0.6. They also feed the headword `native_equivalent` when I2PT misses —
+  I2PT is keyed on borrowed HEADWORDS and has no கார் row at all, so `suggest_native_equivalent`
+  was silent for every homograph before this.
 - **`adapters/etymology.py`** resolves the source from en.wiktionary's machine-readable templates
   (`{{bor+|ta|pt|janela}}`, `{{inh+|ta|dra-pro|*maran}}`). Evolving tier — evidence, not authority;
   confidence caps at 0.8, competing class stays in `alternatives`, citation always travels.

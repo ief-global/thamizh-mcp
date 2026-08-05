@@ -47,9 +47,9 @@ WORDS = [
 
     # --- English loans ----------------------------------------------------------------------
     ("பஸ்", "loanword", "English bus"),
-    ("கார்", "?", "HOMOGRAPH — native கார் (blackness/monsoon, dra-pro *kār) vs English car. "
-              "The Thamizh-first ruling leads with the native sense; that contradicts the "
-              "old expected `loanword`. SARAN TO CONFIRM."),
+    ("கார்", "இயற்சொல்", "HOMOGRAPH, ruled 2026-08-05: native கார் (blackness/monsoon, "
+              "dra-pro *kār) LEADS over English car. Was expected `loanword`. The English sense "
+              "is cited under origin.senses[] and hands back மகிழுந்து/சீருந்து/தானுந்து."),
     ("ரயில்", "loanword", "English rail"), ("ஸ்கூல்", "loanword", "English school"),
     ("ஹோட்டல்", "loanword", "English hotel"), ("காபி", "loanword", "English coffee"),
     ("டீ", "loanword", "English tea"), ("சைக்கிள்", "loanword", "English cycle"),
@@ -145,7 +145,10 @@ async def main():
     for word, got, senses in homographs:
         print(f"   {word:<16} headword {got}")
         for sn in senses:
+            eq = ", ".join(c.equivalent for c in sn.tamil_alternatives)
             print(f"       {str(sn.sense):<34} {sn.class_:<10} {sn.evidence}")
+            if eq:
+                print(f"       {'':<34} {'':<10} → Tamil alternatives for this sense: {eq}")
 
     print("\n" + "=" * 100)
     print("FORMATION SWEEP")

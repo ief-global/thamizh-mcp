@@ -23,7 +23,7 @@ from typing import Optional
 
 from tamil import utf8
 
-from thamizh_mcp.schema import Origin, SenseOrigin, SourceRef
+from thamizh_mcp.schema import EquivalentCandidate, Origin, SenseOrigin, SourceRef
 
 # --- citable rule sources ---
 # Tholkappiyam-first (design rule): the எழுத்து / மொழிமரபு rules are Tholkappiyam's; Nannūl codifies
@@ -83,6 +83,51 @@ def forbidden_final(word: str) -> Optional[str]:
     return last if last in _VALLINAM_MEI else None
 
 
+def looks_orthographically_native(word: str) -> bool:
+    """Does the word survive every rule that can prove NON-nativeness?
+
+    This is the honest half of the orthographic signals (D-015): they can never prove a word IS
+    native, but they do prove when one is not. That is exactly what is needed to filter a synonym
+    list -- en.wiktionary lists ரோடு as a synonym of சாலை's road sense, and ரோடு is English. Offering
+    it as a "pure Tamil equivalent" would be worse than offering nothing.
+
+    Non-Tamil script is excluded outright: a synonym field can carry a stray Latin token.
+    """
+    if not word or not all("\u0b80" <= ch <= "\u0bff" or ch in "\u200c\u200d" for ch in word):
+        return False
+    return not grantha_letters_in(word) and not forbidden_initial(word) and not forbidden_final(word)
+
+
+WIKTIONARY_SYNONYM = SourceRef(
+    name="English Wiktionary (synonyms)", tier="evolving",
+    ref="{{syn|ta|...}} listed under the borrowed sense")
+
+
+def _sense_alternatives(sense: dict, citation: Optional[str]) -> list[EquivalentCandidate]:
+    """Tamil alternatives for ONE borrowed sense.
+
+    Saran's ruling (2026-08-05): the native sense leads, but a reader who meant the BORROWED sense
+    should still be handed the Tamil word -- கார் 'car' carries மகிழுந்து / சீருந்து / தானுந்து.
+    The page's own synonym list is the attestation; the orthographic rules drop any synonym that is
+    itself demonstrably borrowed (ரோடு).
+
+    NOT presented as "pure Tamil": those rules prove non-nativeness only, so naturalized Sanskrit
+    passes them -- தானம் 'place' yields சுவர்க்கம் (< स्वर्ग) and சக்தி (< शक्ति). `attested` refers to
+    the word being attested on the page. Confidence 0.6, tier `evolving`. The loanword lexicon
+    (Madras Tamil Lexicon, next build rung) is what would let this claim nativeness.
+    """
+    out: list[EquivalentCandidate] = []
+    for w in sense.get("synonyms") or []:
+        if not looks_orthographically_native(w):
+            continue
+        out.append(EquivalentCandidate(
+            equivalent=w, source=WIKTIONARY_SYNONYM.name, tier="evolving",
+            attestation="attested", confidence=0.6, citation=citation))
+        if len(out) == 5:      # keep the answer readable; the citation carries the rest
+            break
+    return out
+
+
 def _etymology_source(ety: dict) -> SourceRef:
     return SourceRef(name="English Wiktionary (etymology)", tier="evolving",
                      ref=ety.get("citation"), retrieved=ety.get("retrieved"))
@@ -101,7 +146,7 @@ def _sense_phrase(s: dict) -> str:
     return f"{lang} {word}" if word else lang
 
 
-def _sense_origins(senses: list[dict]) -> list[SenseOrigin]:
+def _sense_origins(senses: list[dict], citation: Optional[str] = None) -> list[SenseOrigin]:
     """The per-sense breakdown carried on every multi-sense answer (D-015, Session 3)."""
     out = []
     for s in senses:
@@ -115,6 +160,8 @@ def _sense_origins(senses: list[dict]) -> list[SenseOrigin]:
             source_word=s.get("source_word"),
             relation=s["relation"],
             evidence=f"{verb} {_sense_phrase(s)}",
+            # only a borrowed sense needs an equivalent; a native sense already IS the Tamil word
+            tamil_alternatives=[] if native else _sense_alternatives(s, citation),
         ))
     return out
 
@@ -130,7 +177,8 @@ def _from_etymology(normalized: str, ety: dict, fst_native_parse: Optional[bool]
     possibly through intermediaries) is weaker than an outright borrowing statement and scores lower.
     """
     all_senses = ety.get("senses") or []
-    sense_origins = _sense_origins(all_senses) if len(all_senses) > 1 else []
+    sense_origins = (_sense_origins(all_senses, ety.get("citation"))
+                     if len(all_senses) > 1 else [])
 
     if ety.get("relation") == "ambiguous":
         # HOMOGRAPH -- one form, two or more words, with different origins per sense.

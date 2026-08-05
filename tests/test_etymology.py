@@ -16,7 +16,7 @@ from thamizh_mcp.adapters.base import AdapterResult, NoEntry
 from thamizh_mcp.adapters.etymology import (
     EnWiktionaryEtymologyAdapter, is_native_code, language_name, parse_etymology,
 )
-from thamizh_mcp.core.classifier import classify_origin
+from thamizh_mcp.core.classifier import classify_origin, looks_orthographically_native
 
 
 # --- parser ---------------------------------------------------------------------------------
@@ -319,3 +319,71 @@ def test_no_etymology_falls_back_to_the_offline_rules():
     """Enrichment off, or a miss — the orthographic rules still run, unchanged."""
     o = classify_origin("ஜோதி", fst_native_parse=None, in_i2pt=False, etymology=None)
     assert o.class_ == "unknown" and o.is_native is False   # Grantha: borrowed, source unknown
+
+
+# --- Saran's ruling applies to ANY source language, not just Sanskrit -------------------------
+
+def _homograph(borrowed_lang, borrowed_name, borrowed_word, synonyms=()):
+    return {"relation": "ambiguous", "is_native": None, "citation": "u",
+            "senses": [
+                {"relation": "inherited", "source_lang": "dra-pro", "sense": "native sense",
+                 "source_lang_name": "Proto-Dravidian", "source_word": "*x", "synonyms": []},
+                {"relation": "borrowed", "source_lang": borrowed_lang, "sense": "borrowed sense",
+                 "source_lang_name": borrowed_name, "source_word": borrowed_word,
+                 "synonyms": list(synonyms)},
+            ]}
+
+
+def test_the_tamil_sense_leads_whatever_the_other_language_is():
+    """Saran clarified 2026-08-05: the rule is NOT Sanskrit-only. Tamil leads over English, Urdu,
+    Marathi, Telugu — any source. கார் (native blackness vs English car) is the case that forced
+    the question; it must behave exactly like பூ (native flower vs Sanskrit earth)."""
+    for code, name, word in [("sa", "Sanskrit", "भू"), ("en", "English", "car"),
+                             ("ur", "Urdu", "x"), ("mr", "Marathi", "y"), ("te", "Telugu", "z")]:
+        o = classify_origin("x", fst_native_parse=True, in_i2pt=False,
+                            etymology=_homograph(code, name, word))
+        assert o.class_ == "இயற்சொல்" and o.is_native is True, name
+        assert name in o.evidence, f"{name} sense must still be disclosed"
+        assert o.senses[1].borrowed_from == name
+
+
+# --- pure-Tamil alternative for the BORROWED sense --------------------------------------------
+
+def test_borrowed_sense_hands_back_the_pure_tamil_word():
+    """The point of the ruling: a reader who meant English 'car' still learns மகிழுந்து."""
+    o = classify_origin("கார்", fst_native_parse=True, in_i2pt=False, etymology=_homograph(
+        "en", "English", "car", ["மகிழுந்து", "சீருந்து", "தானுந்து"]))
+    borrowed = o.senses[1]
+    assert [c.equivalent for c in borrowed.tamil_alternatives] == ["மகிழுந்து", "சீருந்து", "தானுந்து"]
+    assert all(c.attestation == "attested" and c.citation for c in borrowed.tamil_alternatives)
+    assert o.senses[0].tamil_alternatives == [], "a native sense already IS the Tamil word"
+
+
+def test_a_synonym_that_is_itself_borrowed_is_never_offered_as_pure_tamil():
+    """சாலை's road sense lists ரோடு — English. Offering it as a pure-Tamil equivalent would be
+    worse than offering nothing, so the orthographic rules filter the synonym list."""
+    o = classify_origin("சாலை", fst_native_parse=True, in_i2pt=False, etymology=_homograph(
+        "sa", "Sanskrit", "शाला", ["ரோடு", "வழி", "பாதை"]))
+    got = [c.equivalent for c in o.senses[1].tamil_alternatives]
+    assert "ரோடு" not in got and got == ["வழி", "பாதை"]
+
+
+def test_orthographic_native_filter():
+    """Proves NON-nativeness only — that is all it is used for."""
+    for w in ("மகிழுந்து", "சீருந்து", "தானுந்து", "வழி", "பாதை", "வீடு", "மனை"):
+        assert looks_orthographically_native(w), w
+    for w in ("ரோடு", "ஜன்னல்", "பஸ்", "Thesaurus", "", "car"):
+        assert not looks_orthographically_native(w), w
+
+
+def test_synonyms_are_collected_per_sense_block():
+    """The synonym list must follow the SENSE, not the page: கார்'s car synonyms belong to the
+    English block, not to the native blackness block."""
+    wt = ("==Tamil==\n"
+          "===Etymology 1===\n{{inh+|ta|dra-pro|*kār||black}}.\n\n====Noun====\n"
+          "# [[blackness]]\n#: {{syn|ta|கருமை}}\n"
+          "===Etymology 2===\n{{bor+|ta|en|car}}.\n\n====Noun====\n"
+          "# [[car]]\n#: {{syn|ta|மகிழுந்து|சீருந்து}} {{a|ta|all|_|Formal}}\n")
+    senses = parse_etymology(wt)["senses"]
+    assert senses[0]["synonyms"] == ["கருமை"]
+    assert senses[1]["synonyms"] == ["மகிழுந்து", "சீருந்து"]
