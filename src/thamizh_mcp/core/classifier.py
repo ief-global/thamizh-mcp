@@ -83,15 +83,92 @@ def forbidden_final(word: str) -> Optional[str]:
     return last if last in _VALLINAM_MEI else None
 
 
+def _etymology_source(ety: dict) -> SourceRef:
+    return SourceRef(name="English Wiktionary (etymology)", tier="evolving",
+                     ref=ety.get("citation"), retrieved=ety.get("retrieved"))
+
+
+def _from_etymology(normalized: str, ety: dict, fst_native_parse: Optional[bool]) -> Origin:
+    """Turn a stated source language into a Tholkappiyam origin class.
+
+    Confidence is deliberately capped below the orthographic rules' certainty about NON-nativeness,
+    because this source is `evolving`: Wiktionary etymologies are crowd-edited and some are
+    genuinely contested (பசு is given as Sanskrit paśu while a Dravidian *pacu is also argued). The
+    competing class therefore always stays in `alternatives`, and the citation is always attached so
+    a scholar can check the claim rather than take our word for it. A `der` template ("derived from",
+    possibly through intermediaries) is weaker than an outright borrowing statement and scores lower.
+    """
+    if ety.get("relation") == "ambiguous":
+        # A homograph whose senses have different origins (கால் = leg, inherited / time, Sanskrit).
+        # Picking one would be a coin-flip dressed as an answer; which applies depends on the sense,
+        # and sense disambiguation is downstream (blueprint §2). Report both and stay honest.
+        senses = ety.get("senses", [])
+        parts = "; ".join(
+            f"{s['relation']} from {s['source_lang_name']}"
+            + (f" {s['source_word']}" if s.get("source_word") else "")
+            for s in senses)
+        return Origin(
+            class_="unknown", is_native=None, confidence=0.4,
+            evidence=("this headword has more than one etymology, one per sense — " + parts
+                      + ". Which applies depends on the sense meant, and sense disambiguation is "
+                        "downstream of this server. English Wiktionary; see the citation."),
+            alternatives=[{"class": "இயற்சொல்" if s["relation"] == "inherited" else
+                           ("வடசொல்" if s["source_lang"] == "sa" else "loanword"),
+                           "note": f"{s['relation']} from {s['source_lang_name']}"}
+                          for s in senses],
+            sources=[_etymology_source(ety)])
+
+    stated = ety.get("certainty") == "stated"
+    conf = 0.8 if stated else 0.65
+    lang, code = ety.get("source_lang_name", "?"), ety.get("source_lang")
+    src_word = ety.get("source_word")
+    origin_phrase = f"{lang} {src_word}" if src_word else lang
+    verb = "borrowed from" if ety.get("relation") == "borrowed" else "inherited from"
+    evidence = (f"English Wiktionary states the Tamil word is {verb} {origin_phrase} "
+                f"({{{{{ety.get('template')}}}}} template). Evolving source — evidence, not "
+                f"authority; see the citation.")
+
+    if ety.get("is_native"):
+        # Positive evidence of nativeness — the one thing the FST parse alone could never give.
+        return Origin(
+            class_="இயற்சொல்", is_native=True, confidence=conf, evidence=evidence,
+            alternatives=[{"class": "வடசொல்", "adaptation": "தற்பவம்",
+                           "note": "a fully naturalized borrowing can be recorded as inherited"}],
+            sources=[_etymology_source(ety), THAMIZHIMORPH_PARSE] if fst_native_parse
+            else [_etymology_source(ety)])
+
+    if code == "sa":
+        # வடசொல் is precisely "borrowed from Sanskrit" in the Tholkappiyam frame.
+        return Origin(
+            class_="வடசொல்", is_native=False, borrowed_from="Sanskrit", confidence=conf,
+            evidence=evidence,
+            alternatives=[{"class": "loanword",
+                           "note": "if the Sanskrit derivation is disputed"}],
+            sources=[_etymology_source(ety), THOLKAPPIYAM_MOZIMARABU])
+
+    # Any other language: a borrowing that is NOT Sanskrit — `loanword`, with the source named.
+    return Origin(
+        class_="loanword", is_native=False, borrowed_from=lang, confidence=conf, evidence=evidence,
+        alternatives=[{"class": "வடசொல்", "note": "if the source is ultimately Sanskrit"}],
+        sources=[_etymology_source(ety), THOLKAPPIYAM_MOZIMARABU])
+
+
 def classify_origin(
-    normalized: str, *, fst_native_parse: Optional[bool], in_i2pt: bool
+    normalized: str, *, fst_native_parse: Optional[bool], in_i2pt: bool,
+    etymology: Optional[dict] = None,
 ) -> Origin:
-    """Classify one normalized Tamil word's origin from offline signals.
+    """Classify one normalized Tamil word's origin.
 
     fst_native_parse: True = parses through the native FST, False = ran with no analysis,
     None = FST unavailable (foma not installed) — the native signal is then simply absent.
     in_i2pt: the word is an attested INDIC key in the Indic-To-Pure-Tamil lists.
+    etymology: a source-language claim from `adapters/etymology.py`, or None when the lookup was
+    not run (enrichment disabled) or found nothing. This is the ONLY signal that can name a source
+    language; every rule below it can prove non-nativeness but not provenance.
     """
+    if etymology:
+        return _from_etymology(normalized, etymology, fst_native_parse)
+
     grantha = grantha_letters_in(normalized)
     if grantha:
         # Grantha proves the word is NOT NATIVE. It does NOT prove the word is Sanskrit.
