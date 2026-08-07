@@ -1,0 +1,63 @@
+# Runs the test suite on every PR. Nothing ran it automatically before this — the suite was
+# 187 tests doing real work, gated only on someone remembering to run it locally.
+name: tests
+
+on:
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches: [main]
+
+# A fresh push to a PR makes the in-flight run obsolete; main runs are never cancelled.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # 3.10 is the floor declared in pyproject; 3.14 is what minnaham actually runs.
+        # Both are verified green — this is the real supported range, not an aspiration.
+        python: ["3.10", "3.14"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # foma supplies `flookup`, the driver for the ThamizhiMorph FST anchor. Without it five
+      # tests SKIP rather than fail, so the anchor could rot unnoticed — hence the explicit
+      # assertion below rather than trusting a green run.
+      # The package is `foma`. NOT `foma-bin`, which is an empty transitional deb.
+      - name: Install foma (provides flookup)
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends foma
+
+      - name: Set up uv and Python ${{ matrix.python }}
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: ${{ matrix.python }}
+          enable-cache: true
+
+      - name: Install dependencies
+        run: uv sync --extra web
+
+      # A silent skip is the failure mode this project exists to avoid, so prove the anchor is
+      # live before trusting the result.
+      - name: Verify the FST anchor is live
+        run: |
+          command -v flookup
+          uv run python -c "
+          from thamizh_mcp import config
+          assert config.flookup_available(), (
+              'flookup or data/fst missing — the 5 FST tests would silently SKIP')
+          print('FST anchor live:', config.FLOOKUP)
+          "
+
+      - name: Run tests
+        run: uv run pytest -q

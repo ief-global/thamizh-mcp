@@ -1,5 +1,7 @@
 # THAMIZH MCP
 
+[![tests](https://github.com/ief-global/thamizh-mcp/actions/workflows/tests.yml/badge.svg)](https://github.com/ief-global/thamizh-mcp/actions/workflows/tests.yml)
+
 Source-grounded Tamil word-grammar (**சொல் இலக்கணம்**) analysis, exposed as an MCP server.
 
 Give it one Tamil word and it returns: **origin**

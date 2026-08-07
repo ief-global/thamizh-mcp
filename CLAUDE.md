@@ -108,7 +108,9 @@ Orthography proves a word is **not native**; it can NEVER say which language it 
 4. **Phase 4 eval** (`thamizh-eval`, D-005) — paused, harness resumable. Coverage fixes raised the
    ceiling so a re-measure is now meaningful. Prior finding: bare Opus ~97% on BASIC morphology, so
    headroom is in weaker models + harder items.
-5. **Release rungs** — no CI exists yet (`.github/workflows/` absent); version still `0.1.0`.
+5. **Release rungs** — CI runs the suite on every PR (`.github/workflows/tests.yml`,
+   Python 3.10 + 3.14, foma installed so the 5 FST tests RUN rather than skip). Version is
+   still `0.1.0`; no published release yet.
    uvx → PyPI + Docker/GHCR. Registry + tamil-nlp-catalog listings after.
 6. Network session (batch): TVA கலைச்சொல் snapshot · locate/license Aalamaram (D-008).
 7. Lift `classify_origin` further with Thamizhi Validator.
