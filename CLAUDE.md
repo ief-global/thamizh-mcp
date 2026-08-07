@@ -109,7 +109,10 @@ Orthography proves a word is **not native**; it can NEVER say which language it 
    ceiling so a re-measure is now meaningful. Prior finding: bare Opus ~97% on BASIC morphology, so
    headroom is in weaker models + harder items.
 5. **Release rungs** — CI runs the suite on every PR (`.github/workflows/tests.yml`,
-   Python 3.10 + 3.14, foma installed so the 5 FST tests RUN rather than skip). Version is
+   Python 3.10 + 3.14, foma installed so the 5 FST tests RUN rather than skip). **`ci-ok` is the
+   required status check on `main`** — an aggregating job, NOT the matrix legs: requiring
+   `test (3.10)` by name would block every PR forever the day the matrix changes. Both repos'
+   `main` carry the same `protect-main` ruleset (PR-only, no force-push, no delete). Version is
    still `0.1.0`; no published release yet.
    uvx → PyPI + Docker/GHCR. Registry + tamil-nlp-catalog listings after.
 6. Network session (batch): TVA கலைச்சொல் snapshot · locate/license Aalamaram (D-008).

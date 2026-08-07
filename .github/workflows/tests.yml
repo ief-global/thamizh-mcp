@@ -35,8 +35,17 @@ jobs:
       # The package is `foma`. NOT `foma-bin`, which is an empty transitional deb.
       - name: Install foma (provides flookup)
         run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends foma
+          # Retried: once ci-ok is a required check, a transient Ubuntu mirror failure would
+          # otherwise block a merge for reasons that have nothing to do with the change.
+          for i in 1 2 3; do
+            sudo apt-get update -qq \
+              && sudo apt-get install -y --no-install-recommends foma \
+              && exit 0
+            echo "apt attempt $i failed; retrying in $((i * 10))s"
+            sleep $((i * 10))
+          done
+          echo "::error::foma install failed after 3 attempts"
+          exit 1
 
       - name: Set up uv and Python ${{ matrix.python }}
         uses: astral-sh/setup-uv@v5
@@ -61,3 +70,23 @@ jobs:
 
       - name: Run tests
         run: uv run pytest -q
+
+  # ONE stable check name for branch protection to require.
+  #
+  # The matrix legs are named `test (3.10)` / `test (3.14)`. Requiring those literal strings is a
+  # trap: change the matrix — drop 3.10, add 3.13 — and the required context stops being reported,
+  # so every PR blocks forever waiting on a check that will never arrive again. Requiring this job
+  # instead leaves the Python matrix free to change without touching branch protection.
+  #
+  # `if: always()` is load-bearing. Without it this job is SKIPPED when the matrix fails, and a
+  # skipped required check does not block a merge — the gate would silently pass on red.
+  ci-ok:
+    name: ci-ok
+    needs: test
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Assert every test job passed
+        run: |
+          echo "test matrix result: ${{ needs.test.result }}"
+          [ "${{ needs.test.result }}" = "success" ]
