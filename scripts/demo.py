@@ -66,6 +66,15 @@ async def show(word: str, with_meaning: bool) -> None:
     if a.origin.evidence:
         for chunk in _wrap(a.origin.evidence, W - 8):
             print(f"        {chunk}")
+    # A homograph is one form carrying more than one word: the Tamil sense leads above, and every
+    # sense — the borrowed one included — is listed here rather than collapsed away (D-015).
+    if a.origin.senses:
+        print("\n  சொல்லுக்குச் சொல் (origin by sense)")
+        for sn in a.origin.senses:
+            print(f"     {sn.sense or '—'}: {sn.class_} — {sn.evidence}")
+            if sn.tamil_alternatives:
+                eq = ", ".join(c.equivalent for c in sn.tamil_alternatives)
+                print(f"        → Tamil alternatives for this sense: {eq}")
 
     ne = a.native_equivalent
     if ne.candidates:

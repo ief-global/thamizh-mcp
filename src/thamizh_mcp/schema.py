@@ -53,19 +53,69 @@ class SourceRef(BaseModel):
     #                               (the honest interim). Additive, non-breaking.
 
 
+class EquivalentCandidate(BaseModel):
+    """Attested-only: `source` + `attestation` are REQUIRED. The merge layer drops any
+    candidate lacking an attestation source — an invented coinage can never surface."""
+    model_config = ConfigDict(populate_by_name=True)
+
+    equivalent: str
+    source: str
+    tier: Optional[Tier] = None
+    register_: Optional[Register] = Field(default=None, alias="register")
+    attestation: Attestation
+    confidence: Optional[float] = Field(default=None, ge=0.0, le=1.0)
+    citation: Optional[str] = None
+
+
+class SenseOrigin(BaseModel):
+    """Origin of ONE sense of a headword (D-015, Session 3).
+
+    Origin is really a property of a WORD, and a homograph is two words sharing a form: கால் is
+    leg (inherited from Proto-Dravidian *kāl) AND time (borrowed from Sanskrit काल). Modelling
+    origin per-headword forced those into a single `unknown`, which is honest but discards
+    evidence we already hold. This mirrors `Meaning.senses` so the two line up.
+    """
+    model_config = ConfigDict(populate_by_name=True)
+
+    sense: Optional[str] = None            # the sense this origin belongs to — "leg", "time"
+    class_: OriginClass = Field(default="unknown", alias="class")
+    is_native: Optional[bool] = None
+    borrowed_from: Optional[str] = None    # display name of the source language
+    source_word: Optional[str] = None      # the etymon itself — *kāl, काल, car
+    relation: Optional[str] = None         # inherited | borrowed | derived
+    evidence: str = ""
+    # Tamil alternatives for THIS sense — populated only when the sense is borrowed (a native
+    # sense already IS the Tamil word). Saran's ruling, 2026-08-05: a reader who meant the English
+    # word should still be handed the Tamil one — கார்'s 'car' sense carries மகிழுந்து / சீருந்து /
+    # தானுந்து. Same attested-only contract as NativeEquivalent (source + attestation required).
+    #
+    # NOT called `native_equivalents`, deliberately. These come from the page's own {{syn|ta|…}}
+    # list filtered through the orthographic rules, which prove NON-nativeness only — so obvious
+    # borrowings (ரோடு) are excluded but naturalized Sanskrit still passes (தானம் 'place' offers
+    # சுவர்க்கம் < स्वर्ग). Calling them "pure Tamil" would over-claim. The curated I2PT lists behind
+    # `NativeEquivalent` are the anchor-tier answer; these are `evolving` evidence at 0.6.
+    tamil_alternatives: list[EquivalentCandidate] = Field(default_factory=list)
+
+
 class Origin(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
     class_: OriginClass = Field(default="unknown", alias="class")
-    # None = genuinely undetermined, not False. A homograph whose senses differ in origin (கால் =
-    # leg, inherited / time, Sanskrit) is neither native nor non-native as a headword; reporting
-    # False there would assert non-nativeness we have not established.
+    # None = genuinely undetermined, not False. Kept Optional for the case `senses` cannot resolve
+    # (every sense borrowed from a different language); where a native sense exists it is True, per
+    # Saran's ruling below.
     is_native: Optional[bool] = False
     borrowed_from: Optional[str] = None
     adaptation: Optional[Adaptation] = None
     evidence: str = ""
     confidence: float = Field(default=0.0, ge=0.0, le=1.0)
     alternatives: list[dict[str, Any]] = Field(default_factory=list)
+    # One entry per sense when the headword is a homograph whose senses differ in origin; empty
+    # for the ordinary single-origin word. **Saran's ruling (2026-08-05): where a Tamil sense and a
+    # borrowed sense share a form, the Tamil sense leads at headword level** — this is a Thamizh
+    # server, so it nudges the reader to the Tamil word first — and the borrowed sense is always
+    # cited here and in `alternatives` for full disclosure, never suppressed.
+    senses: list[SenseOrigin] = Field(default_factory=list)
     sources: list[SourceRef] = Field(default_factory=list)
 
 
@@ -122,20 +172,6 @@ class Grammar(BaseModel):
     authority: Optional[Authority] = None
     notes: Optional[str] = None
     sources: list[SourceRef] = Field(default_factory=list)
-
-
-class EquivalentCandidate(BaseModel):
-    """Attested-only: `source` + `attestation` are REQUIRED. The merge layer drops any
-    candidate lacking an attestation source — an invented coinage can never surface."""
-    model_config = ConfigDict(populate_by_name=True)
-
-    equivalent: str
-    source: str
-    tier: Optional[Tier] = None
-    register_: Optional[Register] = Field(default=None, alias="register")
-    attestation: Attestation
-    confidence: Optional[float] = Field(default=None, ge=0.0, le=1.0)
-    citation: Optional[str] = None
 
 
 class NativeEquivalent(BaseModel):

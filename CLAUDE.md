@@ -24,7 +24,7 @@ integration. Loop: work on `develop` here → push → open PR `develop → main
 milestones. After any history rewrite, other clones must `git reset --hard origin/main`
 (not merge/rebase).
 
-## Current state (2026-08-05) — 171 tests pass (169 without live foma)
+## Current state (2026-08-05) — 187 tests pass (182 + 5 skipped without live foma)
 
 **Everything below is live and merged to `main`.** Nine MCP tools + web/REST + CLI over ONE engine
 (blueprint §8 — the web head needed zero engine changes, which validated that design).
@@ -43,7 +43,7 @@ milestones. After any history rewrite, other clones must `git reset --hard origi
 
 | | result |
 |---|---|
-| **Origin** | 82 correct · 23 honest `unknown` · **1 wrong** (was 59/30/17 before the D-011/D-014 work) |
+| **Origin** | 87 correct · 18 honest `unknown` · **1 wrong** (was 59/30/17 before D-011/D-014, 82/23/1 before per-sense origin) |
 | **Formation** | 26/30 decoded · 4 gaps (`கொடுக்க` `கொடுத்து` `கொடுக்கும்` non-finite; `வீட்டிற்கு` noun dative) |
 
 Re-run: `uv run python scripts/quality_sweep.py` (network on; ~3 min). It is the only honest
@@ -60,6 +60,34 @@ Orthography proves a word is **not native**; it can NEVER say which language it 
 - **இறுதி எழுத்து is different and still asserts `loanword`** — it turns on morphological
   assimilation, not letters; Sanskrit borrowings take Tamil endings, so a bare vallinam final really
   does indicate a non-Sanskrit loan. Reviewable, reasoning in code.
+- **Origin is per-SENSE, not per-headword (D-015, Session 3).** en.wiktionary carries one
+  `===Etymology N===` block per sense and they disagree: கால் is leg/canal/forest (inherited) AND
+  time (Sanskrit); பூ is flower AND earth; பசு is green AND cow; சாலை is road AND hall; கார் is
+  blackness AND English car. The parser reads each block on its own — ranking templates across the
+  whole section picked `bor` over `inh` every time and labelled four core native words வடசொல் at
+  0.8. Each sense's origin lands in `Origin.senses[]`, mirroring `Meaning.senses`.
+  **Saran's ruling (2026-08-05): the Tamil sense LEADS at headword level — for EVERY source
+  language**, Sanskrit, English, Urdu, Marathi, Telugu alike. This is a Thamizh server, so the
+  reader is pointed at the Tamil word first; the borrowed sense is never suppressed — it rides in
+  the evidence, in `alternatives`, and in full in `senses[]`. Confidence 0.7, below a clean
+  single-etymology 0.8, because the headword class is a reporting ruling layered on the evidence.
+  A sense whose block states no relation at all is omitted, not padded in. 16 of the 108 sweep
+  words carry a breakdown. `Origin.is_native` stays `Optional` for the case no Tamil sense exists
+  (senses differ only in WHICH foreign language, e.g. கிளாஸ் = class AND glass).
+- **A borrowed sense hands back the Tamil word for it.** `SenseOrigin.tamil_alternatives` —
+  கார்'s English 'car' sense returns மகிழுந்து/சீருந்து/தானுந்து; கிளாஸ் returns வகுப்பு for its
+  'class' sense and கண்ணாடி for 'glass'. Saran's reasoning: the reader may well have meant the
+  borrowed sense, and now they also know the Tamil word for it. Sourced from the page's own
+  `{{syn|ta|…}}` under that sense, **filtered by `classifier.looks_orthographically_native`** —
+  en.wiktionary lists ரோடு (English) as a synonym of சாலை's road sense, so an unfiltered list would
+  hand back a borrowing.
+  ⚠️ **Named `tamil_alternatives`, NOT `native_equivalents`, on purpose.** The orthographic rules
+  prove non-nativeness only, so naturalized Sanskrit passes them — தானம் 'place' yields சுவர்க்கம்
+  (< स्वर्ग) and சக்தி (< शक्ति), மந்திரம் yields மண்டபம் (< मण्डप). Do not re-label these "pure Tamil"
+  until the loanword lexicon lands; that is the same native-by-default weakness as build rung 1.
+  Evolving tier, confidence 0.6. They also feed the headword `native_equivalent` when I2PT misses —
+  I2PT is keyed on borrowed HEADWORDS and has no கார் row at all, so `suggest_native_equivalent`
+  was silent for every homograph before this.
 - **`adapters/etymology.py`** resolves the source from en.wiktionary's machine-readable templates
   (`{{bor+|ta|pt|janela}}`, `{{inh+|ta|dra-pro|*maran}}`). Evolving tier — evidence, not authority;
   confidence caps at 0.8, competing class stays in `alternatives`, citation always travels.
@@ -67,34 +95,23 @@ Orthography proves a word is **not native**; it can NEVER say which language it 
 
 ## Next tasks (build order)
 
-1. **▶ SESSION 3 FOCUS — Tamil/Sanskrit homographs.** A headword can carry different origins per
-   SENSE: கால் = leg (inherited, dra-pro *kāl) AND time (Skt காល); பூ = flower AND earth (Skt भू);
-   பசு = cow (Skt पशु) AND green (dra-pro *pac-); சாலை = road (native சால்+ஐ) AND hall (Skt शाला);
-   கார் = black (native) AND car (English). We currently return `unknown` + both alternatives, which
-   is honest but throws away real information — 5 of the 23 unknowns are this.
-   **The fix is architectural, not a rule tweak:** origin is currently per-HEADWORD but is really
-   per-SENSE. Options to weigh: (a) `Origin.senses[]` so the response carries one origin per sense,
-   (b) keep headword-level but return a `senses` breakdown alongside, (c) let the caller pass a sense
-   hint. Note the schema already has `Meaning.senses` — aligning origin to it is the natural move.
-   The adapter already parses both senses (`relation: "ambiguous"` + `senses[]`), so the data is
-   there; only the schema and the presentation need deciding.
-2. **Loanword lexicon** — the last unprincipled branch is native-by-default (no Grantha + legal
+1. **▶ NEXT — Loanword lexicon** — the last unprincipled branch is native-by-default (no Grantha + legal
    phonotactics + no attestation ⇒ assumed native). It is the 1 remaining wrong (பட்டன், English
-   button, no en.wiktionary page) and part of the 23 unknowns. Needs a lexicon, not a rule.
+   button, no en.wiktionary page) and part of the 18 unknowns. Needs a lexicon, not a rule.
    **Madras Tamil Lexicon** (dsal.uchicago.edu) is the intended ANCHOR upgrade over Wiktionary.
-3. **FST coverage:** non-finite forms (infinitive கொடுக்க, verbal participle கொடுத்து, adjectival
+2. **FST coverage:** non-finite forms (infinitive கொடுக்க, verbal participle கொடுத்து, adjectival
    கொடுக்கும்) + noun dative வீட்டிற்கு + more lemmas beyond the ~11 curated.
-4. **Storage backend abstraction (D-013)** — `store/knowledge.py` is SQLite-coupled (`import sqlite3`,
+3. **Storage backend abstraction (D-013)** — `store/knowledge.py` is SQLite-coupled (`import sqlite3`,
    `INSERT OR REPLACE`, `AUTOINCREMENT`). `thamizh-ai.org` runs Postgres; **the MCP product keeps
    zero-config SQLite and must NEVER require containers or Postgres.** Both backends tested,
    SQLite default.
-5. **Phase 4 eval** (`thamizh-eval`, D-005) — paused, harness resumable. Coverage fixes raised the
+4. **Phase 4 eval** (`thamizh-eval`, D-005) — paused, harness resumable. Coverage fixes raised the
    ceiling so a re-measure is now meaningful. Prior finding: bare Opus ~97% on BASIC morphology, so
    headroom is in weaker models + harder items.
-6. **Release rungs** — no CI exists yet (`.github/workflows/` absent); version still `0.1.0`.
+5. **Release rungs** — no CI exists yet (`.github/workflows/` absent); version still `0.1.0`.
    uvx → PyPI + Docker/GHCR. Registry + tamil-nlp-catalog listings after.
-7. Network session (batch): TVA கலைச்சொல் snapshot · locate/license Aalamaram (D-008).
-8. Lift `classify_origin` further with Thamizhi Validator.
+6. Network session (batch): TVA கலைச்சொல் snapshot · locate/license Aalamaram (D-008).
+7. Lift `classify_origin` further with Thamizhi Validator.
 
 ## Design rules (do not violate)
 - **Tholkappiyam-first:** cite Tholkappiyam before Nannool for grammar claims. This drifted once

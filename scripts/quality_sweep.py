@@ -46,7 +46,10 @@ WORDS = [
     ("சமுத்திரம்", "வடசொல்", ""), ("வித்தை", "வடசொல்", ""),
 
     # --- English loans ----------------------------------------------------------------------
-    ("பஸ்", "loanword", "English bus"), ("கார்", "loanword", "English car"),
+    ("பஸ்", "loanword", "English bus"),
+    ("கார்", "இயற்சொல்", "HOMOGRAPH, ruled 2026-08-05: native கார் (blackness/monsoon, "
+              "dra-pro *kār) LEADS over English car. Was expected `loanword`. The English sense "
+              "is cited under origin.senses[] and hands back மகிழுந்து/சீருந்து/தானுந்து."),
     ("ரயில்", "loanword", "English rail"), ("ஸ்கூல்", "loanword", "English school"),
     ("ஹோட்டல்", "loanword", "English hotel"), ("காபி", "loanword", "English coffee"),
     ("டீ", "loanword", "English tea"), ("சைக்கிள்", "loanword", "English cycle"),
@@ -101,11 +104,13 @@ async def main():
     print("=" * 100)
     print("ORIGIN SWEEP")
     print("=" * 100)
-    confident_wrong, unknowns, ok, arguable = [], [], [], []
+    confident_wrong, unknowns, ok, arguable, homographs = [], [], [], [], []
     for word, exp, note in WORDS:
         a = await eng.analyze(word, word, include=["origin"])
         o = a.origin
         got, conf = (o.class_ if o else "?"), (o.confidence if o else 0.0)
+        if o is not None and o.senses:
+            homographs.append((word, got, o.senses))
         if exp == "?":
             arguable.append((word, got, conf, note))
         elif got == "unknown":
@@ -131,6 +136,19 @@ async def main():
     print("\n--- my label uncertain, for Saran ---")
     for w, got, conf, note in arguable:
         print(f"   {w:<16} got {got:<10} conf {conf:.2f}   {note}")
+
+    # D-015 / Session 3: origin is per-SENSE. A homograph is not a coverage gap — it is a headword
+    # carrying more than one word. These used to be reported as bare `unknown`.
+    print("\n--- HOMOGRAPHS: per-sense origin (headword leads with the Tamil sense) ---")
+    if not homographs:
+        print("   none")
+    for word, got, senses in homographs:
+        print(f"   {word:<16} headword {got}")
+        for sn in senses:
+            eq = ", ".join(c.equivalent for c in sn.tamil_alternatives)
+            print(f"       {str(sn.sense):<34} {sn.class_:<10} {sn.evidence}")
+            if eq:
+                print(f"       {'':<34} {'':<10} → Tamil alternatives for this sense: {eq}")
 
     print("\n" + "=" * 100)
     print("FORMATION SWEEP")

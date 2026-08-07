@@ -13,6 +13,7 @@ from thamizh_mcp import config
 from thamizh_mcp.adapters.base import AdapterResult, NoEntry
 from thamizh_mcp.adapters.equivalents import IndicToPureTamilAdapter, load_index
 from thamizh_mcp.core.engine import Engine
+from thamizh_mcp.schema import SourceRef
 
 
 def _write(dir_: Path, name: str, rows: list[tuple[str, str]]) -> None:
@@ -102,3 +103,75 @@ def test_real_i2pt_known_hit_and_miss():
     assert all(c["source"] and c["attestation"] == "attested" for c in hit.fields["candidates"])
     miss = asyncio.run(ad.lookup("மரம்"))
     assert isinstance(miss, NoEntry)
+
+
+# --- homograph gating (D-015, Session 3) -------------------------------------------------------
+
+class _StubEtymology:
+    """An etymology source with a fixed answer — keeps these tests offline."""
+    name, tier = "stub etymology", "evolving"
+
+    def __init__(self, ety):
+        self._ety = ety
+
+    async def lookup(self, normalized_word):
+        return AdapterResult(
+            fields={"etymology": self._ety}, tier="evolving",
+            sources=[SourceRef(name=self.name, tier="evolving", ref="u", retrieved="2026-08-05")])
+
+
+_AMBIGUOUS = {
+    "relation": "ambiguous", "is_native": None, "citation": "u",
+    "senses": [
+        {"relation": "inherited", "source_lang": "dra-pro", "sense": "native sense",
+         "source_lang_name": "Proto-Dravidian", "source_word": "*x"},
+        {"relation": "borrowed", "source_lang": "sa", "sense": "borrowed sense",
+         "source_lang_name": "Sanskrit", "source_word": "y"},
+    ]}
+
+_INHERITED = {"relation": "inherited", "is_native": True, "source_lang": "dra-pro",
+              "source_lang_name": "Proto-Dravidian", "source_word": "*x", "template": "inh",
+              "certainty": "stated", "citation": "u"}
+
+
+def _engine(tmp_path, ety):
+    data_dir, sublists = _fixture_dir(tmp_path)
+    return Engine(equivalent_sources=[IndicToPureTamilAdapter(data_dir, sublists)],
+                  etymology_sources=[_StubEtymology(ety)])
+
+
+def test_homograph_keeps_the_equivalents_of_its_borrowed_sense(tmp_path):
+    """A homograph's headword leads Tamil (Saran's ruling), but its BORROWED sense still has
+    attested equivalents — கார் leads native yet its English 'car' sense has மகிழுந்து.
+    Short-circuiting on is_native alone dropped those silently."""
+    a = asyncio.run(_engine(tmp_path, _AMBIGUOUS).analyze(
+        "அகராதி", "அகராதி", include=["origin", "native_equivalent"]))
+    assert a.origin.class_ == "இயற்சொல்", "headword leads with the Tamil sense"
+    assert a.native_equivalent.applicable is True, "the borrowed sense keeps its equivalents"
+    assert a.native_equivalent.candidates[0].equivalent == "அகரவரிசை"
+
+
+def test_wholly_native_word_still_skips_the_equivalent_lookup(tmp_path):
+    """The homograph exception must not disable the native short-circuit for ordinary words."""
+    a = asyncio.run(_engine(tmp_path, _INHERITED).analyze(
+        "அகராதி", "அகராதி", include=["origin", "native_equivalent"]))
+    assert a.origin.is_native is True and a.origin.senses == []
+    assert a.native_equivalent.applicable is False
+    assert "no borrowed equivalent applies" in a.native_equivalent.note
+
+
+def test_homograph_headword_falls_back_to_its_borrowed_senses_equivalents(tmp_path):
+    """I2PT is keyed on borrowed HEADWORDS, so it has no கார் row — கார் is a native word that
+    merely shares its form with English 'car'. suggest_native_equivalent must still answer, from
+    the synonyms listed under that borrowed sense (Saran's ruling, 2026-08-05)."""
+    ety = dict(_AMBIGUOUS)
+    ety["senses"] = [dict(_AMBIGUOUS["senses"][0], synonyms=[]),
+                     dict(_AMBIGUOUS["senses"][1], synonyms=["மகிழுந்து", "ரோடு"])]
+    # "மரம்" is deliberately NOT in the I2PT fixture, so the fallback is what answers
+    a = asyncio.run(_engine(tmp_path, ety).analyze(
+        "மரம்", "மரம்", include=["origin", "native_equivalent"]))
+    assert a.origin.class_ == "இயற்சொல்"
+    assert a.native_equivalent.applicable is True
+    assert [c.equivalent for c in a.native_equivalent.candidates] == ["மகிழுந்து"], \
+        "ரோடு is itself English and must not surface"
+    assert not any(g.field == "native_equivalent" for g in a.gaps)
