@@ -19,6 +19,45 @@ Smoke test (2026-07-02): மரம்→`மரம்+noun+nom`; மரத்த
 
 ## Classical grammar texts (D-011) — pinned 2026-08-02
 
+### ⚠️ Running heads absorbed into Nannūl verses — 2 ruled, 15 awaiting ruling
+
+Project Madurai's Nannūl text sometimes carries the NEXT section's subject word at the end of the
+preceding நூற்பா. This matters now that the runtime QUOTES verses to users (D-018).
+
+**Ruled 2026-08-08 (Saran):** நூற்பா **133** (trailing `பகுதி`) and **140** (trailing `இடைநிலை`) are
+running heads and are trimmed by `scripts/build_classical.py`. நூற்பா **142** is GENUINE — its
+trailing `இடைநிலை` is the verse's own predicate (`…தரும் தொழில் இடைநிலை`) — and must never be trimmed.
+
+**No heuristic can separate these**, which is why the trim list is curated per verse: the
+discriminator is whether the verse's sentence completes without the term, a reading judgement.
+
+The remaining candidates are **NOT trimmed** pending ruling — quoting one extra word is a smaller
+error than silently deleting scripture. The verdict column is *our reading, offered as a proposal*,
+not an authority:
+
+| நூற்பா | trailing term | our reading | verse tail |
+|---|---|---|---|
+| 1 | `பாயிரம்` | **GENUINE?** | …ை நூன்முகம் புறவுரை தந்துரை புனைந்துரை பாயிரம் |
+| 3 | `பாயிரம்` | **GENUINE?** | …்றாம் ஐந்தும் எல்லாநூற்கும் இவை பொதுப் பாயிரம் |
+| 61 | `பெயர்` | **TRIM?** | …ு விரி ஒன்று ஒழி முந்நூற்று எழுபான் என்ப பெயர் |
+| 139 | `விகுதி` | **GENUINE?** | …விளம்பிய பகுதி வேறு ஆதலும் விதியே விகுதி |
+| 143 | `இடைநிலை` | **GENUINE** | … இடத்தின் ஐம்பால் நிகழ்பொழுது அறை வினை இடைநிலை |
+| 145 | `வடமொழியாக்கம்` | **TRIM?** | …திர்மறை மும்மையும் ஏற்கும் ஈங்கே வடமொழியாக்கம் |
+| 151 | `புணர்ப்பே` | **GENUINE** | …ரு மொழிகள் இயல்பொடு விகாரத்து இயைவது புணர்ப்பே |
+| 181 | `அல்வழி` | **GENUINE?** | …வன்தொடர் அல்லன முன்மிகா அல்வழி |
+| 182 | `வேற்றுமை` | **TRIM?** | …ின் மிகாநெடில் உயிர்த்தொடர் முன்மிகா வேற்றுமை |
+| 203 | `வேற்றுமை` | **GENUINE?** | …ம் அட்டு உறின் ஐ கெட்டு அந்நீள்வுமாம் வேற்றுமை |
+| 242 | `சாரியை` | **TRIM?** | …்கும் மன் அப்பெயர் வேற்றுமைப் புணர்ப்பே சாரியை |
+| 274 | `சொல்` | **GENUINE?** | …னும் ஈர் எழுத்தானும் இயைவன வடசொல் பெயர்ச் சொல் |
+| 290 | `வேற்றுமை` | **TRIM?** | … பிறிதைத் தொல்முறை உரைப்பன ஆகு பெயரே வேற்றுமை |
+| 291 | `வேற்றுமை` | **GENUINE** | … ஈறாய்ப் பொருள் வேற்றுமை செய்வன எட்டே வேற்றுமை |
+| 322 | `வினை` | **GENUINE** | …ி ஒன்றற்கு உரியவும் பொதுவும் ஆகும் முற்று வினை |
+
+To rule one: add it to `NANNUL_RUNNING_HEADS` in `scripts/build_classical.py`, re-run the build, and
+re-sync any verbatim quote in `data/grammar/concept_map.json` (the citation guard will fail until you
+do, which is intended).
+
+
 Built by `scripts/build_classical.py` into `data/classical/{tholkappiyam,nannul}.json`. Re-run with
 `--verify` to detect upstream drift; the `source_sha256` below is over the raw fetched bytes.
 

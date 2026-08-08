@@ -15,7 +15,7 @@
         {
           "authority": "Nannūl",
           "verse": 133,
-          "text": "பகுதி விகுதி இடைநிலை சாரியை சந்தி விகாரம் ஆறினும் ஏற்பவை முன்னி புணர்ப்ப முடியும் எப்பதங்களும் பகுதி",
+          "text": "பகுதி விகுதி இடைநிலை சாரியை சந்தி விகாரம் ஆறினும் ஏற்பவை முன்னி புணர்ப்ப முடியும் எப்பதங்களும்",
           "states": "THE foundational verse. Names all six உறுப்பு — பகுதி, விகுதி, இடைநிலை, சாரியை, சந்தி, விகாரம் — and says every பதம் is completed by joining whichever of the six it takes ('ஏற்பவை'). Note 'ஏற்பவை': a word takes those that APPLY, so not all six occur in every word."
         },
         {
@@ -65,7 +65,7 @@
         {
           "authority": "Nannūl",
           "verse": 140,
-          "text": "அன் ஆன் அள் ஆள் அர் ஆர் ப மார் அ ஆ கு டு து று என் ஏன் அல் அன் அம் ஆம் எம் ஏம் ஓம் ஒடு உம் ஊர் க ட த ற ஐ ஆய் இ மின் இர் ஈர் ஈயர் கயவும் என்பவும் பிறவும் வினையின் விகுதி பெயரினும் சிலவே இடைநிலை",
+          "text": "அன் ஆன் அள் ஆள் அர் ஆர் ப மார் அ ஆ கு டு து று என் ஏன் அல் அன் அம் ஆம் எம் ஏம் ஓம் ஒடு உம் ஊர் க ட த ற ஐ ஆய் இ மின் இர் ஈர் ஈயர் கயவும் என்பவும் பிறவும் வினையின் விகுதி பெயரினும் சிலவே",
           "states": "The விகுதி inventory. Already cited by vikuthi.json."
         }
       ],
@@ -137,7 +137,7 @@
         {
           "authority": "Nannūl",
           "verse": 133,
-          "text": "பகுதி விகுதி இடைநிலை சாரியை சந்தி விகாரம் ஆறினும் ஏற்பவை முன்னி புணர்ப்ப முடியும் எப்பதங்களும் பகுதி",
+          "text": "பகுதி விகுதி இடைநிலை சாரியை சந்தி விகாரம் ஆறினும் ஏற்பவை முன்னி புணர்ப்ப முடியும் எப்பதங்களும்",
           "states": "சந்தி is named as one of the six உறுப்பு. ⚠️ NOTE: no verse located so far gives சந்தி a positional definition the way 141 does for இடைநிலை and 243 does for சாரியை. Its identification currently rests on Saran's ruling plus the elimination argument below."
         }
       ],
@@ -271,5 +271,6 @@
     "எச்சவினை விகுதி: is there a நூற்பா that names these as a class, so the inventory can rise above lesson-level citation?",
     "சந்தி: is there a verse giving சந்தி a positional definition, as 141 does for இடைநிலை and 243 for சாரியை? Currently only Saran's ruling plus elimination."
   ],
-  "attribution": "நூற்பா quoted from the pinned Project Madurai etexts (data/classical/), reproduced with their headers intact — see LICENSING.md. TVA extracts are cited, not redistributed; the ePUBs stay out of git."
+  "attribution": "நூற்பா quoted from the pinned Project Madurai etexts (data/classical/), reproduced with their headers intact — see LICENSING.md. TVA extracts are cited, not redistributed; the ePUBs stay out of git.",
+  "running_heads_note": "⚠️ Project Madurai's Nannūl text sometimes carries the NEXT section's subject word at the end of the preceding நூற்பா. Ruled 2026-08-08: 133 ('பகுதி') and 140 ('இடைநிலை') are running heads and are now trimmed in scripts/build_classical.py; 142's trailing 'இடைநிலை' is GENUINE ('தரும் தொழில் இடைநிலை') and must never be trimmed. No heuristic can separate them — the discriminator is whether the verse's sentence completes without the term — so the trim list is curated per verse. Sixteen further candidates are listed in data/PINS.md awaiting ruling and are deliberately NOT trimmed meanwhile: quoting one extra word is a smaller error than deleting scripture."
 }
