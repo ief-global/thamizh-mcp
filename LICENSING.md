@@ -18,7 +18,7 @@ provenance machinery that makes answers auditable also makes licences classifiab
 |---|---|---|---|
 | Our code, rule tables, curated paradigms | Apache-2.0 | everything | — |
 | ThamizhiMorph FSTs | Apache-2.0 | everything | attribution + academic citation |
-| Indic-To-Pure-Tamil word lists | MIT | use + redistribution | attribution |
+| Sanskrit-To-Pure-Tamil (S2PT) word lists | ⚠️ **unstated upstream** (D-017) | provisional; under review | attribution + name the source's limits |
 | Tamil Wiktionary (meanings) | CC BY-SA 4.0 / GFDL | use + public serving | attribution; stays CC BY-SA |
 | foma / flookup | Apache-2.0 | runtime dep (not redistributed) | — |
 | Tholkappiyam / Nannūl — the *works* | classical, public domain | everything | cite அதிகாரம்/இயல் + நூற்பா |
@@ -41,17 +41,32 @@ provenance machinery that makes answers auditable also makes licences classifiab
    *purpose* of the public demo: scholars and users pinpoint errors so we can correct them. Disabling
    it would remove the feedback loop that improves the data.
 
-## I2PT is deliberately provisional
+## S2PT is provisional — and its licence is UNSTATED (corrected 2026-08-08)
 
-Indic-To-Pure-Tamil is MIT-licensed and openly redistributable (it aggregates openly-licensed community
-word lists), so there is no licence obstacle. It is nonetheless **expected to be superseded**: we are
-sourcing higher-quality, authenticated equivalents (TVA / govt கலைச்சொல் glossaries and comparable gold
-sources). The adapter is one entry behind the `SourceAdapter` interface precisely so a better source can
-be dropped in without architectural change. Treat I2PT as a working placeholder, not a permanent anchor.
+**This section previously claimed S2PT (then called "Indic-To-Pure-Tamil") was MIT-licensed and openly
+redistributable. That claim was wrong and is withdrawn.** Upstream —
+`github.com/narVidhai/Sanskrit-To-Pure-Tamil-Dictionary`, renamed from `Indic-To-Pure-Tamil` — has **no
+LICENSE file** and states no terms in its README. Its four sub-lists are scraped from community sites
+(viruba.com, tamilchol.com, thamizhdna.org, tamilmantram.com) whose own terms are also unstated. Last
+upstream commit: 2020. Sibling repos in the same org do carry explicit MIT, which suggests an omission
+rather than an intent to restrict — but an omission is not a grant.
+
+**What we do about it, pending resolution:**
+- the lists stay vendored and used — they are attested and unique at their job — but
+- every claim they support is **confidence-capped at 0.55**, the lowest committing score in the
+  classifier, and its evidence string names the weakness in the answer itself;
+- an en.wiktionary etymology always outranks them (etymology is evaluated first);
+- they are marked for **supersession** by authenticated sources (TVA / govt கலைச்சொல் glossaries and
+  comparable gold sources). The `SourceAdapter` seam makes that a drop-in swap.
+
+Treat S2PT as a working placeholder, never an anchor, and never cite it as a settled licence.
 
 ## Still genuinely open (unrelated to the above)
 
-- **Madras University Tamil Lexicon (DSAL)** — terms not yet reviewed; not vendored or served.
+- **Madras University Tamil Lexicon (DSAL)** — RESOLVED 2026-08-07 (D-016): CC BY-NC-ND 2.0,
+  consult-and-cite only, never vendored. Also `robots.txt`-blocked for automated query, so
+  integration awaits written permission from U. Madras / DSAL.
+- **S2PT upstream licence** — unstated; see the section above. The one genuine licence gap we ship.
 - **Aalamaram treebank** — distribution/licence unknown until located (D-008).
 - **Tholkappiyam / Nannūl digitised editions** — to be pinned (Project Madurai chosen); needed for
   நூற்பா-level citation. Until then citations stay chapter-level and say so.

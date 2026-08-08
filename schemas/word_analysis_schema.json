@@ -468,7 +468,7 @@
         },
         "source": {
           "type": "string",
-          "description": "Authority attesting this equivalent (கலைச்சொல்/TVA/govt, Indic-To-Pure-Tamil, Wiktionary, தனித்தமிழ் list)."
+          "description": "Authority attesting this equivalent (கலைச்சொல்/TVA/govt, Sanskrit-To-Pure-Tamil, Wiktionary, தனித்தமிழ் list)."
         },
         "tier": {
           "type": "string",

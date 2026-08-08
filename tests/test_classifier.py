@@ -1,9 +1,10 @@
 """Origin classifier (objective 1): orthographic + phonotactic rules and signal fusion.
 
-The rule logic is pure and offline — signals (FST parse, I2PT membership) are passed in directly,
+The rule logic is pure and offline — signals (FST parse, S2PT membership) are passed in directly,
 so these run without foma. One live end-to-end test (needs_fst) exercises the real FST path.
 """
 import asyncio
+import io
 import sys
 from pathlib import Path
 
@@ -48,7 +49,7 @@ def test_grantha_proves_borrowed_not_sanskrit():
     (Portuguese janela), ஜாமீன் and ஜில்லா (Urdu) — every one labelled வடசொல் at 0.9. What the
     orthography licenses is `is_native=False`; the source needs a lexicon we do not have offline.
     """
-    o = classify_origin("ஜோதி", fst_native_parse=None, in_i2pt=False)  # ஜ is a Grantha letter
+    o = classify_origin("ஜோதி", fst_native_parse=None, in_s2pt=False)  # ஜ is a Grantha letter
     assert o.is_native is False, "Grantha DOES prove the word is not native"
     assert o.class_ == "unknown", "but it does NOT prove the source is Sanskrit"
     assert o.borrowed_from is None
@@ -59,20 +60,20 @@ def test_grantha_proves_borrowed_not_sanskrit():
 def test_grantha_does_not_call_english_loans_sanskrit():
     """The regression that motivated the change — these are English, Portuguese and Urdu."""
     for word in ("பஸ்", "ஸ்கூல்", "ஹோட்டல்", "ஆபீஸ்", "நர்ஸ்", "ஜன்னல்", "ஜாமீன்", "ஜில்லா"):
-        o = classify_origin(word, fst_native_parse=None, in_i2pt=False)
+        o = classify_origin(word, fst_native_parse=None, in_s2pt=False)
         assert o.class_ != "வடசொல்", f"{word} is not Sanskrit"
         assert o.is_native is False, f"{word} is certainly borrowed"
 
 
 def test_forbidden_initial_is_loanword():
-    o = classify_origin("ரயில்", fst_native_parse=None, in_i2pt=False)
+    o = classify_origin("ரயில்", fst_native_parse=None, in_s2pt=False)
     assert o.is_native is False, "the rule DOES prove the word is not native"
     assert o.class_ == "unknown", "but it does NOT prove the source language"
     assert "முதல் எழுத்து" in o.evidence
     assert {a["class"] for a in o.alternatives} == {"வடசொல்", "loanword"}
 
     # The word that exposed it: Sanskrit, and it must no longer be called a non-Sanskrit loan.
-    r = classify_origin("ரூபம்", fst_native_parse=None, in_i2pt=False)
+    r = classify_origin("ரூபம்", fst_native_parse=None, in_s2pt=False)
     assert r.class_ != "loanword" and r.is_native is False
 
 
@@ -84,32 +85,79 @@ def test_bare_vallinam_final_still_asserts_loanword():
     யோகம், மனிதன்), so they never surface with a bare vallinam final. An unadapted final really is
     evidence of a non-Sanskrit loan.
     """
-    o = classify_origin("கேக்", fst_native_parse=None, in_i2pt=False)   # cake
+    o = classify_origin("கேக்", fst_native_parse=None, in_s2pt=False)   # cake
     assert o.class_ == "loanword" and o.is_native is False
 
 
 def test_forbidden_final_is_loanword():
-    o = classify_origin("கேக்", fst_native_parse=None, in_i2pt=False)
+    o = classify_origin("கேக்", fst_native_parse=None, in_s2pt=False)
     assert o.class_ == "loanword" and "இறுதி எழுத்து" in o.evidence
 
 
-def test_i2pt_borrowed_without_marker_is_honest_unknown():
-    # காபி (coffee): phonotactically native-looking, but attested as borrowed → don't guess the language.
-    o = classify_origin("காபி", fst_native_parse=None, in_i2pt=True)
-    assert o.class_ == "unknown" and o.is_native is False
-    assert {alt["class"] for alt in o.alternatives} == {"வடசொல்", "loanword"}
+def test_s2pt_membership_is_positive_vadasol_evidence_but_scored_low():
+    """S2PT is வடசொல்-scoped (upstream README: "வடசொல் to தமிழ்"), so membership names Sanskrit.
+
+    This used to return `unknown` on the grounds that no orthographic marker separates வடசொல் from
+    loanword — true, but it ignored what the source is ABOUT and discarded the one thing the list
+    attests. Scored 0.55, the lowest committing score in the module, because the source is
+    provisional: no upstream licence, unmaintained since 2020, scraped upstreams.
+    """
+    o = classify_origin("சந்திரன்", fst_native_parse=None, in_s2pt=True)
+    assert o.class_ == "வடசொல்" and o.is_native is False
+    assert o.borrowed_from == "Sanskrit"
+    assert o.confidence == 0.55, "must stay below the 0.8 an en.wiktionary etymology earns"
+    # the weakness is stated in the answer, not hidden in a doc
+    assert "unmaintained" in o.evidence and "no stated licence" in o.evidence
+    assert "evidence, NOT authority" in o.evidence
+    assert {a["class"] for a in o.alternatives} == {"loanword", "unknown"}
+
+
+def test_a_wiktionary_etymology_always_outranks_the_s2pt_list():
+    """Precedence: the provisional list is a floor, never an override."""
+    ety = {"relation": "borrowed", "is_native": False, "source_lang": "en",
+           "source_lang_name": "English", "source_word": "bus", "template": "bor",
+           "certainty": "stated", "citation": "u"}
+    o = classify_origin("பஸ்", fst_native_parse=None, in_s2pt=True, etymology=ety)
+    assert o.class_ == "loanword" and o.borrowed_from == "English"
+    assert o.confidence > 0.55
+
+
+def test_the_s2pt_lists_really_are_sanskrit_scoped():
+    """Guards the assumption the branch above rests on. If English loans ever appear as S2PT
+    headwords, the வடசொல் inference is invalid and must be withdrawn."""
+    import csv, glob
+    keys = set()
+    for f in glob.glob("data/equivalents/sanskrit-to-pure-tamil/*.csv"):
+        for row in csv.DictReader(io.open(f, encoding="utf-8")):
+            if (k := (row.get("INDIC") or "").strip()):
+                keys.add(k)
+    assert len(keys) > 1500, "vendored lists look truncated"
+    for english_loan in ("காபி", "டீ", "பஸ்", "ரயில்", "கேக்", "ஸ்கூல்", "ஹோட்டல்", "ரேடியோ"):
+        assert english_loan not in keys, (
+            f"{english_loan} is an ENGLISH loan but appears as a வடசொல் headword — the "
+            "Sanskrit-scoping assumption in classify_origin is broken")
+
+
+def test_a_malformed_but_tamil_grapheme_does_not_crash():
+    """`நுா` is நு followed by a second vowel sign — malformed, but every codepoint IS Tamil, so it
+    passes normalize(). open-tamil's splitMeiUyir raises ValueError on it, which crashed
+    classify_origin and would have been a 500 from the web head. An unsplittable grapheme carries
+    no consonant signal; the honest answer is a class, not a traceback."""
+    o = classify_origin("நுா", fst_native_parse=None, in_s2pt=False)
+    assert o.class_ == "unknown"
+    assert forbidden_initial("நுா") is None and forbidden_final("நுா") is None
 
 
 def test_native_fst_parse_is_iyarcol():
-    o = classify_origin("மரம்", fst_native_parse=True, in_i2pt=False)
+    o = classify_origin("மரம்", fst_native_parse=True, in_s2pt=False)
     assert o.class_ == "இயற்சொல்" and o.is_native is True
     assert 0.0 < o.confidence < 1.0                       # moderate — naturalized borrowings can look native
 
 
 def test_no_signal_is_unknown_not_a_guess():
-    o = classify_origin("மரம்", fst_native_parse=False, in_i2pt=False)
+    o = classify_origin("மரம்", fst_native_parse=False, in_s2pt=False)
     assert o.class_ == "unknown" and o.confidence == 0.0
-    o2 = classify_origin("மரம்", fst_native_parse=None, in_i2pt=False)
+    o2 = classify_origin("மரம்", fst_native_parse=None, in_s2pt=False)
     assert o2.class_ == "unknown" and "foma" in o2.evidence   # FST-unavailable reason surfaced
 
 

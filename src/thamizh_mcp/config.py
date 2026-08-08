@@ -22,13 +22,20 @@ PRIMARY_FSTS = ("noun.fst", "pronoun.fst", "adj.fst", "adv.fst", "part.fst",
 FLOOKUP_TIMEOUT_S = float(os.environ.get("THAMIZH_FLOOKUP_TIMEOUT", "10"))
 HTTP_TIMEOUT_S = float(os.environ.get("THAMIZH_HTTP_TIMEOUT", "10"))
 
-# Indic-To-Pure-Tamil equivalents (evolving-tier, local vendored CSVs; pins in data/PINS.md).
-# The four attributable community sub-lists — combined_all.csv is their dedup merge, but we load
-# the sub-lists so every candidate cites the actual list(s) that attest it.
+# Sanskrit-To-Pure-Tamil (S2PT) equivalents — வடசொல் → தனித்தமிழ் community lists.
+#
+# RENAMED 2026-08-08: upstream is `narVidhai/Sanskrit-To-Pure-Tamil-Dictionary`. We had it as
+# "Indic-To-Pure-Tamil" — GitHub silently redirects the old path, so the stale name survived. The
+# scope matters: the lists are explicitly **வடசொல்** (its README is titled "வடசொல் to தமிழ்"), not
+# Indic-in-general, so membership is evidence of a SANSKRIT source, not merely "borrowed".
+#
+# PROVISIONAL source (D-012 said so; D-017 records why it matters): four scraped community purist
+# lists, no upstream LICENCE file, last upstream commit 2020. Confidence is capped and the evidence
+# string says what it is — see core/classifier.py. To be superseded by an authenticated glossary.
 EQUIVALENTS_DIR = Path(os.environ.get(
-    "THAMIZH_EQUIVALENTS_DIR", REPO_ROOT / "data" / "equivalents" / "indic-to-pure-tamil"))
-I2PT_SUBLISTS = ("viruba.csv", "tamilchol.csv", "thamizhdna-org.csv", "tamilmandram.csv")
-I2PT_PIN = "narVidhai/Indic-To-Pure-Tamil@f734646 (2026-07-02)"
+    "THAMIZH_EQUIVALENTS_DIR", REPO_ROOT / "data" / "equivalents" / "sanskrit-to-pure-tamil"))
+S2PT_SUBLISTS = ("viruba.csv", "tamilchol.csv", "thamizhdna-org.csv", "tamilmandram.csv")
+S2PT_PIN = "narVidhai/Sanskrit-To-Pure-Tamil-Dictionary@f734646 (2026-07-02)"
 
 DEFAULT_DB = Path(os.environ.get("THAMIZH_DB", REPO_ROOT / "data" / "knowledge.sqlite3"))
 

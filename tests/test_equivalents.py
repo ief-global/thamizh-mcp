@@ -1,4 +1,4 @@
-"""Indic-To-Pure-Tamil equivalents adapter (objective 5) + engine wiring.
+"""Sanskrit-To-Pure-Tamil (S2PT) equivalents adapter (objective 5) + engine wiring.
 
 Fully offline: synthetic CSVs for the merge/attribution/ordering contract, plus a light smoke
 test against the real vendored lists. No network, no foma — runs in the 25-without-foma tier.
@@ -11,7 +11,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from thamizh_mcp import config
 from thamizh_mcp.adapters.base import AdapterResult, NoEntry
-from thamizh_mcp.adapters.equivalents import IndicToPureTamilAdapter, load_index
+from thamizh_mcp.adapters.equivalents import (
+    _SOURCE_NAME, SanskritToPureTamilAdapter, load_index,
+)
 from thamizh_mcp.core.engine import Engine
 from thamizh_mcp.schema import SourceRef
 
@@ -51,11 +53,11 @@ def test_missing_sublist_is_skipped_not_fatal(tmp_path):
 
 def test_hit_returns_sourced_attested_candidates_ordered(tmp_path):
     data_dir, sublists = _fixture_dir(tmp_path)
-    res = asyncio.run(IndicToPureTamilAdapter(data_dir, sublists).lookup("அகராதி"))
+    res = asyncio.run(SanskritToPureTamilAdapter(data_dir, sublists).lookup("அகராதி"))
     assert isinstance(res, AdapterResult)
     cands = res.fields["candidates"]
     # every candidate carries a source + attestation — the hard rule
-    assert all(c["source"] == "Indic-To-Pure-Tamil" and c["attestation"] == "attested" for c in cands)
+    assert all(c["source"] == _SOURCE_NAME and c["attestation"] == "attested" for c in cands)
     # most-attested first: அகரவரிசை (2 lists) precedes single-list equivalents
     assert cands[0]["equivalent"] == "அகரவரிசை"
     assert "viruba" in cands[0]["citation"] and "tamilchol" in cands[0]["citation"]
@@ -64,7 +66,7 @@ def test_hit_returns_sourced_attested_candidates_ordered(tmp_path):
 
 def test_miss_is_honest_noentry(tmp_path):
     data_dir, sublists = _fixture_dir(tmp_path)
-    res = asyncio.run(IndicToPureTamilAdapter(data_dir, sublists).lookup("மரம்"))
+    res = asyncio.run(SanskritToPureTamilAdapter(data_dir, sublists).lookup("மரம்"))
     assert isinstance(res, NoEntry) and res.reason == "no_entry"
 
 
@@ -72,7 +74,7 @@ def test_miss_is_honest_noentry(tmp_path):
 
 def test_engine_hit_surfaces_applicable_equivalents(tmp_path):
     data_dir, sublists = _fixture_dir(tmp_path)
-    e = Engine(equivalent_sources=[IndicToPureTamilAdapter(data_dir, sublists)])
+    e = Engine(equivalent_sources=[SanskritToPureTamilAdapter(data_dir, sublists)])
     a = asyncio.run(e.analyze("அகராதி", "அகராதி", include=["native_equivalent"]))
     assert a.native_equivalent.applicable is True
     assert a.native_equivalent.candidates[0].equivalent == "அகரவரிசை"
@@ -82,7 +84,7 @@ def test_engine_hit_surfaces_applicable_equivalents(tmp_path):
 
 def test_engine_miss_is_applicable_false_with_gap(tmp_path):
     data_dir, sublists = _fixture_dir(tmp_path)
-    e = Engine(equivalent_sources=[IndicToPureTamilAdapter(data_dir, sublists)])
+    e = Engine(equivalent_sources=[SanskritToPureTamilAdapter(data_dir, sublists)])
     a = asyncio.run(e.analyze("மரம்", "மரம்", include=["native_equivalent"]))
     assert a.native_equivalent.applicable is False
     assert any(g.field == "native_equivalent" for g in a.gaps)
@@ -97,7 +99,7 @@ def test_engine_no_source_still_gaps():
 # --- real vendored data smoke test ---
 
 def test_real_i2pt_known_hit_and_miss():
-    ad = IndicToPureTamilAdapter()  # real config.EQUIVALENTS_DIR
+    ad = SanskritToPureTamilAdapter()  # real config.EQUIVALENTS_DIR
     hit = asyncio.run(ad.lookup("அகராதி"))
     assert isinstance(hit, AdapterResult) and hit.fields["candidates"]
     assert all(c["source"] and c["attestation"] == "attested" for c in hit.fields["candidates"])
@@ -136,7 +138,7 @@ _INHERITED = {"relation": "inherited", "is_native": True, "source_lang": "dra-pr
 
 def _engine(tmp_path, ety):
     data_dir, sublists = _fixture_dir(tmp_path)
-    return Engine(equivalent_sources=[IndicToPureTamilAdapter(data_dir, sublists)],
+    return Engine(equivalent_sources=[SanskritToPureTamilAdapter(data_dir, sublists)],
                   etymology_sources=[_StubEtymology(ety)])
 
 
@@ -161,13 +163,13 @@ def test_wholly_native_word_still_skips_the_equivalent_lookup(tmp_path):
 
 
 def test_homograph_headword_falls_back_to_its_borrowed_senses_equivalents(tmp_path):
-    """I2PT is keyed on borrowed HEADWORDS, so it has no கார் row — கார் is a native word that
+    """S2PT is keyed on borrowed HEADWORDS, so it has no கார் row — கார் is a native word that
     merely shares its form with English 'car'. suggest_native_equivalent must still answer, from
     the synonyms listed under that borrowed sense (Saran's ruling, 2026-08-05)."""
     ety = dict(_AMBIGUOUS)
     ety["senses"] = [dict(_AMBIGUOUS["senses"][0], synonyms=[]),
                      dict(_AMBIGUOUS["senses"][1], synonyms=["மகிழுந்து", "ரோடு"])]
-    # "மரம்" is deliberately NOT in the I2PT fixture, so the fallback is what answers
+    # "மரம்" is deliberately NOT in the S2PT fixture, so the fallback is what answers
     a = asyncio.run(_engine(tmp_path, ety).analyze(
         "மரம்", "மரம்", include=["origin", "native_equivalent"]))
     assert a.origin.class_ == "இயற்சொல்"
