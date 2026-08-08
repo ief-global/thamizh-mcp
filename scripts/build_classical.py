@@ -109,6 +109,33 @@ _TAIL = re.compile(
 )
 
 
+# Running heads absorbed into a verse body. Project Madurai's text sometimes carries the NEXT
+# section's subject word at the end of the preceding நூற்பா.
+#
+# This is a CURATED list, not a heuristic, and it cannot be otherwise. நூற்பா 140 ends with a
+# stray 'இடைநிலை' (the subject of 141) — but 142 ends '…தரும் தொழில் இடைநிலை' where the same word
+# is the verse's own predicate, and 143 likewise. A rule that trimmed one would corrupt the other.
+# The discriminator is whether the verse's sentence completes without the term, which is a reading
+# judgement, so every entry here is ruled individually by Saran (TVA A021 coursework).
+#
+# Ruled 2026-08-08: 133 and 140 are running heads; 142 is genuine and must NOT be trimmed.
+# Sixteen further candidates were detected and are listed in data/PINS.md awaiting ruling — they are
+# deliberately NOT trimmed until ruled, because quoting one extra word is a smaller error than
+# silently deleting scripture.
+NANNUL_RUNNING_HEADS: dict[str, str] = {
+    "133": "பகுதி",      # subject of 134; 133's sentence completes at 'எப்பதங்களும்'
+    "140": "இடைநிலை",    # subject of 141; 140's sentence completes at 'பெயரினும் சிலவே'
+}
+
+
+def strip_running_head(num: str, text: str) -> str:
+    """Drop a ruled running head from the end of a நூற்பா. Only exact, ruled matches."""
+    head = NANNUL_RUNNING_HEADS.get(str(num))
+    if head and text.rstrip().endswith(head):
+        return text.rstrip()[: -len(head)].strip()
+    return text
+
+
 def clean_verse(text: str) -> str:
     """Strip section rules and page boilerplate glued to a verse.
 
@@ -246,7 +273,8 @@ def build() -> tuple[dict, dict]:
         if n not in nan_verses and n in supp:
             nan_verses[n] = supp[n]
             filled[n] = NANNUL_SUPPLEMENT_URL
-    nan_verses = {str(k): nan_verses[str(k)] for k in sorted(int(x) for x in nan_verses)}
+    nan_verses = {str(k): strip_running_head(str(k), nan_verses[str(k)])
+                  for k in sorted(int(x) for x in nan_verses)}
 
     tholkappiyam = {
         "text": "Tholkappiyam",
