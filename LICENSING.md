@@ -20,6 +20,7 @@ provenance machinery that makes answers auditable also makes licences classifiab
 | ThamizhiMorph FSTs | Apache-2.0 | everything | attribution + academic citation |
 | Sanskrit-To-Pure-Tamil (S2PT) word lists | ⚠️ **unstated upstream** (D-017) | provisional; under review | attribution + name the source's limits |
 | Tamil Wiktionary (meanings) | CC BY-SA 4.0 / GFDL | use + public serving | attribution; stays CC BY-SA |
+| English-loanword artifact (derived from Google Dakshina) | CC BY-SA 4.0 | use + public serving | attribution (Roark et al. 2020, LREC); stays CC BY-SA, never Apache-2.0 |
 | foma / flookup | Apache-2.0 | runtime dep (not redistributed) | — |
 | Tholkappiyam / Nannūl — the *works* | classical, public domain | everything | cite அதிகாரம்/இயல் + நூற்பா |
 | Tholkappiyam / Nannūl — the pinned **Project Madurai etexts** (`data/classical/*.json`) | Project Madurai: free distribution **provided the header is kept intact** | use + redistribution incl. public serving | reproduce the © Project Madurai header + edition credits wherever the text or its verses travel |

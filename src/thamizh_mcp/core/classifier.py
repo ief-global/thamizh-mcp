@@ -13,7 +13,9 @@ Signals, strongest first:
      English, Portuguese and Urdu loans as readily as Sanskrit ones.
   2. முதல் எழுத்து violation — a mei that cannot begin a native word (Tholkappiyam மொழிமரபு).
   3. இறுதி எழுத்து violation — a bare vallinam final, which native words never take.
-  4. S2PT attestation as a வடசொல் headword — the lists are Sanskrit-scoped, so this names a source
+  4. Attested English romanization (Dakshina) — names English, but ONLY inside a branch
+     where 1/2/3 already proved non-nativeness. Never consulted on its own.
+  5. S2PT attestation as a வடசொல் headword — the lists are Sanskrit-scoped, so this names a source
      language, but the source is PROVISIONAL so the confidence is capped (see the branch).
   5. Clean native ThamizhiMorph FST parse + no non-native markers → இயற்சொல் (moderate: a fully
      naturalized தற்பவம் borrowing can look native).
@@ -284,15 +286,44 @@ def _from_etymology(normalized: str, ety: dict, fst_native_parse: Optional[bool]
         sources=[_etymology_source(ety), THOLKAPPIYAM_MOZIMARABU])
 
 
+DAKSHINA_ROMANIZATION = SourceRef(
+    name="Google Dakshina (attested romanizations)", tier="anchor",
+    ref="Roark et al. 2020 (LREC) — CC BY-SA 4.0; see data/PINS.md")
+
+
+def _from_english_loan(loan: dict, non_native_reason: str) -> Origin:
+    """Name English as the source, having ALREADY established the word is not native.
+
+    The split is D-015's: orthography proves NON-nativeness, positive evidence names the language.
+    This function only ever runs inside a branch that has proved the former, so it answers "which
+    language" and never "is it borrowed". Ungated, the same evidence mislabels கால் as "call" and
+    கார் as "car" — see adapters/loanwords.py.
+    """
+    english, n = loan["english"], loan.get("attestations", 0)
+    return Origin(
+        class_="loanword", is_native=False, borrowed_from="English", confidence=0.8,
+        evidence=(f"{non_native_reason} The source is English: the word is attested in Latin script "
+                  f"as \u201c{english}\u201d by {n} independent annotators in the Google Dakshina "
+                  "romanization lexicon, and that spelling is an English word. Attested usage, not "
+                  "a phonetic guess \u2014 but a romanization lexicon records how speakers write a "
+                  "word, so it is evidence of an English source rather than a dictionary etymology."),
+        alternatives=[{"class": "\u0bb5\u0b9f\u0b9a\u0bca\u0bb2\u0bcd",
+                       "note": "if the word reached Tamil through Sanskrit rather than English"}],
+        sources=[THOLKAPPIYAM_MOZIMARABU, DAKSHINA_ROMANIZATION])
+
+
 def classify_origin(
     normalized: str, *, fst_native_parse: Optional[bool], in_s2pt: bool,
-    etymology: Optional[dict] = None,
+    etymology: Optional[dict] = None, english_loan: Optional[dict] = None,
 ) -> Origin:
     """Classify one normalized Tamil word's origin.
 
     fst_native_parse: True = parses through the native FST, False = ran with no analysis,
     None = FST unavailable (foma not installed) — the native signal is then simply absent.
     in_s2pt: the word is an attested வடசொல் headword in the Sanskrit-To-Pure-Tamil lists.
+    english_loan: attested-English-romanization evidence from `adapters/loanwords.py`, or None.
+    Consulted ONLY inside a branch that has already proved non-nativeness — it names a language,
+    it never decides whether the word is borrowed.
     etymology: a source-language claim from `adapters/etymology.py`, or None when the lookup was
     not run (enrichment disabled) or found nothing. This is the ONLY signal that can name a source
     language; every rule below it can prove non-nativeness but not provenance.
@@ -302,6 +333,10 @@ def classify_origin(
 
     grantha = grantha_letters_in(normalized)
     if grantha:
+        if english_loan:
+            return _from_english_loan(english_loan, (
+                f"contains Grantha letter(s) {' '.join(grantha)} — outside the native Tamil "
+                "எழுத்து set (Tholkappiyam எழுத்ததிகாரம்), so the word is certainly borrowed."))
         # Grantha proves the word is NOT NATIVE. It does NOT prove the word is Sanskrit.
         #
         # Grantha is simply how Tamil writes sounds its own எழுத்து set lacks — whatever language
@@ -327,6 +362,10 @@ def classify_origin(
 
     bad_initial = forbidden_initial(normalized)
     if bad_initial:
+        if english_loan:
+            return _from_english_loan(english_loan, (
+                f"word-initial ‘{bad_initial}’ cannot begin a native Tamil word (Tholkappiyam "
+                "மொழிமரபு, முதல் எழுத்து rule), so the word is certainly borrowed."))
         # Same defect as the Grantha branch above: a முதல் எழுத்து violation proves the word is NOT
         # NATIVE; it says nothing about WHICH language it came from. Sanskrit borrowings break this
         # rule as readily as English ones — ரூபம் (Skt rūpa) and ராஜா sit beside ரயில் and லாரி.
@@ -347,6 +386,10 @@ def classify_origin(
 
     bad_final = forbidden_final(normalized)
     if bad_final:
+        if english_loan:
+            return _from_english_loan(english_loan, (
+                f"ends in bare vallinam ‘{bad_final}’ — native Tamil words do not end in "
+                "க்/ச்/ட்/த்/ப்/ற் (Tholkappiyam மொழிமரபு, இறுதி எழுத்து rule)."))
         # NOT the same defect as the two rules above, and deliberately left asserting `loanword`.
         # Those two turn on WHICH LETTERS appear, which is neutral about the source language. This
         # one turns on MORPHOLOGICAL ASSIMILATION: a word ending in a bare vallinam has not been

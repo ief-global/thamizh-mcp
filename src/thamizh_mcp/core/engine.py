@@ -29,6 +29,7 @@ class Engine:
         store: Optional[KnowledgeStore] = None,
         morph_fallback: Optional[SourceAdapter] = None,
         etymology_sources: Sequence[SourceAdapter] = (),
+        loanword_sources: Sequence[SourceAdapter] = (),
     ):
         self.morph = morph
         self.morph_fallback = morph_fallback   # curated paradigms — used only on an FST miss
@@ -37,6 +38,9 @@ class Engine:
         # Source-language evidence — the only signal that can name a provenance. Evolving tier, so
         # it is pulled under allow_enrichment and cached, exactly like meaning.
         self.etymology_sources = list(etymology_sources)
+        # Attested-English-romanization evidence. Offline anchor artifact; consulted only
+        # where orthography already proved non-nativeness (see core/classifier.py).
+        self.loanword_sources = list(loanword_sources)
         self.store = store
         self._fixtures: Optional[frozenset] = None   # eval-fixture words, loaded lazily
 
@@ -229,8 +233,19 @@ class Engine:
             a.sources.append(SourceRef(
                 name="English Wiktionary (etymology)", tier="evolving",
                 ref=etymology.get("citation"), retrieved=etymology.get("retrieved")))
+        english_loan = await self._english_loan(a, normalized)
         return classifier.classify_origin(normalized, fst_native_parse=fst_native,
-                                          in_s2pt=in_s2pt, etymology=etymology)
+                                          in_s2pt=in_s2pt, etymology=etymology,
+                                          english_loan=english_loan)
+
+    async def _english_loan(self, a: WordAnalysis, normalized: str) -> Optional[dict]:
+        """Attested English romanization, or None. Offline artifact — no network, no cache needed."""
+        for src in self.loanword_sources:
+            res = await src.lookup(normalized)
+            if isinstance(res, AdapterResult):
+                a.sources.extend(res.sources)
+                return res.fields["english_loan"]
+        return None
 
     async def _etymology(self, normalized: str, allow_enrichment: bool,
                          force_refresh: bool = False) -> Optional[dict]:
@@ -400,6 +415,7 @@ def default_engine() -> Engine:
     if _default is None:
         from thamizh_mcp.adapters.equivalents import SanskritToPureTamilAdapter
         from thamizh_mcp.adapters.etymology import EnWiktionaryEtymologyAdapter
+        from thamizh_mcp.adapters.loanwords import EnglishLoanwordAdapter
         from thamizh_mcp.adapters.paradigms import VerbParadigmAdapter
         from thamizh_mcp.adapters.thamizhimorph import ThamizhiMorphAdapter
         from thamizh_mcp.adapters.wiktionary import TamilWiktionaryAdapter
@@ -408,6 +424,7 @@ def default_engine() -> Engine:
             morph_fallback=VerbParadigmAdapter(),
             meaning_sources=[TamilWiktionaryAdapter()],
             etymology_sources=[EnWiktionaryEtymologyAdapter()],
+            loanword_sources=[EnglishLoanwordAdapter()],
             equivalent_sources=[SanskritToPureTamilAdapter()],
             store=KnowledgeStore(config.DEFAULT_DB),
         )

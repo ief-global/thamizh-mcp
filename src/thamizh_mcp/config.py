@@ -37,6 +37,14 @@ EQUIVALENTS_DIR = Path(os.environ.get(
 S2PT_SUBLISTS = ("viruba.csv", "tamilchol.csv", "thamizhdna-org.csv", "tamilmandram.csv")
 S2PT_PIN = "narVidhai/Sanskrit-To-Pure-Tamil-Dictionary@f734646 (2026-07-02)"
 
+# English-loanword evidence (ANCHOR, pinned artifact) — names the source of a modern borrowing
+# that no etymology source covers. Built by scripts/build_english_loans.py from Google Dakshina
+# (CC BY-SA 4.0) + a public-domain English wordlist; the artifact inherits CC BY-SA, NOT Apache-2.0.
+# Consulted ONLY where orthography already proves non-nativeness — see adapters/loanwords.py.
+ENGLISH_LOANS_FILE = Path(os.environ.get(
+    "THAMIZH_ENGLISH_LOANS", REPO_ROOT / "data" / "loanwords" / "english_loans.json"))
+ENGLISH_LOANS_PIN = "Dakshina v1.0 (2020-05-27) + dwyl/english-words; built 2026-08-08"
+
 DEFAULT_DB = Path(os.environ.get("THAMIZH_DB", REPO_ROOT / "data" / "knowledge.sqlite3"))
 
 # Transaction logging (blueprint §12): every resolved analysis is logged as gold data, on by default.
