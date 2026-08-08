@@ -85,6 +85,11 @@ WORDS = [
     ("ஓடு", "இயற்சொல்", ""),
 ]
 
+# Forms the பகுபத decoder deliberately does NOT own. Saran's ruling 2026-08-08: a split that turns
+# on a சாரியை/உருபு புணர்ச்சி belongs to the புணர்ச்சி engine, so these are reported separately and
+# excluded from the in-scope denominator rather than counted as decoder failures.
+PUNARCHI_SCOPE = {"வீட்டிற்கு"}
+
 # Inflected forms for the formation sweep — everyday shapes a real user types.
 FORMS = [
     "வந்தான்", "வருகிறான்", "வருவான்", "வந்தனன்", "வந்தார்கள்", "வந்தீர்கள்",
@@ -162,12 +167,23 @@ async def main():
         else:
             decoded.append((word, " + ".join(f"{c.form}({c.part})" for c in comps)))
 
-    print(f"\ndecoded: {len(decoded)}/{len(FORMS)}   no-analysis gaps: {len(gaps)}\n")
+    # Saran's ruling 2026-08-08: forms whose split turns on a சாரியை/உருபு புணர்ச்சி (வீட்டிற்கு)
+    # belong to the **புணர்ச்சி engine**, not to பகுபத உறுப்பிலக்கணம். They are not decoder gaps, so
+    # counting them as failures made this metric measure something it does not claim to measure.
+    out_of_scope = [w for w in gaps if w in PUNARCHI_SCOPE]
+    real_gaps = [w for w in gaps if w not in PUNARCHI_SCOPE]
+    in_scope = len(FORMS) - len(out_of_scope)
+    print(f"\ndecoded: {len(decoded)}/{in_scope} in-scope   "
+          f"no-analysis gaps: {len(real_gaps)}   "
+          f"out of scope (புணர்ச்சி engine): {len(out_of_scope)}\n")
     for w, s in decoded:
         print(f"   {w:<16} {s}")
-    if gaps:
-        print("\n--- NO ANALYSIS (FST coverage gap) ---")
-        print("   " + ", ".join(gaps))
+    if real_gaps:
+        print("\n--- NO ANALYSIS (genuine coverage gap) ---")
+        print("   " + ", ".join(real_gaps))
+    if out_of_scope:
+        print("\n--- OUT OF SCOPE for பகுபத உறுப்பிலக்கணம் (புணர்ச்சி engine owns these) ---")
+        print("   " + ", ".join(out_of_scope))
 
 
 asyncio.run(main())

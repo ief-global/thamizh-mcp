@@ -450,7 +450,14 @@
               "string",
               "null"
             ],
-            "description": "D-011: நூற்பா number for classical (Tholkappiyam/Nannūl) citations; null until a digitized edition is pinned (section-level interim)."
+            "description": "D-011: the நூற்பா address. Nannūl is continuous 1–462 so a bare number suffices; Tholkappiyam numbers RESTART per இயல், so its label carries அதிகாரம் › இயல் › நூற்பா. null = the pinned edition does not print it — never a fabricated number."
+          },
+          "verse_text": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "D-018: the நூற்பா ITSELF, quoted verbatim from the pinned edition. A citation tells a reader where to look; this shows them the verse, so 'on whose authority?' is answered in the authority's own words. null when the edition does not print the verse or the artifact is absent. Quoting Project Madurai text obliges the surface to carry its attribution — see LICENSING.md."
           }
         }
       }

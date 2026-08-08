@@ -37,6 +37,11 @@ EQUIVALENTS_DIR = Path(os.environ.get(
 S2PT_SUBLISTS = ("viruba.csv", "tamilchol.csv", "thamizhdna-org.csv", "tamilmandram.csv")
 S2PT_PIN = "narVidhai/Sanskrit-To-Pure-Tamil-Dictionary@f734646 (2026-07-02)"
 
+# Pinned classical texts (D-011) — read at RUNTIME so a claim can quote its நூற்பா, not merely
+# cite a number (D-018). Verse-addressable; rebuilt/verified by scripts/build_classical.py.
+CLASSICAL_DIR = Path(os.environ.get(
+    "THAMIZH_CLASSICAL_DIR", REPO_ROOT / "data" / "classical"))
+
 # English-loanword evidence (ANCHOR, pinned artifact) — names the source of a modern borrowing
 # that no etymology source covers. Built by scripts/build_english_loans.py from Google Dakshina
 # (CC BY-SA 4.0) + a public-domain English wordlist; the artifact inherits CC BY-SA, NOT Apache-2.0.

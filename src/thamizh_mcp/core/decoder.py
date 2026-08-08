@@ -15,26 +15,39 @@ from __future__ import annotations
 from typing import NamedTuple, Optional
 
 from thamizh_mcp import config
+from thamizh_mcp.core import classical
 from thamizh_mcp.schema import (
     Formation, FormationComponent, GrammarCase, MorphAnalysis, Pos, SandhiEvent, SourceRef,
     WordClass, WordType,
 )
 
+# Citations now QUOTE the நூற்பா where we have verified its number against the pinned edition
+# (D-018). `retrieved` used to say "edition-pinned in Phase 4" — stale since D-011 closed and both
+# editions ARE pinned; core/classical.py fills it from the artifact's own edition line.
+#
+# Only VERIFIED verses are wired. Where the நூற்பா has not been confirmed against the pinned text,
+# the SourceRef keeps `verse=None` and cites the section — the honest interim D-011 requires. Do NOT
+# fill these in from memory or from a secondary source; TVA renumbers (its 336 is 337 here).
 THOLKAPPIYAM_COLLATIKARAM = SourceRef(
     name="Tholkappiyam", tier="anchor", authority="Tholkappiyam",
-    ref="சொல்லதிகாரம் — word classes பெயர்/வினை/இடை/உரி", retrieved="classical (edition-pinned in Phase 4)")
+    ref="சொல்லதிகாரம் — word classes பெயர்/வினை/இடை/உரி",
+    retrieved="Project Madurai (pinned; see data/PINS.md)")
 THOLKAPPIYAM_VETRUMAI = SourceRef(
     name="Tholkappiyam", tier="anchor", authority="Tholkappiyam",
-    ref="சொல்லதிகாரம், வேற்றுமையியல் — the eight வேற்றுமை", retrieved="classical (edition-pinned in Phase 4)")
-NANNOOL_PAKUPADAM = SourceRef(
-    name="Nannūl", tier="anchor", authority="Nannūl",
-    ref="பகுபத உறுப்பிலக்கணம் — the six உறுப்பு labels", retrieved="classical (edition-pinned in Phase 4)")
-THOLKAPPIYAM_PUNARIYAL = SourceRef(
-    name="Tholkappiyam", tier="anchor", authority="Tholkappiyam",
-    ref="எழுத்ததிகாரம், புணரியல் — சந்தி/விகாரம்", retrieved="classical (edition-pinned in Phase 4)")
+    ref="சொல்லதிகாரம், வேற்றுமையியல் — the eight வேற்றுமை",
+    retrieved="Project Madurai (pinned; see data/PINS.md)")
+# நன்னூல் 133 names the six உறுப்பு outright — பகுதி விகுதி இடைநிலை சாரியை சந்தி விகாரம். Verified
+# against the pinned edition and already cited by sariyai.json and vikaram.json.
+NANNOOL_PAKUPADAM = classical.cite_nannul(133, "பகுபத உறுப்பிலக்கணம் — the six உறுப்பு labels")
+# எழுத்ததிகாரம் › புணரியல் › 7 names the three விகாரம் — மெய் பிறிது ஆதல் / மிகுதல் / குன்றல்.
+# Verified; already cited by vikaram.json, and it is the verse behind Saran's 2026-08-02 ruling that
+# the decoder emits Tholkappiyam's விகாரம் names rather than Nannūl's.
+THOLKAPPIYAM_PUNARIYAL = classical.cite_tholkappiyam(
+    "எழுத்ததிகாரம்", "புணரியல்", 7, "எழுத்ததிகாரம், புணரியல் — சந்தி/விகாரம்")
 THOLKAPPIYAM_VINAIYIYAL = SourceRef(
     name="Tholkappiyam", tier="anchor", authority="Tholkappiyam",
-    ref="சொல்லதிகாரம், வினையியல் — காலம்/முற்று", retrieved="classical (edition-pinned in Phase 4)")
+    ref="சொல்லதிகாரம், வினையியல் — காலம்/முற்று",
+    retrieved="Project Madurai (pinned; see data/PINS.md)")
 
 # ThamizhiMorph POS tag → schema Pos (Tholkappiyam's four-way word-class frame).
 _POS_MAP: dict[str, Pos] = {
