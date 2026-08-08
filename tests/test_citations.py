@@ -97,6 +97,28 @@ def test_tholkappiyam_upstream_corruption_repaired(tholkappiyam):
     assert tholkappiyam["repairs"]["aytham_restored"] > 0
 
 
+def _walk(node):
+    """Every dict in a nested structure."""
+    if isinstance(node, dict):
+        yield node
+        for v in node.values():
+            yield from _walk(v)
+    elif isinstance(node, list):
+        for v in node:
+            yield from _walk(v)
+
+
+def _structured_nannul(table) -> set[int]:
+    return {int(d["verse"]) for d in _walk(table)
+            if d.get("authority") == "Nannūl" and isinstance(d.get("verse"), int)}
+
+
+def _structured_tholkappiyam(table) -> list[dict]:
+    return [d for d in _walk(table)
+            if d.get("authority") == "Tholkappiyam" and isinstance(d.get("verse"), int)
+            and d.get("athikaram") and d.get("iyal")]
+
+
 @pytest.mark.parametrize("path", TABLES, ids=lambda p: p.name)
 def test_table_declares_source_priority(path):
     """A rule table without source_priority is incomplete — that is how the drift happened."""
@@ -111,7 +133,12 @@ def test_table_declares_source_priority(path):
 def test_nannul_citations_resolve(path, nannul):
     """Every 'நன்னூல் N' anywhere in a table must exist in the pinned edition."""
     verses = nannul["verses"]
-    cited = {int(n) for n in NANNUL_CITE.findall(path.read_text("utf-8"))}
+    raw = path.read_text("utf-8")
+    cited = {int(n) for n in NANNUL_CITE.findall(raw)}
+    # concept_map.json cites STRUCTURALLY ({"authority": "Nannūl", "verse": 133}) rather than in
+    # prose, because it is meant to be looked up rather than read. Collect those too, or the guard
+    # silently passes over the one file whose entire purpose is citation.
+    cited |= _structured_nannul(_load(path))
     assert cited, f"{path.name} cites no Nannūl verse — unexpected"
     unresolved = sorted(n for n in cited if str(n) not in verses)
     assert not unresolved, (
@@ -191,3 +218,63 @@ def test_vikaram_carries_both_authority_names():
     assert t["vikaram"]["primary_canonical"] == ["பிறிது ஆதல்", "மிகுதல்", "குன்றல்"]
     for name, spec in t["vikaram"]["types"].items():
         assert spec.get("tholkappiyam_name"), f"{name} lacks its Tholkappiyam name"
+
+
+# --- concept_map.json: it quotes verses verbatim, so we can check the QUOTE, not just the number ---
+
+CONCEPT_MAP = GRAMMAR / "concept_map.json"
+
+
+def _norm(t: str) -> str:
+    return " ".join(str(t).split())
+
+
+@pytest.mark.skipif(not CONCEPT_MAP.exists(), reason="concept map not present")
+def test_concept_map_quotes_match_the_pinned_nannul_verse(nannul):
+    """A quoted நூற்பா must be the pinned edition's words, not a paraphrase.
+
+    Stronger than number-resolution: a citation can carry a correct number and still misquote or
+    silently paraphrase the verse. Paraphrase-presented-as-source is precisely the failure this
+    project keeps hitting — the 'one சந்தி, one இடைநிலை' gloss in idainilai.json was exactly that.
+    """
+    verses = nannul["verses"]
+    checked = 0
+    for d in _walk(_load(CONCEPT_MAP)):
+        if d.get("authority") != "Nannūl" or not isinstance(d.get("verse"), int):
+            continue
+        n, quoted = str(d["verse"]), d.get("text")
+        assert n in verses, f"concept_map cites Nannūl {n}, absent from the pinned edition"
+        if quoted:
+            assert _norm(quoted) == _norm(verses[n]), (
+                f"concept_map's quote of Nannūl {n} does not match the pinned edition verbatim.\n"
+                f"  pinned: {_norm(verses[n])[:120]}\n  quoted: {_norm(quoted)[:120]}")
+            checked += 1
+    assert checked >= 8, f"only {checked} Nannūl quotes verified — the map should carry more"
+
+
+@pytest.mark.skipif(not CONCEPT_MAP.exists(), reason="concept map not present")
+def test_concept_map_quotes_match_the_pinned_tholkappiyam_verse(tholkappiyam):
+    checked = 0
+    for d in _structured_tholkappiyam(_load(CONCEPT_MAP)):
+        node = tholkappiyam["athikaram"].get(d["athikaram"], {}).get(d["iyal"], {})
+        n = str(d["verse"])
+        assert n in node, (
+            f"concept_map cites {d['athikaram']} › {d['iyal']} › {n}, absent from the pinned edition")
+        if d.get("text"):
+            assert _norm(d["text"]) == _norm(node[n]), (
+                f"concept_map's quote of {d['athikaram']} › {d['iyal']} › {n} is not verbatim")
+            checked += 1
+    assert checked >= 2
+
+
+@pytest.mark.skipif(not CONCEPT_MAP.exists(), reason="concept map not present")
+def test_every_inference_in_the_concept_map_declares_its_status():
+    """An `inferred` claim without a status is indistinguishable from a sourced one — which is the
+    whole confusion the map exists to prevent."""
+    for concept, body in _load(CONCEPT_MAP)["concepts"].items():
+        for inf in body.get("inferred", []):
+            assert inf.get("claim"), f"{concept}: inference with no claim"
+            assert inf.get("status"), (
+                f"{concept}: inference '{inf['claim'][:60]}…' has no status — mark it CONFIRMED, "
+                "SARAN'S RULING, OPEN or AWAITING RULING")
+            assert inf.get("derivation"), f"{concept}: inference must show its derivation"

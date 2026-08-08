@@ -1,0 +1,275 @@
+{
+  "comment": "Grammar concept map — each concept the decoder relies on, tied to the நூற்பா that STATES it, with anything we merely INFERRED marked as such. Built so future work looks a concept up instead of recalling it. Recall is the failure mode this file exists to remove: `idainilai.json` shipped a note claiming 'TVA A0212 analyses வந்தேன் as one சந்தி, one இடைநிலை' — that parenthetical was an earlier session's plausible inference written up as the source's statement, and it survived until Saran corrected it on 2026-08-08. Every entry here is therefore split into `stated` (verbatim, verse-addressed) and `inferred` (our reasoning, flagged for review).",
+  "source_priority": {
+    "primary": "Tholkappiyam",
+    "fallback": "Nannūl",
+    "why": "Tholkappiyam-first is the standing rule. But it does NOT enumerate the six பகுபத உறுப்பு, so for பகுபத உறுப்பிலக்கணம் Nannūl is the genuine primary — recorded in tamil-grammar.md and restated in DESIGN.md §4a. Where both cover the ground, both are quoted and any divergence is recorded rather than collapsed."
+  },
+  "verified_by": "verses quoted from data/classical/ at build time; test_citations.py enforces that every நூற்பா cited here resolves in the pinned edition",
+  "verified_date": "2026-08-08",
+  "how_to_use": "Before encoding a rule or labelling an உறுப்பு, look for the concept here. If the claim you need is under `stated`, cite that verse. If it is under `inferred`, it is NOT yet authority — get Saran's ruling or find the verse. If it is absent, say so and add it; do not fill the gap from memory.",
+  "concepts": {
+    "பகுபதம் / பகாப்பதம்": {
+      "english": "analysable word / unanalysable word",
+      "stated": [
+        {
+          "authority": "Nannūl",
+          "verse": 133,
+          "text": "பகுதி விகுதி இடைநிலை சாரியை சந்தி விகாரம் ஆறினும் ஏற்பவை முன்னி புணர்ப்ப முடியும் எப்பதங்களும் பகுதி",
+          "states": "THE foundational verse. Names all six உறுப்பு — பகுதி, விகுதி, இடைநிலை, சாரியை, சந்தி, விகாரம் — and says every பதம் is completed by joining whichever of the six it takes ('ஏற்பவை'). Note 'ஏற்பவை': a word takes those that APPLY, so not all six occur in every word."
+        },
+        {
+          "authority": "Nannūl",
+          "verse": 134,
+          "text": "தத்தம், பகாப் பதங்களே பகுதி ஆகும்",
+          "states": "The பகாப்பதம் (unanalysable word) is itself the பகுதி."
+        }
+      ],
+      "inferred": [],
+      "used_by": [
+        "core/decoder.py decode_formation (word_type)",
+        "schema.py WordType"
+      ]
+    },
+    "பகுதி": {
+      "english": "root / base",
+      "stated": [
+        {
+          "authority": "Nannūl",
+          "verse": 134,
+          "text": "தத்தம், பகாப் பதங்களே பகுதி ஆகும்",
+          "states": "The பகாப்பதம் is the பகுதி."
+        },
+        {
+          "authority": "Nannūl",
+          "verse": 137,
+          "text": "நட வா மடி சீ விடு கூ வே வை நொ போ வௌ உரிஞ் உண் பொருந் திரும் தின் தேய் பார் செல் வவ் வாழ் கேள் அஃகு என்று எய்திய இருபான் மூன்றாம் ஈற்றவும் செய் என் ஏவல் வினைப் பகாப் பதமே",
+          "states": "The twenty-three verb ஏவல் பகாப்பதம் endings, listed by example. Directly relevant to the curated paradigm table: வா, விடு, போ, உண், பார், செல், வாழ், கேள் all appear here."
+        }
+      ],
+      "inferred": [],
+      "used_by": [
+        "core/decoder.py (first component is always பகுதி)",
+        "data/verb_paradigms.json"
+      ]
+    },
+    "விகுதி": {
+      "english": "terminal suffix / இறுதிநிலை",
+      "stated": [
+        {
+          "authority": "Nannūl",
+          "verse": 139,
+          "text": "விளம்பிய பகுதி வேறு ஆதலும் விதியே விகுதி",
+          "states": "The விகுதி is what makes the stated பகுதி become something other than itself."
+        },
+        {
+          "authority": "Nannūl",
+          "verse": 140,
+          "text": "அன் ஆன் அள் ஆள் அர் ஆர் ப மார் அ ஆ கு டு து று என் ஏன் அல் அன் அம் ஆம் எம் ஏம் ஓம் ஒடு உம் ஊர் க ட த ற ஐ ஆய் இ மின் இர் ஈர் ஈயர் கயவும் என்பவும் பிறவும் வினையின் விகுதி பெயரினும் சிலவே இடைநிலை",
+          "states": "The விகுதி inventory. Already cited by vikuthi.json."
+        }
+      ],
+      "inferred": [],
+      "used_by": [
+        "data/grammar/vikuthi.json",
+        "core/decoder.py map_vikuthi"
+      ]
+    },
+    "இடைநிலை": {
+      "english": "medial — tense and voice marker",
+      "stated": [
+        {
+          "authority": "Nannūl",
+          "verse": 141,
+          "text": "இலக்கியம் கண்டு அதற்கு இலக்கணம் இயம்பலின் பகுதி விகுதி பகுத்து இடை நின்றதை வினைப்பெயர் அல் பெயர்க்கு இடைநிலை எனலே",
+          "states": "The POSITIONAL definition: what stands BETWEEN the பகுதி and the விகுதி when they are separated is the இடைநிலை. ⭐ This is the verse behind the D-014 ruling that Nannūl's positional definition governs (so causative வி is an இடைநிலை, not a விகுதி) — a ruling `vikuthi.json` currently cites only as 'TVA C0212 §5.3.3'. That citation can be upgraded to நூற்பா level."
+        },
+        {
+          "authority": "Nannūl",
+          "verse": 142,
+          "text": "த ட ற ஒற்று இன்னே ஐம்பால் மூ இடத்து இறந்தகாலம் தரும் தொழில் இடைநிலை",
+          "states": "PAST இடைநிலை: த், ட், ற், இன். ⭐ Every one is SINGLE. No doubled இடைநிலை is listed."
+        },
+        {
+          "authority": "Nannūl",
+          "verse": 143,
+          "text": "ஆநின்று கின்று கிறு மூ இடத்தின் ஐம்பால் நிகழ்பொழுது அறை வினை இடைநிலை",
+          "states": "PRESENT இடைநிலை: ஆநின்று, கின்று, கிறு."
+        },
+        {
+          "authority": "Nannūl",
+          "verse": 144,
+          "text": "ப வ மூ இடத்து ஐம்பால் எதிர்பொழுது இசை வினை இடைநிலையாம் இவை சில இல",
+          "states": "FUTURE இடைநிலை: ப், வ்."
+        }
+      ],
+      "inferred": [],
+      "used_by": [
+        "data/grammar/idainilai.json",
+        "core/decoder.py map_idainilai"
+      ]
+    },
+    "சாரியை": {
+      "english": "euphonic increment / connective",
+      "stated": [
+        {
+          "authority": "Nannūl",
+          "verse": 243,
+          "text": "பதம்முன் விகுதியும் பதமும் உருபும் புணர்வழி ஒன்றும் பலவும் சாரியை வருதலும் தவிர்தலும் விகற்பமும் ஆகும்",
+          "states": "சாரியை arises where a பதம் joins a விகுதி, another பதம், or a உருபு. It may come singly OR severally, may be absent, and may be optional. ⭐ So its position is the பதம்–விகுதி / பதம்–உருபு junction, and its presence is NOT obligatory."
+        },
+        {
+          "authority": "Nannūl",
+          "verse": 244,
+          "text": "அன் ஆன் இன் அல் அற்று இற்று அத்து அம் தம் நம் நும் ஏ அ உ ஐ கு ன இன்ன பிறவும் பொதுச் சாரியையே உருபு புணர்ச்சிக்குச் சிறப்புவிதி",
+          "states": "The பொதுச் சாரியை inventory: அன், ஆன், இன், அல், அற்று, இற்று, அத்து, அம், தம், நம், நும், ஏ, அ, உ, ஐ, கு, ன."
+        }
+      ],
+      "inferred": [],
+      "used_by": [
+        "data/grammar/sariyai.json",
+        "core/decoder.py map_sariyai"
+      ]
+    },
+    "சந்தி": {
+      "english": "junction consonant",
+      "stated": [
+        {
+          "authority": "Nannūl",
+          "verse": 133,
+          "text": "பகுதி விகுதி இடைநிலை சாரியை சந்தி விகாரம் ஆறினும் ஏற்பவை முன்னி புணர்ப்ப முடியும் எப்பதங்களும் பகுதி",
+          "states": "சந்தி is named as one of the six உறுப்பு. ⚠️ NOTE: no verse located so far gives சந்தி a positional definition the way 141 does for இடைநிலை and 243 does for சாரியை. Its identification currently rests on Saran's ruling plus the elimination argument below."
+        }
+      ],
+      "inferred": [
+        {
+          "claim": "In a strong-verb form such as கொடு + த் + த் + ஆன், the FIRST doubled consonant is the சந்தி and the SECOND is the இடைநிலை.",
+          "derivation": "By elimination among the six of நூற்பா 133: (a) only ONE of the two த் can be the இடைநிலை, because 142 lists the past இடைநிலை as single த்/ட்/ற்/இன்; (b) it is not a சாரியை — த் is absent from 244's inventory and this is not the பதம்–விகுதி junction 243 describes; (c) it is not a விகாரம், because 154 makes விகாரம் the three EVENTS தோன்றல்/திரிதல்/கெடுதல், not a segment; (d) it is not the பகுதி or விகுதி. சந்தி is what remains.",
+          "status": "CONFIRMED by Saran 2026-08-08 — his ruling: 'The first த் is சந்தி and second த் is (இறந்த) இடைநிலை. சந்தி mostly comes in between பகுதி & இடைநிலை; சாரியை will come in between இடைநிலை & விகுதி.' Recorded as a ruling because the positional heuristic he states is finer-grained than any verse we have located."
+        },
+        {
+          "claim": "A சந்தி is never itself doubled, and neither is a சாரியை.",
+          "derivation": "Not derivable from any verse located so far.",
+          "status": "SARAN'S RULING 2026-08-08 — 'சந்தி won't double. Normally doubling won't come for சந்தி or சாரியை.' Treat as authority; it comes from the commentary/teaching tradition rather than from a நூற்பா we hold."
+        }
+      ],
+      "used_by": [
+        "core/decoder.py map_idainilai (sandhi split)",
+        "data/grammar/idainilai.json from_fst"
+      ]
+    },
+    "விகாரம்": {
+      "english": "the three change-events in joining",
+      "stated": [
+        {
+          "authority": "Tholkappiyam",
+          "athikaram": "எழுத்ததிகாரம்",
+          "iyal": "புணரியல்",
+          "verse": 7,
+          "text": "அவைதாம், மெய் பிறிது ஆதல் மிகுதல் குன்றல் என்று இவ் என மொழிப திரியும் ஆறே.",
+          "states": "Tholkappiyam's names for the three: மெய் பிறிது ஆதல் / மிகுதல் / குன்றல். ⭐ The decoder emits THESE names (Saran's ruling 2026-08-02, Tholkappiyam-first)."
+        },
+        {
+          "authority": "Nannūl",
+          "verse": 154,
+          "text": "தோன்றல் திரிதல் கெடுதல் விகாரம் மூன்றும் மொழிமூ இடத்தும் ஆகும்",
+          "states": "Nannūl's names for the same three: தோன்றல் / திரிதல் / கெடுதல், occurring in all three positions of a word. Both namings are true; the divergence is recorded, not collapsed."
+        },
+        {
+          "authority": "Nannūl",
+          "verse": 153,
+          "text": "விகாரம் அனைத்தும் மேவலது இயல்பே",
+          "states": "Where no விகாரம் applies, the join is இயல்பு (unchanged)."
+        },
+        {
+          "authority": "Nannūl",
+          "verse": 136,
+          "text": "ஈறு போதல் இடை உகரம் இ ஆதல் ஆதி நீடல் அடி அகரம் ஐ ஆதல் தன் ஒற்று இரட்டல் முன் நின்ற மெய் திரிதல் இனம் மிகல் இனையவும் பண்பிற்கு இயல்பே",
+          "states": "The change VOCABULARY, stated for பண்பு: ஈறு போதல் (final dropping), தன் ஒற்று இரட்டல் (doubling its own consonant), முன் நின்ற மெய் திரிதல் (the preceding mei changing), இனம் மிகல். ⭐ 'தன் ஒற்று இரட்டல்' and 'முன் நின்ற மெய் திரிதல்' are exactly the phenomena our verb paradigm notes describe for விற்→விற்ற் and சொல்→சொன்ன்."
+        }
+      ],
+      "inferred": [
+        {
+          "claim": "The four curated paradigm entries whose stems change rather than take a doubled tense marker — சொல்→சொன்ன் (ல்→ன்ன்), கல்→கற்ற் (ல்→ற்ற்), கேள்→கேட்ட் (ள்→ட்ட்), விற்→விற்ற் (ற் doubling) — are விகாரம் (திரிதல் / ஒற்று இரட்டல்) affecting the பகுதி, NOT சந்தி + இடைநிலை.",
+          "derivation": "நூற்பா 142 lists the past இடைநிலை as த், ட், ற், இன் — ன் is NOT among them, so சொன்னான் has no listed past இடைநிலை at all. நூற்பா 136 supplies the vocabulary for what is happening instead ('முன் நின்ற மெய் திரிதல்', 'தன் ஒற்று இரட்டல்'), and 154 makes திரிதல் a விகாரம். TVA corroborates the mechanism: A0212 §6.2.2 says that 'இடைநிலை இடம்பெறாத நிலையில், பகுதியானது … இரட்டித்து நின்றோ காலம் காட்டும்' — where no இடைநிலை is present the பகுதி itself shows tense — and C0212 §6.3.1 names this பகுதி இரட்டித்துக் காலம் காட்டுதல் (புகு + ஆன் → புக்கான்).",
+          "consequence_if_accepted": "data/verb_paradigms.json currently declares marker='ன்' for சொல் and marker='ற்' for விற், which labels a விகாரம் as an இடைநிலை. Those four entries need a விகாரம் representation instead, and கொடு (genuine வலிமிகு doubling) needs marker='த்த்' so the existing from_fst mapping yields சந்தி த் + இடைநிலை த்.",
+          "status": "AWAITING SARAN'S RULING — this is our derivation, not an authority. Do not encode it until ruled."
+        }
+      ],
+      "used_by": [
+        "data/grammar/vikaram.json",
+        "schema.py SandhiType",
+        "core/decoder.py (SandhiEvent)"
+      ]
+    },
+    "புணர்ச்சி": {
+      "english": "joining of words",
+      "stated": [
+        {
+          "authority": "Nannūl",
+          "verse": 151,
+          "text": "மெய் உயிர் முதல் ஈறு ஆம் இரு பதங்களும் தன்னொடும் பிறிதொடும் அல்வழி வேற்றுமைப் பொருளின் பொருந்துழி நிலைவரு மொழிகள் இயல்பொடு விகாரத்து இயைவது புணர்ப்பே",
+          "states": "புணர்ச்சி is the joining of நிலைமொழி and வருமொழி, either இயல்பு or with விகாரம், in அல்வழி or வேற்றுமை relation."
+        },
+        {
+          "authority": "Nannūl",
+          "verse": 152,
+          "text": "வேற்றுமை ஐம் முதல் ஆறு ஆம் அல்வழி தொழில் பண்பு உவமை உம்மை அன்மொழி எழுவாய் விளி ஈர் எச்சம் முற்று இடை உரி தழுவுதொடர் அடுக்கு என ஈர் ஏழே",
+          "states": "The fourteen அல்வழி relations."
+        },
+        {
+          "authority": "Tholkappiyam",
+          "athikaram": "எழுத்ததிகாரம்",
+          "iyal": "புணரியல்",
+          "verse": 6,
+          "text": "அவற்றுள், நிறுத்த சொல்லின் ஈறு ஆகு எழுத்தொடு குறித்து வரு கிளவி முதல் எழுத்து இயைய பெயரொடு பெயரைப் புணர்க்குங் காலும் பெயரொடு தொழிலைப் புணர்க்குங் காலும் தொழிலொடு பெயரைப் புணர்க்குங் காலும் தொழிலொடு தொழிலைப் புணர்க்குங் காலும் மூன்றே திரிபு இடன் ஒன்றே இயல்பு என ஆங்கு அந் நான்கே மொழி புணர் இயல்பே.",
+          "states": "The four joining cases (பெயர்+பெயர், பெயர்+தொழில், தொழில்+பெயர், தொழில்+தொழில்); three admit திரிபு, one is இயல்பு."
+        }
+      ],
+      "inferred": [
+        {
+          "claim": "Noun forms whose split turns on a சாரியை/உருபு புணர்ச்சி — வீட்டிற்கு and its like — belong to the புணர்ச்சி engine and are NOT பகுபத-decoder gaps.",
+          "derivation": "நூற்பா 243 makes சாரியை a புணர்ச்சி phenomenon at the பதம்–உருபு junction, and 151/152 place that squarely in புணர்ச்சி.",
+          "status": "CONFIRMED by Saran 2026-08-08 — 'வீட்டிற்கு and similar words to be dealt by புணர்ச்சி engine. These are not to be decoded by பகுபத உறுப்பிலக்கணம்.' Recorded in sariyai.json; quality_sweep.py reports these separately."
+        }
+      ],
+      "used_by": [
+        "scripts/quality_sweep.py (PUNARCHI_SCOPE)",
+        "data/grammar/sariyai.json"
+      ]
+    },
+    "எச்சவினை (பெயரெச்சம் / வினையெச்சம்)": {
+      "english": "non-finite verb forms — adjectival and verbal participles",
+      "stated": [
+        {
+          "authority": "TVA C0212",
+          "section": "§6.1.3 எச்சவினை விகுதிகள்",
+          "verse": null,
+          "text": "தெரிநிலைப் பெயரெச்ச விகுதிகள்: நடந்த, நடக்கின்ற, நடவாத, நடக்கும் – இவற்றுள் அ, உம் விகுதிகள். … தெரிநிலை வினையெச்ச விகுதிகள்: உ, இ, ய், பு, ஆ, ஊ, என, ஏ, அ, இன், ஆல், … முதலியன.",
+          "states": "The எச்சவினை விகுதி inventories. ⚠️ §6.1.3 quotes NO நூற்பா, so this carries lesson-level citation only — verse stays null (D-011). Encoded in vikuthi.json under `echchavinai`."
+        }
+      ],
+      "inferred": [
+        {
+          "claim": "The infinitive (உண்ண, ஆட, கொடுக்க) is a வினையெச்சம் with விகுதி 'அ', not a separate செயவெனெச்சம்.",
+          "derivation": "TVA §6.1.3 lists உண்ண/ஆட under தெரிநிலை வினையெச்ச விகுதி 'அ'.",
+          "status": "CONFIRMED by Saran 2026-08-08 — 'Yes, it's வினையெச்சம் - as TVA classifies.' Settled."
+        },
+        {
+          "claim": "A நூற்பா-level citation for the எச்சவினை விகுதி inventory has not been located.",
+          "derivation": "நூற்பா 140's விகுதி list includes அ, உம், இ, கு, டு, து, று — several of the எச்சவினை endings — but 140 does not separate them as எச்சவினை விகுதி. Whether Nannūl treats them under a distinct heading elsewhere is unresolved.",
+          "status": "OPEN — worth resolving so this inventory can rise from lesson-level to நூற்பா-level citation."
+        }
+      ],
+      "used_by": [
+        "data/grammar/vikuthi.json (echchavinai)"
+      ]
+    }
+  },
+  "open_review_list": [
+    "விகாரம் / paradigm entries: are சொல்→சொன்ன், கல்→கற்ற், கேள்→கேட்ட் விகாரம் (திரிதல்) and விற்→விற்ற் ஒற்று இரட்டல், rather than சந்தி + இடைநிலை? Our derivation is under `விகாரம்.inferred`. If accepted, four paradigm entries change and கொடு needs marker='த்த்'.",
+    "எச்சவினை விகுதி: is there a நூற்பா that names these as a class, so the inventory can rise above lesson-level citation?",
+    "சந்தி: is there a verse giving சந்தி a positional definition, as 141 does for இடைநிலை and 243 for சாரியை? Currently only Saran's ruling plus elimination."
+  ],
+  "attribution": "நூற்பா quoted from the pinned Project Madurai etexts (data/classical/), reproduced with their headers intact — see LICENSING.md. TVA extracts are cited, not redistributed; the ePUBs stay out of git."
+}
