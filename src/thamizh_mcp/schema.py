@@ -92,7 +92,7 @@ class SenseOrigin(BaseModel):
     # NOT called `native_equivalents`, deliberately. These come from the page's own {{syn|ta|…}}
     # list filtered through the orthographic rules, which prove NON-nativeness only — so obvious
     # borrowings (ரோடு) are excluded but naturalized Sanskrit still passes (தானம் 'place' offers
-    # சுவர்க்கம் < स्वर्ग). Calling them "pure Tamil" would over-claim. The curated I2PT lists behind
+    # சுவர்க்கம் < स्वर्ग). Calling them "pure Tamil" would over-claim. The curated S2PT lists behind
     # `NativeEquivalent` are the anchor-tier answer; these are `evolving` evidence at 0.6.
     tamil_alternatives: list[EquivalentCandidate] = Field(default_factory=list)
 

@@ -156,19 +156,19 @@ def _ety(**kw):
 
 
 def test_sanskrit_etymology_gives_vadasol():
-    o = classify_origin("புத்தகம்", fst_native_parse=None, in_i2pt=False,
+    o = classify_origin("புத்தகம்", fst_native_parse=None, in_s2pt=False,
                         etymology=_ety(source_lang="sa", source_lang_name="Sanskrit"))
     assert o.class_ == "வடசொல்" and o.borrowed_from == "Sanskrit" and o.is_native is False
 
 
 def test_non_sanskrit_etymology_gives_loanword_naming_the_source():
-    o = classify_origin("ஜன்னல்", fst_native_parse=None, in_i2pt=False,
+    o = classify_origin("ஜன்னல்", fst_native_parse=None, in_s2pt=False,
                         etymology=_ety(source_lang="pt", source_lang_name="Portuguese"))
     assert o.class_ == "loanword" and o.borrowed_from == "Portuguese"
 
 
 def test_inherited_etymology_gives_iyarchol():
-    o = classify_origin("மரம்", fst_native_parse=True, in_i2pt=False,
+    o = classify_origin("மரம்", fst_native_parse=True, in_s2pt=False,
                         etymology=_ety(relation="inherited", is_native=True,
                                        source_lang="dra-pro", source_lang_name="Proto-Dravidian"))
     assert o.class_ == "இயற்சொல்" and o.is_native is True
@@ -181,7 +181,7 @@ def test_homograph_leads_with_the_tamil_sense_and_still_cites_the_borrowing():
     This replaces the earlier `unknown` answer, which was honest but discarded evidence we held
     and made five everyday words look like coverage gaps.
     """
-    o = classify_origin("கால்", fst_native_parse=True, in_i2pt=False, etymology={
+    o = classify_origin("கால்", fst_native_parse=True, in_s2pt=False, etymology={
         "relation": "ambiguous", "is_native": None, "citation": "u",
         "senses": [
             {"relation": "inherited", "source_lang": "dra-pro", "sense": "leg",
@@ -203,7 +203,7 @@ def test_homograph_leads_with_the_tamil_sense_and_still_cites_the_borrowing():
 def test_homograph_borrowed_in_every_sense_stays_unknown():
     """The ruling only picks a winner when a TAMIL sense exists. Senses that merely disagree about
     which foreign language is the source have no Tamil word to lead with."""
-    o = classify_origin("x", fst_native_parse=None, in_i2pt=False, etymology={
+    o = classify_origin("x", fst_native_parse=None, in_s2pt=False, etymology={
         "relation": "ambiguous", "is_native": None, "citation": "u",
         "senses": [
             {"relation": "borrowed", "source_lang": "sa", "sense": "a",
@@ -217,7 +217,7 @@ def test_homograph_borrowed_in_every_sense_stays_unknown():
 
 def test_single_origin_word_carries_no_sense_breakdown():
     """senses[] is the homograph affordance -- an ordinary word must not sprout a one-item list."""
-    o = classify_origin("ஜன்னல்", fst_native_parse=None, in_i2pt=False, etymology=_ety())
+    o = classify_origin("ஜன்னல்", fst_native_parse=None, in_s2pt=False, etymology=_ety())
     assert o.senses == []
 
 
@@ -302,22 +302,22 @@ def test_sense_label_falls_back_from_id_to_template_gloss_to_definition():
 
 
 def test_derived_scores_lower_than_stated():
-    stated = classify_origin("x", fst_native_parse=None, in_i2pt=False, etymology=_ety())
-    derived = classify_origin("x", fst_native_parse=None, in_i2pt=False,
+    stated = classify_origin("x", fst_native_parse=None, in_s2pt=False, etymology=_ety())
+    derived = classify_origin("x", fst_native_parse=None, in_s2pt=False,
                               etymology=_ety(certainty="derived"))
     assert derived.confidence < stated.confidence
 
 
 def test_etymology_confidence_stays_below_certainty():
     """Evolving tier. Some etymologies are contested (பசு), so the competing class must survive."""
-    o = classify_origin("x", fst_native_parse=None, in_i2pt=False, etymology=_ety())
+    o = classify_origin("x", fst_native_parse=None, in_s2pt=False, etymology=_ety())
     assert o.confidence <= 0.8 and o.alternatives, "never assert more than a crowd source earns"
     assert any("en.wiktionary.org" in (s.ref or "") for s in o.sources)
 
 
 def test_no_etymology_falls_back_to_the_offline_rules():
     """Enrichment off, or a miss — the orthographic rules still run, unchanged."""
-    o = classify_origin("ஜோதி", fst_native_parse=None, in_i2pt=False, etymology=None)
+    o = classify_origin("ஜோதி", fst_native_parse=None, in_s2pt=False, etymology=None)
     assert o.class_ == "unknown" and o.is_native is False   # Grantha: borrowed, source unknown
 
 
@@ -340,7 +340,7 @@ def test_the_tamil_sense_leads_whatever_the_other_language_is():
     the question; it must behave exactly like பூ (native flower vs Sanskrit earth)."""
     for code, name, word in [("sa", "Sanskrit", "भू"), ("en", "English", "car"),
                              ("ur", "Urdu", "x"), ("mr", "Marathi", "y"), ("te", "Telugu", "z")]:
-        o = classify_origin("x", fst_native_parse=True, in_i2pt=False,
+        o = classify_origin("x", fst_native_parse=True, in_s2pt=False,
                             etymology=_homograph(code, name, word))
         assert o.class_ == "இயற்சொல்" and o.is_native is True, name
         assert name in o.evidence, f"{name} sense must still be disclosed"
@@ -351,7 +351,7 @@ def test_the_tamil_sense_leads_whatever_the_other_language_is():
 
 def test_borrowed_sense_hands_back_the_pure_tamil_word():
     """The point of the ruling: a reader who meant English 'car' still learns மகிழுந்து."""
-    o = classify_origin("கார்", fst_native_parse=True, in_i2pt=False, etymology=_homograph(
+    o = classify_origin("கார்", fst_native_parse=True, in_s2pt=False, etymology=_homograph(
         "en", "English", "car", ["மகிழுந்து", "சீருந்து", "தானுந்து"]))
     borrowed = o.senses[1]
     assert [c.equivalent for c in borrowed.tamil_alternatives] == ["மகிழுந்து", "சீருந்து", "தானுந்து"]
@@ -362,7 +362,7 @@ def test_borrowed_sense_hands_back_the_pure_tamil_word():
 def test_a_synonym_that_is_itself_borrowed_is_never_offered_as_pure_tamil():
     """சாலை's road sense lists ரோடு — English. Offering it as a pure-Tamil equivalent would be
     worse than offering nothing, so the orthographic rules filter the synonym list."""
-    o = classify_origin("சாலை", fst_native_parse=True, in_i2pt=False, etymology=_homograph(
+    o = classify_origin("சாலை", fst_native_parse=True, in_s2pt=False, etymology=_homograph(
         "sa", "Sanskrit", "शाला", ["ரோடு", "வழி", "பாதை"]))
     got = [c.equivalent for c in o.senses[1].tamil_alternatives]
     assert "ரோடு" not in got and got == ["வழி", "பாதை"]

@@ -115,7 +115,7 @@ class SuggestNativeEquivalentInput(BaseModel):
 async def suggest_native_equivalent(params: SuggestNativeEquivalentInput) -> str:
     """Use this whenever asked for the pure-Tamil / தனித்தமிழ் equivalent of a borrowed, Sanskrit, or
     English word (e.g. அகராதி → அகரமுதலி/அகரவரிசை) — don't coin one from memory. Returns only ATTESTED
-    equivalents from named community glossaries (Indic-To-Pure-Tamil); every candidate carries its
+    equivalents from named community glossaries (Sanskrit-To-Pure-Tamil); every candidate carries its
     attestation source, and an invented coinage never surfaces.
 
     A word with no attested equivalent (or a native word not in the lists) returns
@@ -167,7 +167,7 @@ class ClassifyOriginInput(BaseModel):
 async def classify_origin(params: ClassifyOriginInput) -> str:
     """Use this whenever asked whether a Tamil word is native or borrowed, or for its origin class —
     இயற்சொல் (native), வடசொல் (Sanskrit), or loanword. Grounded in Tamil orthography (Grantha letters,
-    Tholkappiyam முதல்/இறுதி எழுத்து rules), the native ThamizhiMorph FST parse, and I2PT
+    Tholkappiyam முதல்/இறுதி எழுத்து rules), the native ThamizhiMorph FST parse, and S2PT
     borrowed-word attestation — more reliable than judging native-vs-borrowed from memory.
 
     HONEST BOUNDARY: திரிசொல் (literary) and திசைச்சொல் (regional) need lexical/dialectal corpus

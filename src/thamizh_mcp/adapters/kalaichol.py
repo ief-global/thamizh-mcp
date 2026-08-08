@@ -1,5 +1,5 @@
 """Native-equivalent sources (objective 5): TVA/govt கலைச்சொல் glossaries (ANCHOR) +
-Indic-To-Pure-Tamil / தனித்தமிழ் lists (EVOLVING). HARD RULE: every candidate carries its
+Sanskrit-To-Pure-Tamil / தனித்தமிழ் lists (EVOLVING, provisional). HARD RULE: every candidate carries its
 attestation source; unsourced candidates are dropped in merge; purist coinages marked
 attestation="proposed". No attested equivalent → empty candidates + note, never an invention."""
 from __future__ import annotations

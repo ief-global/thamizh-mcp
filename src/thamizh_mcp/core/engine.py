@@ -29,6 +29,7 @@ class Engine:
         store: Optional[KnowledgeStore] = None,
         morph_fallback: Optional[SourceAdapter] = None,
         etymology_sources: Sequence[SourceAdapter] = (),
+        loanword_sources: Sequence[SourceAdapter] = (),
     ):
         self.morph = morph
         self.morph_fallback = morph_fallback   # curated paradigms — used only on an FST miss
@@ -37,6 +38,9 @@ class Engine:
         # Source-language evidence — the only signal that can name a provenance. Evolving tier, so
         # it is pulled under allow_enrichment and cached, exactly like meaning.
         self.etymology_sources = list(etymology_sources)
+        # Attested-English-romanization evidence. Offline anchor artifact; consulted only
+        # where orthography already proved non-nativeness (see core/classifier.py).
+        self.loanword_sources = list(loanword_sources)
         self.store = store
         self._fixtures: Optional[frozenset] = None   # eval-fixture words, loaded lazily
 
@@ -209,7 +213,7 @@ class Engine:
 
         FST native-parse signal: reuse the morphology run if it already happened; else query the
         FST directly. None means the FST is unavailable (no foma) — the native signal is absent,
-        not False. I2PT membership is the borrowed-attestation signal.
+        not False. S2PT membership is the borrowed-attestation signal.
         """
         if a.all_analyses:
             fst_native: Optional[bool] = True
@@ -223,14 +227,25 @@ class Engine:
                 fst_native = isinstance(fb, AdapterResult) and bool(fb.fields.get("all_analyses"))
         else:
             fst_native = None
-        in_i2pt = await self._word_in_i2pt(normalized)
+        in_s2pt = await self._word_in_s2pt(normalized)
         etymology = await self._etymology(normalized, allow_enrichment, force_refresh)
         if etymology is not None:
             a.sources.append(SourceRef(
                 name="English Wiktionary (etymology)", tier="evolving",
                 ref=etymology.get("citation"), retrieved=etymology.get("retrieved")))
+        english_loan = await self._english_loan(a, normalized)
         return classifier.classify_origin(normalized, fst_native_parse=fst_native,
-                                          in_i2pt=in_i2pt, etymology=etymology)
+                                          in_s2pt=in_s2pt, etymology=etymology,
+                                          english_loan=english_loan)
+
+    async def _english_loan(self, a: WordAnalysis, normalized: str) -> Optional[dict]:
+        """Attested English romanization, or None. Offline artifact — no network, no cache needed."""
+        for src in self.loanword_sources:
+            res = await src.lookup(normalized)
+            if isinstance(res, AdapterResult):
+                a.sources.extend(res.sources)
+                return res.fields["english_loan"]
+        return None
 
     async def _etymology(self, normalized: str, allow_enrichment: bool,
                          force_refresh: bool = False) -> Optional[dict]:
@@ -264,7 +279,7 @@ class Engine:
                 return ety
         return None
 
-    async def _word_in_i2pt(self, normalized: str) -> bool:
+    async def _word_in_s2pt(self, normalized: str) -> bool:
         """Is the word an attested borrowed headword in any configured equivalent source?"""
         for src in self.equivalent_sources:
             res = await src.lookup(normalized)
@@ -281,7 +296,7 @@ class Engine:
         A word classified native (இயற்சொல்) needs no equivalent: applicable=False, and NOT a gap
         (that is a resolved answer, not an unknown). Otherwise (borrowed, or origin undetermined)
         we look for attested equivalents; a miss is an honest gap. Network equivalent sources
-        (future ta.wiktionary synonym mining) must honor allow_enrichment; the local I2PT CSVs do
+        (future ta.wiktionary synonym mining) must honor allow_enrichment; the local S2PT CSVs do
         not touch the network, so they always run.
         """
         # A homograph is the exception: its headword class is native by the Thamizh-first ruling
@@ -308,7 +323,7 @@ class Engine:
                     return
             else:
                 misses.append(f"{res.source}: {res.reason} — {res.note}")
-        # Fall back to the per-sense equivalents the origin pass already resolved. I2PT is keyed on
+        # Fall back to the per-sense equivalents the origin pass already resolved. S2PT is keyed on
         # borrowed HEADWORDS, so it misses a homograph entirely — it has no கார் row, because கார்
         # is a native word that merely happens to share its form with English 'car'. The page's own
         # synonyms under that borrowed sense do carry மகிழுந்து / சீருந்து / தானுந்து, and Saran's
@@ -398,8 +413,9 @@ def default_engine() -> Engine:
     """Auto-wire from environment: FST anchor if available; Wiktionary + store for meaning."""
     global _default
     if _default is None:
-        from thamizh_mcp.adapters.equivalents import IndicToPureTamilAdapter
+        from thamizh_mcp.adapters.equivalents import SanskritToPureTamilAdapter
         from thamizh_mcp.adapters.etymology import EnWiktionaryEtymologyAdapter
+        from thamizh_mcp.adapters.loanwords import EnglishLoanwordAdapter
         from thamizh_mcp.adapters.paradigms import VerbParadigmAdapter
         from thamizh_mcp.adapters.thamizhimorph import ThamizhiMorphAdapter
         from thamizh_mcp.adapters.wiktionary import TamilWiktionaryAdapter
@@ -408,7 +424,8 @@ def default_engine() -> Engine:
             morph_fallback=VerbParadigmAdapter(),
             meaning_sources=[TamilWiktionaryAdapter()],
             etymology_sources=[EnWiktionaryEtymologyAdapter()],
-            equivalent_sources=[IndicToPureTamilAdapter()],
+            loanword_sources=[EnglishLoanwordAdapter()],
+            equivalent_sources=[SanskritToPureTamilAdapter()],
             store=KnowledgeStore(config.DEFAULT_DB),
         )
     return _default

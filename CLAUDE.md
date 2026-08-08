@@ -32,7 +32,7 @@ milestones. After any history rewrite, other clones must `git reset --hard origi
 | Layer | What |
 |---|---|
 | Anchors | ThamizhiMorph FST via `flookup` · curated verb paradigms (`data/verb_paradigms.json`) · pinned Tholkappiyam + Nannūl (`data/classical/`) · cited grammar tables (`data/grammar/`) |
-| Evolving | ta.wiktionary (meanings) · **en.wiktionary (etymology → source language)** · I2PT (native equivalents) |
+| Evolving | ta.wiktionary (meanings) · **en.wiktionary (etymology → source language)** · S2PT (native equivalents, PROVISIONAL — licence unstated) |
 | Store | zero-config SQLite, per-claim provenance + `transactions` gold log (on by default) |
 
 **Tools:** `analyze_word` `classify_origin` `get_root` `get_meaning` `suggest_native_equivalent`
@@ -43,7 +43,7 @@ milestones. After any history rewrite, other clones must `git reset --hard origi
 
 | | result |
 |---|---|
-| **Origin** | 87 correct · 18 honest `unknown` · **1 wrong** (was 59/30/17 before D-011/D-014, 82/23/1 before per-sense origin) |
+| **Origin** | 94 correct · 11 honest `unknown` · **1 wrong** (பட்டன்; was 59/30/17 → 82/23/1 → 87/18/1 → now) |
 | **Formation** | 26/30 decoded · 4 gaps (`கொடுக்க` `கொடுத்து` `கொடுக்கும்` non-finite; `வீட்டிற்கு` noun dative) |
 
 Re-run: `uv run python scripts/quality_sweep.py` (network on; ~3 min). It is the only honest

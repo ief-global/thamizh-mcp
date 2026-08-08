@@ -13,7 +13,10 @@ Signals, strongest first:
      English, Portuguese and Urdu loans as readily as Sanskrit ones.
   2. முதல் எழுத்து violation — a mei that cannot begin a native word (Tholkappiyam மொழிமரபு).
   3. இறுதி எழுத்து violation — a bare vallinam final, which native words never take.
-  4. I2PT attestation as a borrowed word (no orthographic marker → source language undetermined).
+  4. Attested English romanization (Dakshina) — names English, but ONLY inside a branch
+     where 1/2/3 already proved non-nativeness. Never consulted on its own.
+  5. S2PT attestation as a வடசொல் headword — the lists are Sanskrit-scoped, so this names a source
+     language, but the source is PROVISIONAL so the confidence is capped (see the branch).
   5. Clean native ThamizhiMorph FST parse + no non-native markers → இயற்சொல் (moderate: a fully
      naturalized தற்பவம் borrowing can look native).
 """
@@ -35,6 +38,8 @@ THOLKAPPIYAM_MOZIMARABU = SourceRef(
 OPEN_TAMIL_LETTERSET = SourceRef(
     name="open-tamil letter set", tier="anchor",
     ref="tamil.utf8.sanskrit_letters (Grantha: ஶ ஜ ஷ ஸ ஹ க்ஷ)", retrieved="open-tamil>=1.1")
+_S2PT_NAME = "Sanskrit-To-Pure-Tamil (community தனித்தமிழ் lists)"
+
 THAMIZHIMORPH_PARSE = SourceRef(
     name="ThamizhiMorph", tier="anchor",
     ref="native FST parse (lemma found in primary FSTs)", retrieved="see data/PINS.md")
@@ -51,8 +56,19 @@ _VALLINAM_MEI = frozenset(("க்", "ச்", "ட்", "த்", "ப்", "�
 
 
 def _base_mei(grapheme: str) -> Optional[str]:
-    """Base consonant (mei, with pulli) of one grapheme, or None if it is a bare vowel."""
-    split = utf8.splitMeiUyir(grapheme)
+    """Base consonant (mei, with pulli) of one grapheme, or None if it is a bare vowel.
+
+    Returns None rather than raising when open-tamil cannot split the grapheme. Real input
+    contains malformed-but-Tamil-codepoint sequences — `நுா` (நு followed by a second vowel sign)
+    occurs in crowd-sourced data and passes `normalize()`, since every codepoint IS Tamil.
+    `utf8.splitMeiUyir` raises ValueError on it, which crashed `classify_origin` and would have
+    surfaced as a 500 from the web head. An unsplittable grapheme simply carries no consonant
+    signal, so the honest answer is "no mei", not a traceback.
+    """
+    try:
+        split = utf8.splitMeiUyir(grapheme)
+    except Exception:
+        return None
     if isinstance(split, tuple):      # உயிர்மெய் → (mei, uyir)
         return split[0]
     if split.endswith("்"):           # already a pure mei (e.g. 'ஸ்')
@@ -270,15 +286,44 @@ def _from_etymology(normalized: str, ety: dict, fst_native_parse: Optional[bool]
         sources=[_etymology_source(ety), THOLKAPPIYAM_MOZIMARABU])
 
 
+DAKSHINA_ROMANIZATION = SourceRef(
+    name="Google Dakshina (attested romanizations)", tier="anchor",
+    ref="Roark et al. 2020 (LREC) — CC BY-SA 4.0; see data/PINS.md")
+
+
+def _from_english_loan(loan: dict, non_native_reason: str) -> Origin:
+    """Name English as the source, having ALREADY established the word is not native.
+
+    The split is D-015's: orthography proves NON-nativeness, positive evidence names the language.
+    This function only ever runs inside a branch that has proved the former, so it answers "which
+    language" and never "is it borrowed". Ungated, the same evidence mislabels கால் as "call" and
+    கார் as "car" — see adapters/loanwords.py.
+    """
+    english, n = loan["english"], loan.get("attestations", 0)
+    return Origin(
+        class_="loanword", is_native=False, borrowed_from="English", confidence=0.8,
+        evidence=(f"{non_native_reason} The source is English: the word is attested in Latin script "
+                  f"as \u201c{english}\u201d by {n} independent annotators in the Google Dakshina "
+                  "romanization lexicon, and that spelling is an English word. Attested usage, not "
+                  "a phonetic guess \u2014 but a romanization lexicon records how speakers write a "
+                  "word, so it is evidence of an English source rather than a dictionary etymology."),
+        alternatives=[{"class": "\u0bb5\u0b9f\u0b9a\u0bca\u0bb2\u0bcd",
+                       "note": "if the word reached Tamil through Sanskrit rather than English"}],
+        sources=[THOLKAPPIYAM_MOZIMARABU, DAKSHINA_ROMANIZATION])
+
+
 def classify_origin(
-    normalized: str, *, fst_native_parse: Optional[bool], in_i2pt: bool,
-    etymology: Optional[dict] = None,
+    normalized: str, *, fst_native_parse: Optional[bool], in_s2pt: bool,
+    etymology: Optional[dict] = None, english_loan: Optional[dict] = None,
 ) -> Origin:
     """Classify one normalized Tamil word's origin.
 
     fst_native_parse: True = parses through the native FST, False = ran with no analysis,
     None = FST unavailable (foma not installed) — the native signal is then simply absent.
-    in_i2pt: the word is an attested INDIC key in the Indic-To-Pure-Tamil lists.
+    in_s2pt: the word is an attested வடசொல் headword in the Sanskrit-To-Pure-Tamil lists.
+    english_loan: attested-English-romanization evidence from `adapters/loanwords.py`, or None.
+    Consulted ONLY inside a branch that has already proved non-nativeness — it names a language,
+    it never decides whether the word is borrowed.
     etymology: a source-language claim from `adapters/etymology.py`, or None when the lookup was
     not run (enrichment disabled) or found nothing. This is the ONLY signal that can name a source
     language; every rule below it can prove non-nativeness but not provenance.
@@ -288,6 +333,10 @@ def classify_origin(
 
     grantha = grantha_letters_in(normalized)
     if grantha:
+        if english_loan:
+            return _from_english_loan(english_loan, (
+                f"contains Grantha letter(s) {' '.join(grantha)} — outside the native Tamil "
+                "எழுத்து set (Tholkappiyam எழுத்ததிகாரம்), so the word is certainly borrowed."))
         # Grantha proves the word is NOT NATIVE. It does NOT prove the word is Sanskrit.
         #
         # Grantha is simply how Tamil writes sounds its own எழுத்து set lacks — whatever language
@@ -297,7 +346,7 @@ def classify_origin(
         # eleven confident-wrong answers in a 108-word everyday sweep, every one at 0.9.
         #
         # So: assert what the orthography actually licenses (is_native=False) and leave the SOURCE
-        # language undetermined, exactly as the I2PT branch below does. Promoting to வடசொல் needs a
+        # language undetermined, unlike the S2PT branch below. Promoting to வடசொல் needs a
         # positive Sanskrit signal — a lexicon — which we do not have offline. Honest gap over a
         # confident guess (blueprint §2).
         return Origin(
@@ -313,6 +362,10 @@ def classify_origin(
 
     bad_initial = forbidden_initial(normalized)
     if bad_initial:
+        if english_loan:
+            return _from_english_loan(english_loan, (
+                f"word-initial ‘{bad_initial}’ cannot begin a native Tamil word (Tholkappiyam "
+                "மொழிமரபு, முதல் எழுத்து rule), so the word is certainly borrowed."))
         # Same defect as the Grantha branch above: a முதல் எழுத்து violation proves the word is NOT
         # NATIVE; it says nothing about WHICH language it came from. Sanskrit borrowings break this
         # rule as readily as English ones — ரூபம் (Skt rūpa) and ராஜா sit beside ரயில் and லாரி.
@@ -333,6 +386,10 @@ def classify_origin(
 
     bad_final = forbidden_final(normalized)
     if bad_final:
+        if english_loan:
+            return _from_english_loan(english_loan, (
+                f"ends in bare vallinam ‘{bad_final}’ — native Tamil words do not end in "
+                "க்/ச்/ட்/த்/ப்/ற் (Tholkappiyam மொழிமரபு, இறுதி எழுத்து rule)."))
         # NOT the same defect as the two rules above, and deliberately left asserting `loanword`.
         # Those two turn on WHICH LETTERS appear, which is neutral about the source language. This
         # one turns on MORPHOLOGICAL ASSIMILATION: a word ending in a bare vallinam has not been
@@ -348,15 +405,39 @@ def classify_origin(
             alternatives=[{"class": "வடசொல்", "note": "source language undetermined"}],
             sources=[THOLKAPPIYAM_MOZIMARABU])
 
-    if in_i2pt:
-        # Attested borrowed, but no orthographic marker tells வடசொல் from loanword — honest unknown.
+    if in_s2pt:
+        # The lists are **வடசொல்-scoped**, not "borrowed in general" — upstream is
+        # narVidhai/Sanskrit-To-Pure-Tamil-Dictionary, README titled "வடசொல் to தமிழ்", and its four
+        # sub-lists are all வடமொழி→தமிழ் purist glossaries. So membership IS positive evidence of a
+        # Sanskrit source. We previously returned `unknown` here, saying "no orthographic marker
+        # distinguishes வடசொல் from loanword" — true, but it ignored what the source is ABOUT, and
+        # threw away the one thing the list actually attests.
+        #
+        # Confidence 0.55 — deliberately the lowest committing score in this module, BELOW the
+        # 0.8 an en.wiktionary etymology earns, because the source is PROVISIONAL: no upstream
+        # LICENCE file, last commit 2020, and its own upstreams are four scraped community sites
+        # with unstated terms. This branch only runs when en.wiktionary had nothing (etymology is
+        # checked first), so it is a floor, never an override.
+        #
+        # The evidence string names the weakness on purpose. A reader who inspects our sources
+        # should find that we already told them — that is what makes the provenance worth trusting.
         return Origin(
-            class_="unknown", is_native=False, confidence=0.5,
-            evidence="attested as a borrowed word in the Indic-To-Pure-Tamil lists, but no "
-                     "orthographic marker distinguishes வடசொல் from loanword — source language undetermined",
-            alternatives=[{"class": "வடசொல்"}, {"class": "loanword"}],
-            sources=[SourceRef(name="Indic-To-Pure-Tamil", tier="evolving",
-                               ref="attested as a borrowed headword")])
+            class_="வடசொல்", is_native=False, borrowed_from="Sanskrit", confidence=0.55,
+            evidence="attested as a வடசொல் headword in the Sanskrit-To-Pure-Tamil தனித்தமிழ் lists "
+                     "(விருபா · தமிழ்ச்சொல் · ThamizhDNA · தமிழ்மந்திரம், aggregated upstream). Those lists "
+                     "exist to give Tamil replacements for SANSKRIT words, so membership is evidence "
+                     "of a Sanskrit source. Weak evidence, deliberately scored low: the aggregate is "
+                     "a community compilation, unmaintained since 2020, with no stated licence and "
+                     "scraped upstreams — evidence, NOT authority. No en.wiktionary etymology was "
+                     "available for this word, or it would have been preferred.",
+            alternatives=[{"class": "loanword",
+                           "note": "if the word is borrowed from a non-Sanskrit source and the "
+                                   "purist list mis-scoped it"},
+                          {"class": "unknown",
+                           "note": "if the community compilation is not accepted as evidence"}],
+            sources=[SourceRef(name=_S2PT_NAME, tier="evolving",
+                               ref="https://github.com/narVidhai/Sanskrit-To-Pure-Tamil-Dictionary"
+                                   " — attested as a வடசொல் headword (provisional source)")])
 
     if fst_native_parse:
         return Origin(

@@ -13,7 +13,9 @@ Sandbox note (no root): extract debs to ~/local and export
 
 Smoke test (2026-07-02): மரம்→`மரம்+noun+nom`; மரத்தில்→`மரம்+noun+infInc+loc|soc` (both analyses kept).
 
-| Indic-To-Pure-Tamil CSVs (`data/equivalents/indic-to-pure-tamil/`) | github.com/narVidhai/Indic-To-Pure-Tamil @ `f734646675579d3d3eb8d44b288f6a13701feaa9` | 2026-07-02 | MIT — **cleared for use and redistribution** (2026-07-26, see LICENSING.md) |
+| Sanskrit-To-Pure-Tamil (S2PT) CSVs (`data/equivalents/sanskrit-to-pure-tamil/`) | github.com/narVidhai/**Sanskrit-To-Pure-Tamil-Dictionary** @ `f734646675579d3d3eb8d44b288f6a13701feaa9` | 2026-07-02 | ⚠️ **LICENCE UNSTATED — corrected 2026-08-08 (D-017).** Upstream has NO LICENCE file and no licence statement; last upstream commit 2020. Its own upstreams are four scraped community sites with unstated terms. This table previously said "MIT — cleared for use and redistribution"; **no basis for that was found.** PROVISIONAL: confidence-capped in `core/classifier.py`, supersession tracked in LICENSING.md. |
+
+| English-loanword artifact (`data/loanwords/english_loans.json`) | Derived from **Google Dakshina v1.0** (2020-05-27) + `dwyl/english-words`; built 2026-08-08 by `scripts/build_english_loans.py` (source checksums inside the artifact's `_meta`) | 2026-08-08 | **CC BY-SA 4.0** — inherited from Dakshina, **NOT Apache-2.0**, never relicensed. Attribution travels with every claim. Wordlist is Unlicense. Rebuild/verify: `--verify`. |
 
 ## Classical grammar texts (D-011) — pinned 2026-08-02
 

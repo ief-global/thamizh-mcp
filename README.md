@@ -116,7 +116,7 @@ data keeps its own licence and is classified per source in [`LICENSING.md`](LICE
 | Source | Licence | Obligation |
 |---|---|---|
 | ThamizhiMorph FSTs | Apache-2.0 | attribution + academic citation |
-| Indic-To-Pure-Tamil lists | MIT | attribution |
+| Sanskrit-To-Pure-Tamil lists | ⚠️ unstated upstream — provisional, see LICENSING.md | attribution |
 | Tamil Wiktionary meanings | CC BY-SA | attribution; **stays** CC BY-SA, never relicensed |
 | Tholkappiyam / Nannūl etexts | Project Madurai | keep their header intact wherever the text travels |
 
