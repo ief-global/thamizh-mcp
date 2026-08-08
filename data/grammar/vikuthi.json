@@ -330,8 +330,8 @@
   "echchavinai": {
     "comment": "எச்சவினை விகுதி — the NON-FINITE verb endings (பெயரெச்சம் / வினையெச்சம்). Encoded 2026-08-08 to close this file's own recorded gap, which said these 'are listed in TVA C0212 §§6.1.3–6.1.7 but are NOT yet encoded here … Encode when the noun / non-finite decoders need them.' The non-finite decoder needs them now: கொடுக்க, கொடுத்து and கொடுக்கும் were 3 of the 4 formation gaps.",
     "authority": "TVA C0212 எழுத்தின் பிறப்பும் பத இலக்கணமும், §6.1.3 எச்சவினை விகுதிகள் (Government of Tamil Nadu, degree-level accredited). Quoted verbatim in source_extract below. NOTE: unlike the வினைமுற்று inventory above, §6.1.3 does NOT quote a நூற்பா number, so these carry lesson-level citation only — `verse: null`, per D-011. Do not invent a நூற்பா for them.",
-    "verified_by": "extracted from the TVA C0212 ePUB 2026-08-08 — AWAITING Saran's linguistic review",
-    "verified_date": null,
+    "verified_by": "Saran Saravanan (formal TVA A021 coursework) — ruling 2026-08-08",
+    "verified_date": "2026-08-08",
     "peyareccham": {
       "class": "தெரிநிலைப் பெயரெச்ச விகுதி",
       "canonical": [
@@ -475,8 +475,8 @@
       }
     },
     "open_questions_for_review": [
-      "The INFINITIVE (உண்ண, ஆட — and so கொடுக்க) is classified by TVA §6.1.3 as a தெரிநிலை வினையெச்ச விகுதி 'அ', not as a separate category. We follow the source. Saran to confirm this is the analysis he wants surfaced, since some grammars treat செயவெனெச்சம் separately.",
-      "'அ' is both a பெயரெச்ச விகுதி (நடந்த) and a வினையெச்ச விகுதி (உண்ண); 'உம்' likewise (நடக்கும் vs the வினையெச்ச list). 'து' is both a வினையெச்ச விகுதி and the ஒன்றன்பால் வினைமுற்று விகுதி (நடந்தது). So the ENDING ALONE cannot decide the உறுப்பு — the decoder must use the form's function, and where it cannot, it must say so rather than pick."
+      "RESOLVED 2026-08-08 (Saran's ruling): the INFINITIVE (உண்ண, ஆட, கொடுக்க) is a **வினையெச்சம்** with விகுதி 'அ', exactly as TVA §6.1.3 classifies it — NOT a separate செயவெனெச்சம் category. Settled; do not re-open.",
+      "STANDING (not a defect): 'அ' is both a பெயரெச்ச and a வினையெச்ச விகுதி; 'உம்' likewise; 'து' is also the ஒன்றன்பால் வினைமுற்று விகுதி (நடந்தது). The ENDING ALONE cannot decide the உறுப்பு — the decoder must use the form's function, and where it cannot, it must say so rather than pick."
     ],
     "source_extract": "TVA C0212 §6.1.3, verbatim: 'எச்சவினை விகுதிகளையும் இங்குக் காண்போம். தெரிநிலைப் பெயரெச்ச விகுதிகள்: நடந்த, நடக்கின்ற, நடவாத, நடக்கும் – இவற்றுள் அ, உம் விகுதிகள். குறிப்புப் பெயரெச்ச விகுதிகள்: சிறிய – அ பெரிய – அ தெரிநிலை வினையெச்ச விகுதிகள்: … உ, இ, ய், பு, ஆ, ஊ, என, ஏ, அ, இன், ஆல், கால், ஏல், எனின், ஆயின், ஏனும், கு, இய, இயர், வான், பான், பாக்கு, கடை, கண், வழி, இடத்து, உம், மல், மை, மே, து முதலியன. இவற்றில் மல், மை, மே, து என்ற நான்கும் எதிர்மறைப் பொருளிலும் வருவன. … குறிப்பு வினையெச்ச விகுதிகள் … அ, றி, து, ஆல், மல், கால், கடை, வழி, இடத்து என்னும் 9 விகுதிகள்.'"
   }
