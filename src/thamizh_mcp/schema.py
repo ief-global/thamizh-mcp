@@ -48,9 +48,13 @@ class SourceRef(BaseModel):
     authority: Optional[Authority] = None
     ref: Optional[str] = None
     retrieved: Optional[str] = None
-    verse: Optional[str] = None   # D-011: நூற்பா number for classical citations, populated once a
-    #                               digitized Tholkappiyam/Nannūl edition is pinned; None = section-level
-    #                               (the honest interim). Additive, non-breaking.
+    verse: Optional[str] = None   # D-011: the நூற்பா address. Nannūl is continuous so "நூற்பா 133"
+    #                               suffices; Tholkappiyam numbers RESTART per இயல், so its label
+    #                               carries அதிகாரம் › இயல் › நூற்பா. None = the edition does not
+    #                               print it — the honest interim, never a fabricated number.
+    verse_text: Optional[str] = None  # The நூற்பா ITSELF, quoted from the pinned edition (D-018).
+    #                               A citation tells a scholar where to look; this shows them the
+    #                               verse. Populated by core/classical.py; None when unavailable.
 
 
 class EquivalentCandidate(BaseModel):

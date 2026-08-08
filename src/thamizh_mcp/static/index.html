@@ -56,7 +56,11 @@
   .plus{align-self:center;color:var(--muted);font-size:1.3rem}
   .row{padding:9px 0;border-bottom:1px dashed var(--line)}
   .row:last-child{border-bottom:0}
-  .src{font-size:.8rem;color:var(--muted);font-family:system-ui,sans-serif}
+  .nurpa{margin:.55rem 0 .2rem;padding:.5rem .7rem;border-left:3px solid #c8a24a;
+  background:rgba(200,162,74,.08);border-radius:0 4px 4px 0}
+.nurpa .addr{font-size:.78rem;letter-spacing:.02em;opacity:.85;margin-bottom:.25rem}
+.nurpa .txt{font-size:1.02rem;line-height:1.7}
+.src{font-size:.8rem;color:var(--muted);font-family:system-ui,sans-serif}
   .ev{font-size:.9rem;color:var(--muted);margin-top:6px}
   .badge{display:inline-block;font-size:.72rem;padding:2px 9px;border-radius:999px;
          background:var(--line);color:var(--ink);font-family:system-ui,sans-serif;margin-left:8px}
@@ -225,11 +229,33 @@ function render(word, d, ok){
     out.appendChild(card("gaps",kids));
   }
 
-  // provenance
-  const names=[...new Set((d.sources||[]).map(s=>s.name))];
-  if(names.length){
-    out.appendChild(card(null,[h2("சான்று — sources"), el("div","src", names.join("  ·  "))]));
+  // provenance — quote the நூற்பா, don't merely name the authority (D-018).
+  // A scholar's first question is "on whose authority?"; showing the verse answers it in the
+  // authority's own words, which naming a chapter never did.
+  const srcs = d.sources||[];
+  const withVerse = srcs.filter(s=>s.verse_text);
+  const seen = new Set();
+  const kidsS = [h2("சான்று — sources")];
+  withVerse.forEach(s=>{
+    const key = s.verse + "|" + s.verse_text;
+    if(seen.has(key)) return;            // the same verse can ground several fields
+    seen.add(key);
+    const b = el("div","nurpa");
+    b.appendChild(el("div","addr", (s.authority||s.name) + " · " + s.verse));
+    b.appendChild(el("div","txt", s.verse_text));
+    if(s.ref) b.appendChild(el("div","src", s.ref));
+    kidsS.push(b);
+  });
+  const names=[...new Set(srcs.map(s=>s.name))];
+  if(names.length) kidsS.push(el("div","src", names.join("  ·  ")));
+  // Project Madurai grants free distribution PROVIDED its header travels with the text, so any
+  // surface that quotes a verse must carry the credit. See LICENSING.md.
+  if(withVerse.length){
+    kidsS.push(el("div","src",
+      "நூற்பா quoted from the pinned Project Madurai etexts — © Project Madurai, "
+      + "reproduced with its header intact. Edition details: data/PINS.md"));
   }
+  if(names.length) out.appendChild(card(null,kidsS));
 }
 </script>
 </body>

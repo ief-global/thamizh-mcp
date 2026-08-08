@@ -31,7 +31,7 @@ milestones. After any history rewrite, other clones must `git reset --hard origi
 
 | Layer | What |
 |---|---|
-| Anchors | ThamizhiMorph FST via `flookup` · curated verb paradigms (`data/verb_paradigms.json`) · pinned Tholkappiyam + Nannūl (`data/classical/`) · cited grammar tables (`data/grammar/`) |
+| Anchors | ThamizhiMorph FST via `flookup` · curated verb paradigms (`data/verb_paradigms.json`) · pinned Tholkappiyam + Nannūl (`data/classical/`), **read at RUNTIME so claims QUOTE their நூற்பா** (`core/classical.py`, D-018) · cited grammar tables (`data/grammar/`) |
 | Evolving | ta.wiktionary (meanings) · **en.wiktionary (etymology → source language)** · S2PT (native equivalents, PROVISIONAL — licence unstated) |
 | Store | zero-config SQLite, per-claim provenance + `transactions` gold log (on by default) |
 
@@ -117,6 +117,25 @@ Orthography proves a word is **not native**; it can NEVER say which language it 
    uvx → PyPI + Docker/GHCR. Registry + tamil-nlp-catalog listings after.
 6. Network session (batch): TVA கலைச்சொல் snapshot · locate/license Aalamaram (D-008).
 7. Lift `classify_origin` further with Thamizhi Validator.
+
+### Verse grounding is RUNTIME now, not just a test (D-018)
+
+`data/classical/` was previously read only by `tests/test_citations.py` — a design-time guard proving
+every cited நூற்பா number exists. Nothing in `src/` opened it, so `SourceRef.verse` was always None
+and a user asking "on whose authority?" got a chapter name. **`core/classical.py` now serves verses at
+runtime**, `SourceRef.verse_text` carries the நூற்பா verbatim, and the web app quotes it.
+
+- **Nannūl** is continuous 1–462 → `classical.nannul_verse(133)`.
+- **Tholkappiyam** numbers RESTART per இயல் and collide, so there is deliberately **no bare-number
+  API** — `classical.tholkappiyam_verse(அதிகாரம், இயல், n)`. A bare number is a bug, not a shortcut.
+- **Only VERIFIED verses are wired.** Unconfirmed citations keep `verse=None` and cite the section.
+  Never fill one in from memory or a secondary source — TVA renumbers (its 336 is 337 here).
+- **Quoting obliges attribution.** Project Madurai grants distribution provided its header travels
+  with the text, so any surface that quotes must show the credit (`classical.attribution`).
+
+The cost of not having had this: the question of what the second `த்` in வா + த் + த் + ஏன் is called
+took several exchanges, and the answer — **நன்னூல் 133**, which names all six உறுப்பு including
+சந்தி — was in the repo the whole time. It had to be grepped by hand.
 
 ## Design rules (do not violate)
 - **Tholkappiyam-first:** cite Tholkappiyam before Nannool for grammar claims. This drifted once
