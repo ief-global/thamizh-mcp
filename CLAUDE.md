@@ -24,7 +24,7 @@ integration. Loop: work on `develop` here → push → open PR `develop → main
 milestones. After any history rewrite, other clones must `git reset --hard origin/main`
 (not merge/rebase).
 
-## Current state (2026-08-05) — 187 tests pass (182 + 5 skipped without live foma)
+## Current state (2026-08-11) — 266 tests pass (5 skip without live foma)
 
 **Everything below is live and merged to `main`.** Nine MCP tools + web/REST + CLI over ONE engine
 (blueprint §8 — the web head needed zero engine changes, which validated that design).
@@ -34,12 +34,13 @@ milestones. After any history rewrite, other clones must `git reset --hard origi
 | Anchors | ThamizhiMorph FST via `flookup` · curated verb paradigms (`data/verb_paradigms.json`) · pinned Tholkappiyam + Nannūl (`data/classical/`), **read at RUNTIME so claims QUOTE their நூற்பா** (`core/classical.py`, D-018) · cited grammar tables (`data/grammar/`) |
 | Evolving | ta.wiktionary (meanings) · **en.wiktionary (etymology → source language)** · S2PT (native equivalents, PROVISIONAL — licence unstated) |
 | Store | zero-config SQLite, per-claim provenance + `transactions` gold log (on by default) |
+| Registry | **`data/sources.json` (D-017)** — every source's evidential GRADE (A–D) and legal REDISTRIBUTION MODE, as independent axes. `core/sources.py` stamps the grade onto every `SourceRef`; the web app shows it. |
 
 **Tools:** `analyze_word` `classify_origin` `get_root` `get_meaning` `suggest_native_equivalent`
 `enrich_word` `explain_formation` `explain_grammar` `refresh_sources`. Only optional
 `validate_pure_tamil`/`generate_forms`/`transliterate` remain from blueprint §6.
 
-### Measured quality (108-word everyday sweep, 2026-08-05)
+### Measured quality (108-word everyday sweep, re-measured 2026-08-11 — unchanged)
 
 | | result |
 |---|---|
@@ -118,6 +119,26 @@ Orthography proves a word is **not native**; it can NEVER say which language it 
 6. Network session (batch): TVA கலைச்சொல் snapshot · locate/license Aalamaram (D-008).
 7. Lift `classify_origin` further with Thamizhi Validator.
 
+### Every source declares its grade and its licence (D-017)
+
+`data/sources.json` is the registry; `core/sources.py` reads it at runtime. Before it, licence and
+quality facts lived in three prose places (`LICENSING.md`, `data/PINS.md`, adapter docstrings) and
+**nothing checked that a shipped adapter had been through any of them** — which is how S2PT stayed
+load-bearing for weeks under a "MIT" claim with no upstream basis.
+
+- **`grade` (A–D) is EVIDENTIAL; `redistribution` is LEGAL. They are INDEPENDENT axes (D-016).**
+  The Madras Tamil Lexicon is grade **A** *and* consult-and-cite. Never derive one from the other.
+- **`tests/test_sources_registry.py` fails if a shipped `SourceAdapter` has no entry, or an entry
+  states no licence.** `licence_status: "unstated"` PASSES — recording "we do not know" is the
+  honest fact. What must never pass is silence.
+- **The grade travels with the answer.** `_grade_sources()` in `engine.py` walks the finished
+  analysis once, so a source cannot ship ungraded by being wired somewhere the author forgot.
+- Caps are a **ceiling, never a score** — every cap currently sits at or above what the classifier
+  emits, so the sweep is unchanged. It binds the day someone raises a confidence past its source.
+- Framing to keep: **authenticity comes from every claim carrying a graded, citable provenance the
+  user can check — not from every source being impeccable.** A grade D source is fine to ship, as
+  long as the answer says it is grade D.
+
 ### Verse grounding is RUNTIME now, not just a test (D-018)
 
 `data/classical/` was previously read only by `tests/test_citations.py` — a design-time guard proving
@@ -128,8 +149,12 @@ runtime**, `SourceRef.verse_text` carries the நூற்பா verbatim, and t
 - **Nannūl** is continuous 1–462 → `classical.nannul_verse(133)`.
 - **Tholkappiyam** numbers RESTART per இயல் and collide, so there is deliberately **no bare-number
   API** — `classical.tholkappiyam_verse(அதிகாரம், இயல், n)`. A bare number is a bug, not a shortcut.
-- **Only VERIFIED verses are wired.** Unconfirmed citations keep `verse=None` and cite the section.
-  Never fill one in from memory or a secondary source — TVA renumbers (its 336 is 337 here).
+- **As of 2026-08-11 every decoder `SourceRef` is verse-cited.** The last three (`COLLATIKARAM` → பெயரியல் 4+5, `VETRUMAI` → வேற்றுமையியல் 3, `VINAIYIYAL` → வினையியல் 1) carried `verse=None`. Note பெயரியல் **4 and 5**: Tholkappiyam does NOT state four word classes
+  in one நூற்பா — 4 names பெயர்/வினை, 5 adds இடை/உரி — so both travel rather than crediting one
+  verse with classes it does not name.
+- **The rule still stands and is not a licence to guess.** An unconfirmed நூற்பா keeps `verse=None` and cites the section. Never fill one in from memory or a secondary source — TVA
+  renumbers (its 336 is 337 here). Build refs through `classical.cite_*`, never by hand, so the
+  quoted text comes from the pinned artifact. `tests/test_citations.py` now asserts both.
 - **Quoting obliges attribution.** Project Madurai grants distribution provided its header travels
   with the text, so any surface that quotes must show the credit (`classical.attribution`).
 
@@ -165,7 +190,10 @@ took several exchanges, and the answer — **நன்னூல் 133**, which 
   relicense it as Apache-2.0. Mixed-licence product, classified per source: `LICENSING.md`.
 
 ## Where things live
-- Runbook: `TESTING-ON-LINUX.md` · Pins/citations: `data/PINS.md` · Contract: `src/thamizh_mcp/schema.py`
+- Runbook: `TESTING-ON-LINUX.md` · Pins: `data/PINS.md` · Contract: `src/thamizh_mcp/schema.py`
+- **Source registry (D-017): `data/sources.json`** — grade, licence, redistribution mode, pin,
+  maintenance, supersession. Read by `core/sources.py`; enforced by `tests/test_sources_registry.py`.
+  `LICENSING.md` keeps the REASONING and points here for the facts — do not restate a licence in both.
 - **Web app (main test surface): http://minnaham:8080** — `src/thamizh_mcp/web.py`,
   `src/thamizh_mcp/static/index.html`, service unit `deploy/thamizh-web.service`.
   Local run: `uv sync --extra web && uv run thamizh-web`.

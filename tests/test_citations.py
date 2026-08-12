@@ -278,3 +278,67 @@ def test_every_inference_in_the_concept_map_declares_its_status():
                 f"{concept}: inference '{inf['claim'][:60]}…' has no status — mark it CONFIRMED, "
                 "SARAN'S RULING, OPEN or AWAITING RULING")
             assert inf.get("derivation"), f"{concept}: inference must show its derivation"
+
+
+# --- decoder.py's own SourceRef constants: they are what a USER actually sees ---
+
+def _decoder_source_refs():
+    """Every module-level SourceRef in core/decoder.py, by constant name."""
+    from thamizh_mcp.core import decoder
+    from thamizh_mcp.schema import SourceRef
+    return {n: v for n, v in vars(decoder).items()
+            if n.isupper() and isinstance(v, SourceRef)}
+
+
+def test_decoder_source_refs_all_quote_their_nurpa():
+    """Closed 2026-08-11. COLLATIKARAM, VETRUMAI and VINAIYIYAL carried `verse=None` and cited a
+    chapter name, so a reader asking "on whose authority?" got 'சொல்லதிகாரம்' and nothing to check.
+
+    This is deliberately stricter than the rule-table guards above: those check that a cited number
+    RESOLVES, while a decoder SourceRef is what reaches the user through the MCP tool, the web app
+    and the CLI. If a future citation genuinely cannot be verified against the pinned edition, the
+    honest move is `verse=None` plus a note — and then this test should be given an explicit,
+    NAMED exemption rather than being weakened for everything.
+    """
+    refs = _decoder_source_refs()
+    assert refs, "no SourceRef constants found in decoder — has the module been restructured?"
+    missing = sorted(n for n, s in refs.items() if not (s.verse and s.verse_text))
+    assert not missing, (
+        f"{missing} cite a section but do not quote a நூற்பா. Build them with "
+        "classical.cite_tholkappiyam / cite_nannul so the text comes from the pinned artifact."
+    )
+
+
+def test_decoder_source_refs_quote_the_pinned_edition_verbatim(nannul, tholkappiyam):
+    """A SourceRef can carry a real number and still misquote the verse.
+
+    The project's recorded failure mode is that confabulation is indistinguishable from derivation
+    from the inside — five நூற்பா transcriptions drifted minutes after being read. Constructing
+    these through `classical.cite_*` makes drift impossible by design; this test is what keeps
+    that TRUE when someone hand-builds one in a hurry.
+    """
+    for name, ref in _decoder_source_refs().items():
+        assert ref.verse, f"{name} has no verse — covered by the test above"
+        nums = re.findall(r"\d{1,3}", ref.verse)
+        assert len(nums) == 1, f"{name}: expected exactly one நூற்பா number in {ref.verse!r}"
+        num = nums[0]
+
+        if ref.authority == "Nannūl":
+            pinned = nannul["verses"].get(num)
+        else:
+            # Tholkappiyam numbers restart per இயல், so the label must name its இயல் — that is
+            # precisely what makes this checkable at all.
+            pinned = None
+            for iyals in tholkappiyam["athikaram"].values():
+                for iyal, verses in iyals.items():
+                    if iyal in ref.verse:
+                        pinned = verses.get(num)
+                        break
+                if pinned is not None:
+                    break
+            assert pinned is not None, (
+                f"{name}: {ref.verse!r} names no இயல் present in the pinned edition")
+
+        assert _norm(ref.verse_text) == _norm(pinned), (
+            f"{name} does not quote the pinned edition verbatim.\n"
+            f"  pinned: {_norm(pinned)[:120]}\n  quoted: {_norm(ref.verse_text)[:120]}")

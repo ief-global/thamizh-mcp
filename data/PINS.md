@@ -1,5 +1,11 @@
 # Anchor version pins (blueprint §4 — reproducibility is part of authenticity)
 
+> **Licence and grade now live in [`data/sources.json`](sources.json)** — the D-017 source registry,
+> read at runtime by `core/sources.py` and enforced by `tests/test_sources_registry.py`. The pins
+> below remain authoritative for *which bytes* we ship; the registry is authoritative for what each
+> source is worth and what we may do with it. Do not restate a licence in both places — update the
+> registry and point here.
+
 | Anchor | Pin | Retrieved | Licence |
 |---|---|---|---|
 | ThamizhiMorph FSTs (`data/fst/*.fst`) | github.com/sarves/thamizhi-morph @ `adbacceda5e8aa902e4b6ed58a3edf5f78cd46fb` | 2026-07-02 | Apache-2.0 |

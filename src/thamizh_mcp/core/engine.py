@@ -8,11 +8,14 @@ decoding lands next (Phase 2/3).
 from __future__ import annotations
 
 import datetime as _dt
-from typing import Optional, Sequence
+from typing import Any, Optional, Sequence
+
+from pydantic import BaseModel
 
 from thamizh_mcp import config
 from thamizh_mcp.adapters.base import AdapterResult, SourceAdapter
 from thamizh_mcp.core import classifier, decoder
+from thamizh_mcp.core import sources as sources_registry
 from thamizh_mcp.schema import (
     STUB_NOTE, EquivalentCandidate, Gap, Grammar, Meaning, NativeEquivalent, Origin, Sense,
     SourceRef, WordAnalysis, empty_analysis,
@@ -74,6 +77,7 @@ class Engine:
             await self._fill_native_equivalent(a, normalized, allow_enrichment, origin)
         if "formation" in wants:
             self._fill_formation(a, normalized)
+        _grade_sources(a)
         await self._log_transaction(a, word, normalized, tool)
         return a
 
@@ -127,7 +131,9 @@ class Engine:
         if "grammar" in wants:
             grammar = Grammar(word_class=decoder.word_class_of(a.pos),
                               authority="Tholkappiyam",
-                              sources=[*res.sources, decoder.THOLKAPPIYAM_COLLATIKARAM])
+                              sources=[*res.sources,
+                                       decoder.THOLKAPPIYAM_COLLATIKARAM,
+                                       decoder.THOLKAPPIYAM_COLLATIKARAM_IDAI_URI])
             cases = {(m2.number, m2.name, m2.function)
                      for m in analyses if (m2 := decoder.map_case(m.tags))}
             if len(cases) == 1:
@@ -430,6 +436,34 @@ def default_engine() -> Engine:
         )
     return _default
 
+
+
+def _grade_sources(a: WordAnalysis) -> None:
+    """Stamp every SourceRef reachable from `a` with its D-017 registry grade and licence.
+
+    Deliberately a single sweep over the finished object rather than a call inside each adapter:
+    SourceRefs are built in adapters, in the decoder and in the classifier, and requiring each
+    author to remember one more line is how the S2PT licence gap survived for weeks in the first
+    place. Walking the result means a source can only ship ungraded by being absent from the
+    registry — which is what tests/test_sources_registry.py fails on.
+    """
+    seen: set[int] = set()
+
+    def walk(obj: Any) -> None:
+        if id(obj) in seen:
+            return
+        seen.add(id(obj))
+        if isinstance(obj, SourceRef):
+            sources_registry.annotate(obj)
+            return
+        if isinstance(obj, BaseModel):
+            for name in type(obj).model_fields:
+                walk(getattr(obj, name, None))
+        elif isinstance(obj, (list, tuple)):
+            for item in obj:
+                walk(item)
+
+    walk(a)
 
 async def analyze_word(
     word: str, normalized: str,

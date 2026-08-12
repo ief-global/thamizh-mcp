@@ -61,6 +61,11 @@
 .nurpa .addr{font-size:.78rem;letter-spacing:.02em;opacity:.85;margin-bottom:.25rem}
 .nurpa .txt{font-size:1.02rem;line-height:1.7}
 .src{font-size:.8rem;color:var(--muted);font-family:system-ui,sans-serif}
+  .grade{display:inline-block;font-size:.68rem;font-weight:600;padding:1px 6px;margin-left:5px;
+         border-radius:3px;background:var(--line);color:var(--ink);font-family:system-ui,sans-serif}
+  .grade.gA{background:rgba(70,140,90,.22)} .grade.gB{background:rgba(200,162,74,.22)}
+  .grade.gC{background:rgba(200,140,60,.20)} .grade.gD{background:rgba(190,80,70,.22)}
+  .lic{color:#b4544a;font-size:.76rem;margin-left:5px}
   .ev{font-size:.9rem;color:var(--muted);margin-top:6px}
   .badge{display:inline-block;font-size:.72rem;padding:2px 9px;border-radius:999px;
          background:var(--line);color:var(--ink);font-family:system-ui,sans-serif;margin-left:8px}
@@ -246,8 +251,24 @@ function render(word, d, ok){
     if(s.ref) b.appendChild(el("div","src", s.ref));
     kidsS.push(b);
   });
-  const names=[...new Set(srcs.map(s=>s.name))];
-  if(names.length) kidsS.push(el("div","src", names.join("  ·  ")));
+  // D-017 — a bare list of source names makes a grade D community compilation look exactly like
+  // Nannūl. Show each source's GRADE beside it, and say out loud when its upstream licence is
+  // unstated: that is a fact about the claim the reader is being handed, not internal bookkeeping.
+  const byName = new Map();
+  srcs.forEach(s=>{ if(!byName.has(s.name)) byName.set(s.name, s); });
+  const names = [...byName.keys()];
+  if(names.length){
+    const line = el("div","src");
+    [...byName.values()].forEach((s,i)=>{
+      if(i) line.appendChild(document.createTextNode("  ·  "));
+      line.appendChild(document.createTextNode(s.name));
+      if(s.grade) line.appendChild(el("span","grade g"+s.grade, s.grade));
+      if(s.licence && /unstated/i.test(s.licence)){
+        line.appendChild(el("span","lic","⚠ upstream licence unstated"));
+      }
+    });
+    kidsS.push(line);
+  }
   // Project Madurai grants free distribution PROVIDED its header travels with the text, so any
   // surface that quotes a verse must carry the credit. See LICENSING.md.
   if(withVerse.length){

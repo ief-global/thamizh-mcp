@@ -271,7 +271,7 @@ def test_a8_sandhi_type_is_a_classical_vikaram_name():
 
 
 def test_b1_causative_vi_stays_an_idainilai():
-    """Saran's ruling 2026-08-02: வி is an இடைநிலை (Nannūl's positional definition, C0212 §5.3.3),
+    """Saran's ruling 2026-08-02: வி is an இடைநிலை (Nannūl's positional definition, நன்னூல் 141),
     NOT a பிறவினை விகுதி despite TVA C0212 §6.1.7 listing it among them. Settled — do not re-open."""
     assert _parts("செய்வித்தான்", lemma="செய்", pos="verb",
                   tags=["fin", "caus=வி", "past=த்", "3sgm=ஆன்"]) == [
