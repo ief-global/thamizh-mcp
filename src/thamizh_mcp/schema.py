@@ -56,6 +56,14 @@ class SourceRef(BaseModel):
     #                               A citation tells a scholar where to look; this shows them the
     #                               verse. Populated by core/classical.py; None when unavailable.
 
+    # D-017 — the source's standing, stamped from data/sources.json by core/sources.annotate().
+    # `grade` is EVIDENTIAL; `redistribution` is LEGAL. They are independent axes (D-016): the
+    # Madras Tamil Lexicon is grade A AND consult-and-cite. A confidence number a reader cannot
+    # interpret is not provenance — the grade is what makes it checkable.
+    grade: Optional[str] = None            # A / B / C / D — see data/sources.json → grades
+    licence: Optional[str] = None          # verbatim from the registry; "UNSTATED" is a real value
+    redistribution: Optional[str] = None   # redistribute | serve-with-attribution | consult-and-cite
+
 
 class EquivalentCandidate(BaseModel):
     """Attested-only: `source` + `attestation` are REQUIRED. The merge layer drops any

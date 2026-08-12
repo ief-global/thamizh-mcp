@@ -42,6 +42,13 @@ S2PT_PIN = "narVidhai/Sanskrit-To-Pure-Tamil-Dictionary@f734646 (2026-07-02)"
 CLASSICAL_DIR = Path(os.environ.get(
     "THAMIZH_CLASSICAL_DIR", REPO_ROOT / "data" / "classical"))
 
+# The source registry (D-017) — every grounding source with its evidential GRADE and its legal
+# REDISTRIBUTION MODE, as INDEPENDENT axes (D-016). Read at runtime by core/sources.py so the grade
+# travels with the answer; enforced by tests/test_sources_registry.py, which fails if a shipped
+# SourceAdapter has no entry or an entry states no licence.
+SOURCES_FILE = Path(os.environ.get(
+    "THAMIZH_SOURCES_FILE", REPO_ROOT / "data" / "sources.json"))
+
 # English-loanword evidence (ANCHOR, pinned artifact) — names the source of a modern borrowing
 # that no etymology source covers. Built by scripts/build_english_loans.py from Google Dakshina
 # (CC BY-SA 4.0) + a public-domain English wordlist; the artifact inherits CC BY-SA, NOT Apache-2.0.

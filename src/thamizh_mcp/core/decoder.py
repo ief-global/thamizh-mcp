@@ -17,25 +17,37 @@ from typing import NamedTuple, Optional
 from thamizh_mcp import config
 from thamizh_mcp.core import classical
 from thamizh_mcp.schema import (
-    Formation, FormationComponent, GrammarCase, MorphAnalysis, Pos, SandhiEvent, SourceRef,
+    Formation, FormationComponent, GrammarCase, MorphAnalysis, Pos, SandhiEvent,
     WordClass, WordType,
 )
 
-# Citations now QUOTE the நூற்பா where we have verified its number against the pinned edition
-# (D-018). `retrieved` used to say "edition-pinned in Phase 4" — stale since D-011 closed and both
-# editions ARE pinned; core/classical.py fills it from the artifact's own edition line.
+# Citations QUOTE the நூற்பா (D-018). `retrieved` used to say "edition-pinned in Phase 4" — stale
+# since D-011 closed and both editions ARE pinned; core/classical.py fills it from the artifact's
+# own edition line.
 #
-# Only VERIFIED verses are wired. Where the நூற்பா has not been confirmed against the pinned text,
-# the SourceRef keeps `verse=None` and cites the section — the honest interim D-011 requires. Do NOT
-# fill these in from memory or from a secondary source; TVA renumbers (its 336 is 337 here).
-THOLKAPPIYAM_COLLATIKARAM = SourceRef(
-    name="Tholkappiyam", tier="anchor", authority="Tholkappiyam",
-    ref="சொல்லதிகாரம் — word classes பெயர்/வினை/இடை/உரி",
-    retrieved="Project Madurai (pinned; see data/PINS.md)")
-THOLKAPPIYAM_VETRUMAI = SourceRef(
-    name="Tholkappiyam", tier="anchor", authority="Tholkappiyam",
-    ref="சொல்லதிகாரம், வேற்றுமையியல் — the eight வேற்றுமை",
-    retrieved="Project Madurai (pinned; see data/PINS.md)")
+# As of 2026-08-11 EVERY SourceRef here is verse-cited; the last three (COLLATIKARAM, VETRUMAI,
+# VINAIYIYAL) carried `verse=None` and cited only a section. The rule that allowed that still
+# stands and is not a licence to guess: a நூற்பா whose number has not been confirmed against
+# data/classical/ keeps `verse=None` and cites the section, which is the honest interim D-011
+# requires. Do NOT fill one in from memory or from a secondary source; TVA renumbers (its 336 is
+# 337 here). Build these through `classical.cite_*`, never by hand — that way the quoted text
+# comes from the pinned artifact and cannot drift from the edition.
+# The four-way word-class frame is stated across TWO நூற்பா, not one, and the citation says so:
+# பெயரியல் 4 names பெயர் and வினை as the two சொல்; பெயரியல் 5 adds இடைச்சொல் and உரிச்சொல் as
+# arising "அவற்று வழி மருங்கின்" — in their train. Citing 4 alone for a four-class decode would
+# credit that verse with two classes it does not name, so both travel with the claim.
+THOLKAPPIYAM_COLLATIKARAM = classical.cite_tholkappiyam(
+    "சொல்லதிகாரம்", "பெயரியல்", 4,
+    "சொல்லதிகாரம், பெயரியல் — பெயர் and வினை, the two primary word classes")
+THOLKAPPIYAM_COLLATIKARAM_IDAI_URI = classical.cite_tholkappiyam(
+    "சொல்லதிகாரம்", "பெயரியல்", 5,
+    "சொல்லதிகாரம், பெயரியல் — இடைச்சொல் and உரிச்சொல், which arise in their train")
+# வேற்றுமையியல் 1 counts seven, 2 makes it eight with விளி, and 3 lists all eight ஈறு
+# (பெயர் ஐ ஒடு கு இன் அது கண் விளி) — the verse `_CASE_MAP` actually mirrors, and the same one
+# verrumai_urubu.json uses as its citation_format example.
+THOLKAPPIYAM_VETRUMAI = classical.cite_tholkappiyam(
+    "சொல்லதிகாரம்", "வேற்றுமையியல்", 3,
+    "சொல்லதிகாரம், வேற்றுமையியல் — the eight வேற்றுமை and their ஈறு")
 # நன்னூல் 133 names the six உறுப்பு outright — பகுதி விகுதி இடைநிலை சாரியை சந்தி விகாரம். Verified
 # against the pinned edition and already cited by sariyai.json and vikaram.json.
 NANNOOL_PAKUPADAM = classical.cite_nannul(133, "பகுபத உறுப்பிலக்கணம் — the six உறுப்பு labels")
@@ -44,10 +56,12 @@ NANNOOL_PAKUPADAM = classical.cite_nannul(133, "பகுபத உறுப்�
 # the decoder emits Tholkappiyam's விகாரம் names rather than Nannūl's.
 THOLKAPPIYAM_PUNARIYAL = classical.cite_tholkappiyam(
     "எழுத்ததிகாரம்", "புணரியல்", 7, "எழுத்ததிகாரம், புணரியல் — சந்தி/விகாரம்")
-THOLKAPPIYAM_VINAIYIYAL = SourceRef(
-    name="Tholkappiyam", tier="anchor", authority="Tholkappiyam",
-    ref="சொல்லதிகாரம், வினையியல் — காலம்/முற்று",
-    retrieved="Project Madurai (pinned; see data/PINS.md)")
+# வினையியல் 1 defines வினை as what is thought of WITH காலம் ("...காலமொடு தோன்றும்") — the
+# authority for the decoder attaching tense to a verb at all. வினையியல் 2 adds that the காலம் are
+# three; that count is already carried by the tense decode itself.
+THOLKAPPIYAM_VINAIYIYAL = classical.cite_tholkappiyam(
+    "சொல்லதிகாரம்", "வினையியல்", 1,
+    "சொல்லதிகாரம், வினையியல் — வினை appears with காலம் (tense/முற்று)")
 
 # ThamizhiMorph POS tag → schema Pos (Tholkappiyam's four-way word-class frame).
 _POS_MAP: dict[str, Pos] = {
@@ -200,7 +214,7 @@ def case_urubu_forms(case_tag: str) -> list[str]:
 #
 # RULING (Saran, 2026-08-02): causative வி is an **இடைநிலை**, not a பிறவினை விகுதி. TVA C0212 §6.1.7
 # lists வி/பி among the பிறவினை விகுதி, but Nannūl's positional definition governs — இடைநிலை is what
-# stands between முதனிலை and இறுதிநிலை (C0212 §5.3.3), and வி does. Settled; do not re-open.
+# stands between முதனிலை and இறுதிநிலை — நன்னூல் 141 — and வி does. Settled; do not re-open.
 _MID_ROLE: dict[str, str] = {
     "caus": "பிறவினை (causative)", "pass": "செயப்பாட்டு வினை (passive)",
 }

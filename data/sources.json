@@ -1,0 +1,234 @@
+{
+  "comment": "D-017 — the systemic source registry. Every grounding source this server can cite, with its evidential GRADE and its legal REDISTRIBUTION MODE recorded as INDEPENDENT axes (D-016). Before this file the licence facts lived in three places — LICENSING.md prose, data/PINS.md tables and per-adapter docstrings — and nothing checked that a shipped adapter had been through any of them. S2PT was quietly load-bearing for weeks under a licence claim ('MIT') that turned out to have no basis. The failure was not that S2PT is a weak source; it is that its weakness was not DECLARED anywhere a machine could read. Framing to keep: authenticity comes from every claim carrying a graded, citable provenance the user can check — NOT from every source being impeccable. A grade D source is fine to ship, as long as the answer says it is grade D.",
+  "schema_version": 1,
+  "updated": "2026-08-11",
+  "authoritative_prose": "LICENSING.md is the human-readable position and remains authoritative for REASONING. This file is authoritative for the machine-checkable FACTS (grade, cap, licence, mode). If they disagree, that is a bug — tests/test_sources_registry.py exists to keep them from drifting apart.",
+
+  "grades": {
+    "comment": "GRADE IS EVIDENTIAL STANDING ONLY. It is deliberately NOT a proxy for licence, tier or convenience. D-016's finding was that 'how much do we trust it' and 'what may we do with the bytes' are separate properties that had been collapsed into one: the Madras Tamil Lexicon is the most authoritative lexicon we have AND the most restrictively licensed. It grades A and redistributes consult-and-cite, and both are true at once.",
+    "A": {
+      "means": "Primary authority — the classical text itself, or a rule table derived from it and carrying its நூற்பா.",
+      "confidence_cap": 0.95
+    },
+    "B": {
+      "means": "Scholarly or institutional publication — peer-reviewed, or published by a government body; named editors, stable citation, versioned release.",
+      "confidence_cap": 0.85
+    },
+    "C": {
+      "means": "Community-edited and revisable — anyone may change it, so a claim is only as good as the revision it was read from. Citable per revision, not per work.",
+      "confidence_cap": 0.8
+    },
+    "D": {
+      "means": "Unattributed compilation — no named editor, no stated terms, no active maintenance. Usable as attested evidence, never as authority.",
+      "confidence_cap": 0.55
+    }
+  },
+
+  "redistribution_modes": {
+    "comment": "D-016. The mode constrains DISTRIBUTION, not trust.",
+    "redistribute": "Ship the data as a version-locked artifact in the public repo.",
+    "serve-with-attribution": "Cache and serve; attribution travels with every claim; never relicensed.",
+    "consult-and-cite": "Consult to establish a FACT; store the fact plus the citation, never the source's own wording. Excluded from gold-corpus export."
+  },
+
+  "sources": {
+    "tholkappiyam": {
+      "name": "Tholkappiyam",
+      "adapter": null,
+      "used_by": ["core/classical.py", "data/grammar/*.json", "core/decoder.py"],
+      "authority": "Tholkappiyam",
+      "tier": "anchor",
+      "grade": "A",
+      "licence": "The work is public domain (classical). The pinned Project Madurai etext is distributable provided its header is kept intact.",
+      "licence_status": "stated",
+      "redistribution": "redistribute",
+      "attribution_required": true,
+      "attribution": "© Project Madurai 1999-2001. Etext: Dr. K. Kalyanasundaram; proof-reading: N. D. Logasundaram.",
+      "maintenance": "stable — a pinned etext of a fixed classical work; drift is detectable via scripts/build_classical.py --verify",
+      "pin": "tamilnation.org/literature/grammar/mp100{a,b,c}; sha256 recorded in data/PINS.md; retrieved 2026-08-02",
+      "supersession": null,
+      "notes": "நூற்பா RESTART per இயல் — a citation must name அதிகாரம் › இயல் › நூற்பா. Never take a number from a secondary source; TVA's 336 is 337 here."
+    },
+    "nannul": {
+      "name": "Nannūl",
+      "adapter": null,
+      "used_by": ["core/classical.py", "data/grammar/*.json", "core/decoder.py"],
+      "authority": "Nannūl",
+      "tier": "anchor",
+      "grade": "A",
+      "licence": "The work is public domain (classical). The pinned Project Madurai etext is distributable provided its header is kept intact.",
+      "licence_status": "stated",
+      "redistribution": "redistribute",
+      "attribution_required": true,
+      "attribution": "© Project Madurai 1999-2001. Etext: Dr. Thomas Malten (Univ. of Köln), conforming to the edition of Mani Thirunavukkarasu Mudaliar (Vavilla Ramasamy Sastrulu & Sons, Madras, 1926); proof-reading: N. D. Logasundaram.",
+      "maintenance": "stable — pinned etext, complete at all 462 நூற்பா",
+      "pin": "projectmadurai.org/pm_etexts/utf8/pmuni0147.html (+ pmuni0152 for gap-fill); sha256 in data/PINS.md; retrieved 2026-08-02",
+      "supersession": null,
+      "notes": "Continuous 1–462, so a bare number is unambiguous. நூற்பா 73 and 176 are supplemented from the older 2002 etext and marked per-verse in the artifact."
+    },
+    "curated_rule_tables": {
+      "name": "thamizh-mcp cited rule tables",
+      "adapter": null,
+      "used_by": ["data/grammar/*.json"],
+      "authority": "Tholkappiyam",
+      "tier": "anchor",
+      "grade": "A",
+      "licence": "Apache-2.0 (our own work)",
+      "licence_status": "stated",
+      "redistribution": "redistribute",
+      "attribution_required": false,
+      "attribution": null,
+      "maintenance": "active — maintained in this repo",
+      "pin": "versioned with the repo",
+      "supersession": null,
+      "notes": "Grade A is earned by the நூற்பா citation each table carries, not by being ours. tests/test_citations.py fails any table without a source_priority block, and every cited verse must resolve in data/classical/."
+    },
+    "curated_verb_paradigms": {
+      "name": "thamizh-mcp curated verb paradigms",
+      "adapter": "thamizh_mcp.adapters.paradigms.VerbParadigmAdapter",
+      "used_by": ["core/engine.py morph_fallback"],
+      "authority": null,
+      "tier": "anchor",
+      "grade": "B",
+      "licence": "Apache-2.0 (our own work)",
+      "licence_status": "stated",
+      "redistribution": "redistribute",
+      "attribution_required": false,
+      "attribution": null,
+      "maintenance": "active — maintained in this repo",
+      "pin": "data/verb_paradigms.json, versioned with the repo",
+      "supersession": {
+        "intent": "Superseded per-lemma as ThamizhiMorph coverage grows; the fallback exists because the FST returns NoEntry for ~12 irregular verbs, not because we prefer our own data.",
+        "blocked_on": null
+      },
+      "notes": "Graded B, NOT A: these are hand-curated inflection tables, and only some entries carry a நூற்பா. Four entries (சொல், கல், கேள், வில்) are under an open ruling — see data/grammar/concept_map.json → concepts.விகாரம்.inferred."
+    },
+    "thamizhimorph": {
+      "name": "ThamizhiMorph",
+      "adapter": "thamizh_mcp.adapters.thamizhimorph.ThamizhiMorphAdapter",
+      "used_by": ["core/engine.py (primary morphology anchor)"],
+      "authority": null,
+      "tier": "anchor",
+      "grade": "B",
+      "licence": "Apache-2.0",
+      "licence_status": "stated",
+      "redistribution": "redistribute",
+      "attribution_required": true,
+      "attribution": "Sarveswaran, K., Dias, G., Butt, M. — 'ThamizhiMorph: A morphological parser for the Tamil language', Machine Translation (Springer) 2021. DOI 10.1007/s10590-021-09261-5.",
+      "maintenance": "upstream stable; pinned by commit",
+      "pin": "github.com/sarves/thamizhi-morph @ adbacceda5e8aa902e4b6ed58a3edf5f78cd46fb; retrieved 2026-07-02",
+      "supersession": null,
+      "notes": "Peer-reviewed and Apache-2.0 — B rather than A because it is a computational model of the grammar, not the grammar. Where the FST and a நூற்பா disagree, the நூற்பா governs."
+    },
+    "english_loanwords_dakshina": {
+      "name": "Google Dakshina (attested romanizations)",
+      "adapter": "thamizh_mcp.adapters.loanwords.EnglishLoanwordAdapter",
+      "used_by": ["core/classifier.py (English-loan detection, gated)"],
+      "authority": null,
+      "tier": "anchor",
+      "grade": "B",
+      "licence": "CC BY-SA 4.0 — inherited from Dakshina. NOT Apache-2.0 and never relicensed. (The dwyl/english-words wordlist component is Unlicense.)",
+      "licence_status": "stated",
+      "redistribution": "serve-with-attribution",
+      "attribution_required": true,
+      "attribution": "Roark et al. 2020, LREC — the Dakshina dataset. Google Research, v1.0 (2020-05-27).",
+      "maintenance": "upstream released once (2020) and not updated; artifact rebuildable and checksummed",
+      "pin": "data/loanwords/english_loans.json, built 2026-08-08 by scripts/build_english_loans.py; source checksums in the artifact's _meta; verify with --verify",
+      "supersession": null,
+      "notes": "⚠️ GATED ON ORTHOGRAPHY ALREADY PROVING NON-NATIVENESS. Ungated, the romanization signal fired on 15 of 56 native words — கால்→'call', கார்→'car'. Share-alike, so it must stay labelled CC BY-SA in any export."
+    },
+    "tamil_wiktionary": {
+      "name": "Tamil Wiktionary",
+      "adapter": "thamizh_mcp.adapters.wiktionary.TamilWiktionaryAdapter",
+      "used_by": ["core/engine.py (meanings)"],
+      "authority": null,
+      "tier": "evolving",
+      "grade": "C",
+      "licence": "CC BY-SA 4.0 / GFDL",
+      "licence_status": "stated",
+      "redistribution": "serve-with-attribution",
+      "attribution_required": true,
+      "attribution": "Tamil Wiktionary contributors, CC BY-SA 4.0.",
+      "maintenance": "actively edited by the community",
+      "pin": "no pin — live source, cached per claim with its retrieval date",
+      "supersession": {
+        "intent": "The Madras Tamil Lexicon is the intended ANCHOR upgrade for meanings.",
+        "blocked_on": "written permission from U. Madras / DSAL (D-016)"
+      },
+      "notes": "Community-edited, so a claim is only as good as the revision read. Share-alike: never relicensed as Apache-2.0."
+    },
+    "en_wiktionary_etymology": {
+      "name": "English Wiktionary (etymology)",
+      "adapter": "thamizh_mcp.adapters.etymology.EnWiktionaryEtymologyAdapter",
+      "used_by": ["core/classifier.py (origin — evaluated FIRST, outranks S2PT)"],
+      "authority": null,
+      "tier": "evolving",
+      "grade": "C",
+      "licence": "CC BY-SA 4.0 / GFDL",
+      "licence_status": "stated",
+      "redistribution": "serve-with-attribution",
+      "attribution_required": true,
+      "attribution": "English Wiktionary contributors, CC BY-SA 4.0.",
+      "maintenance": "actively edited by the community",
+      "pin": "no pin — live source, cached per claim with its retrieval date",
+      "supersession": null,
+      "notes": "Read per ===Etymology N=== block, one per SENSE (D-015): ranking templates across the whole section picked `bor` over `inh` every time and labelled four core native words வடசொல். A cached etymology is a PARSE, not raw source — clear the cache after any adapter change or the sweep measures stale data."
+    },
+    "s2pt": {
+      "name": "Sanskrit-To-Pure-Tamil (community தனித்தமிழ் lists)",
+      "adapter": "thamizh_mcp.adapters.equivalents.SanskritToPureTamilAdapter",
+      "used_by": ["core/classifier.py (வடசொல் membership evidence)", "suggest_native_equivalent"],
+      "authority": null,
+      "tier": "evolving",
+      "grade": "D",
+      "licence": "UNSTATED — no LICENSE file and no terms in the README.",
+      "licence_status": "unstated",
+      "redistribution": "serve-with-attribution",
+      "attribution_required": true,
+      "attribution": "github.com/narVidhai/Sanskrit-To-Pure-Tamil-Dictionary",
+      "maintenance": "unmaintained — last upstream commit 2020",
+      "pin": "github.com/narVidhai/Sanskrit-To-Pure-Tamil-Dictionary @ f734646675579d3d3eb8d44b288f6a13701feaa9; retrieved 2026-07-02",
+      "supersession": {
+        "intent": "Marked for supersession by authenticated sources — TVA / government கலைச்சொல் glossaries and comparable gold sources. The SourceAdapter seam makes it a drop-in swap.",
+        "blocked_on": "an authenticated equivalent source being wired (see kalaichol)"
+      },
+      "notes": "⚠️ THE ONE GENUINE LICENCE GAP WE SHIP, and the source that motivated this registry. A 'MIT' claim was carried for weeks and WITHDRAWN 2026-08-08 — sibling repos in the same org do carry MIT, which suggests omission rather than intent to restrict, but an omission is not a grant. Its own four upstreams are scraped community sites with unstated terms. Grade D caps it at 0.55, the lowest committing score, and the evidence string names the weakness in the answer itself. Never cite it as a settled licence; never call it an anchor."
+    },
+    "madras_tamil_lexicon": {
+      "name": "Madras Tamil Lexicon",
+      "adapter": "thamizh_mcp.adapters.lexicon.MadrasLexiconAdapter",
+      "used_by": [],
+      "authority": null,
+      "tier": "anchor",
+      "grade": "A",
+      "licence": "CC BY-NC-ND 2.0 — © University of Madras (original 1924–1936); DSAL digitization refreshed September 2023.",
+      "licence_status": "stated",
+      "redistribution": "consult-and-cite",
+      "attribution_required": true,
+      "attribution": "Madras University Tamil Lexicon, dsal.uchicago.edu/dictionaries/tamil-lex/.",
+      "maintenance": "digitization maintained by DSAL; the lexicon itself is a fixed historical work",
+      "pin": "not vendored — query-time only, by licence",
+      "supersession": null,
+      "adapter_status": "stub — raises NotImplementedError",
+      "notes": "⚠️ GRADE A AND consult-and-cite AT THE SAME TIME — this entry is the reason grade and redistribution are separate axes. It is the most authoritative lexicon we have and the most restrictively licensed. NC bites because thamizh-mcp is Apache-2.0 and anyone may run it commercially; ND bites because a restructured store is plausibly a derivative. When wired: no bundled copy, query-time lookup, cache in the gitignored knowledge.sqlite3 only, store the derived FACT and citation never the entry text, excluded from gold-corpus export, opt-in and disabled by default. Also robots.txt-blocked (Disallow: /cgi-bin/ is the only endpoint), so integration awaits written permission. Recorded honestly: this is the cautious reading, and Saran is approaching DSAL for permission."
+    },
+    "kalaichol": {
+      "name": "TVA கலைச்சொல்",
+      "adapter": "thamizh_mcp.adapters.kalaichol.KalaicholAdapter",
+      "used_by": [],
+      "authority": null,
+      "tier": "anchor",
+      "grade": "B",
+      "licence": "Government of Tamil Nadu / Tamil Virtual Academy — no redistribution grant located.",
+      "licence_status": "stated",
+      "redistribution": "consult-and-cite",
+      "attribution_required": true,
+      "attribution": "Tamil Virtual Academy கலைச்சொல் glossaries, Government of Tamil Nadu.",
+      "maintenance": "institutionally published; snapshot not yet taken",
+      "pin": "not yet pinned — snapshot is a queued network task",
+      "supersession": null,
+      "adapter_status": "stub — raises NotImplementedError",
+      "notes": "The intended authenticated replacement for S2PT's job. The TVA course books are already treated this way: the ePUBs stay gitignored in the design repo and only derived, cited rule tables ship — facts are not copyrightable and citing the source is scholarship, but the wording is expression."
+    }
+  }
+}
