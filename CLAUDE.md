@@ -3,7 +3,7 @@
 Thamizh MCP is a Model Context Protocol server for Tamil word-grammar
 (சொல் இலக்கணம்) analysis. It grounds every answer in authentic Tamil sources
 (Tholkappiyam-first) and self-enriches from evolving internet Tamil data instead
-of a hand-maintained dictionary. Public repo: github.com/ief-admin/thamizh-mcp
+of a hand-maintained dictionary. Public repo: github.com/ief-global/thamizh-mcp
 (Apache-2.0, nonprofit org IEF).
 
 ## Machine roles
@@ -45,12 +45,56 @@ milestones. After any history rewrite, other clones must `git reset --hard origi
 | | result |
 |---|---|
 | **Origin** | 94 correct · 11 honest `unknown` · **1 wrong** (பட்டன்; was 59/30/17 → 82/23/1 → 87/18/1 → now) |
-| **Formation** | 26/30 decoded · 4 gaps (`கொடுக்க` `கொடுத்து` `கொடுக்கும்` non-finite; `வீட்டிற்கு` noun dative) |
+| **Formation** | 26/29 **in-scope** decoded · 3 gaps (`கொடுக்க` `கொடுத்து` `கொடுக்கும்` non-finite) · `வீட்டிற்கு` is **out of scope**, not a gap — புணர்ச்சி engine owns it (Saran's ruling 2026-08-08) |
+
+⚠️ **The formation figure overstates quality — see KNOWN DECODER DEFECTS below.** The sweep counts a word as decoded if it yields MORE THAN ONE component; it never checks the split is right.
 
 Re-run: `uv run python scripts/quality_sweep.py` (network on; ~3 min). It is the only honest
 read on quality — expected labels inside are ASSESSMENTS, not authority, and need Saran's eye.
 ⚠️ It MUST use `default_engine()`: a hand-built `Engine` omits `morph_fallback=VerbParadigmAdapter()`
-and 12 covered irregular verbs then look like FST gaps.
+and the 11 covered irregular verbs then look like FST gaps.
+
+### ⚠️ KNOWN DECODER DEFECTS — found 2026-08-11, both still OPEN
+
+Neither of these is among the 3 "no analysis" gaps. **They affect words the sweep counts as
+DECODED**, which is why the formation figure reads better than the decoder actually is.
+
+**1 · The formation decode never checks its answer against the word.** `decode_formation()` builds
+components from FST TAGS ONLY and never reconstructs the surface to compare. Anything present in the
+word but absent from the tags is dropped in silence. Found by Saran via **காத்திருந்தாள்**, which
+decodes as `காத்திரு + த் + ஆள்` — **the ந் is missing entirely.**
+
+Root cause: the FST's `past=த்` is a tense CATEGORY, not the surface letters. It returns the *same
+tag* for `ந்த` (காத்திருந்தாள், இருந்தான், அமர்ந்தான், நடந்தது), for `த்த` (படித்தான், பார்த்தான்)
+and for plain `த` (செய்தான்). The decoder treats that tag as if it were the surface.
+
+- **Saran's ruling 2026-08-11:** `காத்திருந்தாள் = காத்திரு(பகுதி) + ந்(சந்தி) + த்(இடைநிலை) + ஆள்(விகுதி)`.
+  This agrees with **நன்னூல் 142**, which lists the past இடைநிலை as த்/ட்/ற்/இன் only — ந் is not
+  among them, so it cannot BE the இடைநிலை.
+- Affected inside the sweep's own list, all counted as decoded today: வந்தான், வந்தனன், வந்தார்கள்,
+  வந்தீர்கள், நடந்தன.
+- **FIX SITES.** `core/decoder.py` → `decode_formation()`: reconstruct and compare; unaccounted
+  material must be NAMED or declared a gap, never dropped — the module docstring already promises
+  *"a join we cannot classify is left unnamed, never invented"*, which the code cannot honour today
+  because it never sees the join. Then `data/grammar/idainilai.json` → `idainilai.past.from_fst`:
+  the machinery already exists (it maps `த்த்` → சந்தி + இடைநிலை); the nasal clusters `ந்த்`,
+  `ன்ற்`, `ண்ட்` simply have no entries.
+- **`scripts/quality_sweep.py` is blind to this by construction** — it counts a word as decoded if
+  it produces MORE THAN ONE component and never checks the split. Any fix should add a guard that a
+  decoded formation must rebuild its own surface or declare a gap. Expect the headline number to
+  FALL; the current one is measuring the wrong thing.
+
+**2 · `map_idainilai` labels strong-verb doubling as சந்தி, which Saran has RULED WRONG.**
+`idainilai.json`'s `known_gap` says it plainly: *"It is not சந்தி (ruled) … `map_idainilai` currently
+splits the doubling off AS சந்தி and emits a வல்லினம் மிகுதல் SandhiEvent. Both are wrong and must
+change."* Today படிக்கிறான் still returns `படி + க்(சந்தி) + கிறு + ஆன்`.
+
+⛔ **BLOCKED — do NOT guess the label.** It is not சந்தி (ruled); it is not one of the listed
+இடைநிலை, which are all single; and TVA C0212 §6.3.1's பகுதி-இரட்டித்தல் is defined only for the case
+where there is NO இடைநிலை, which is not this case. Fixing defect 1 will EXPOSE this immediately on
+படித்தான், கொடுத்தான், பார்த்தான், செய்வித்தான். Scope once ruled touches every strong-verb form
+already decoded (கொடுக்கிறான், படிக்கிறான், படிப்பான், கொடுப்பான் …), not only the new ones — which
+is exactly why the note says getting the label wrong means doing the rework twice.
 
 ### How origin works now (the hard-won part)
 
@@ -86,9 +130,10 @@ Orthography proves a word is **not native**; it can NEVER say which language it 
   prove non-nativeness only, so naturalized Sanskrit passes them — தானம் 'place' yields சுவர்க்கம்
   (< स्वर्ग) and சக்தி (< शक्ति), மந்திரம் yields மண்டபம் (< मण्डप). Do not re-label these "pure Tamil"
   until the loanword lexicon lands; that is the same native-by-default weakness as build rung 1.
-  Evolving tier, confidence 0.6. They also feed the headword `native_equivalent` when I2PT misses —
-  I2PT is keyed on borrowed HEADWORDS and has no கார் row at all, so `suggest_native_equivalent`
-  was silent for every homograph before this.
+  Evolving tier, confidence 0.6. They also feed the headword `native_equivalent` when S2PT misses —
+  S2PT is keyed on borrowed HEADWORDS and has no கார் row at all, so `suggest_native_equivalent`
+  was silent for every homograph before this. (Renamed from “I2PT” in D-017; GitHub's silent
+  redirect hid the rename for weeks, so treat the old name as a staleness marker wherever it appears.)
 - **`adapters/etymology.py`** resolves the source from en.wiktionary's machine-readable templates
   (`{{bor+|ta|pt|janela}}`, `{{inh+|ta|dra-pro|*maran}}`). Evolving tier — evidence, not authority;
   confidence caps at 0.8, competing class stays in `alternatives`, citation always travels.
@@ -96,28 +141,48 @@ Orthography proves a word is **not native**; it can NEVER say which language it 
 
 ## Next tasks (build order)
 
-1. **▶ NEXT — Loanword lexicon** — the last unprincipled branch is native-by-default (no Grantha + legal
+0. ⛔ **BLOCKED ON SARAN — open rulings. Do NOT guess these**; they are recorded as `inferred`/open
+   precisely so they stay marked until he rules.
+   - **(a) The four verb-paradigm entries** — `data/grammar/concept_map.json` →
+     `concepts.விகாரம்.inferred`. **விற் is RULED (2026-08-11): the root is வில், ல்→ற் is the
+     விகாரம், and the following ற் is a நூற்பா-142-listed இடைநிலை** — so it joins கல்/கேள்/நில்/கொள்
+     rather than standing alone. **சொல், கல், கேள் remain open.** `verb_paradigms.json` is
+     deliberately NOT restructured yet: the lemma is the lookup key, so விற்→வில் lands with the
+     other three as one change.
+   - **(b) The 15 running-head candidates** in `data/PINS.md` — our reading is a PROPOSAL. Note it
+     contradicts itself in two places: 139/242 share a structure but get opposite verdicts, as do
+     181/182.
+   - **(c) எச்சவினை விகுதி** — FOUND: தொல். சொல். வினையியல் 31 and நன்னூல் 343 both enumerate the
+     class, so this is a Tholkappiyam-FIRST citation. Open part: they name the FORMS, not the விகுதி
+     letters, and **நன்னூல் 140 lists `து` where `vikuthi.json` (following TVA) has `உ`**.
+   - **(d) What the doubled `த்` slot is called** — see KNOWN DECODER DEFECTS above.
+
+1. **▶ NEXT — the ந் surface-reconciliation fix** (defect 1 above). Unblocked by Saran's 2026-08-11
+   ruling, and it should ship with a guard test asserting a decoded formation rebuilds its own
+   surface or declares a gap. Landing it will expose defect 2, which is blocked on ruling (d).
+2. **Loanword lexicon** — the last unprincipled branch is native-by-default (no Grantha + legal
    phonotactics + no attestation ⇒ assumed native). It is the 1 remaining wrong (பட்டன், English
-   button, no en.wiktionary page) and part of the 18 unknowns. Needs a lexicon, not a rule.
+   button, no en.wiktionary page) and part of the 11 unknowns. Needs a lexicon, not a rule.
    **Madras Tamil Lexicon** (dsal.uchicago.edu) is the intended ANCHOR upgrade over Wiktionary.
-2. **FST coverage:** non-finite forms (infinitive கொடுக்க, verbal participle கொடுத்து, adjectival
-   கொடுக்கும்) + noun dative வீட்டிற்கு + more lemmas beyond the ~11 curated.
-3. **Storage backend abstraction (D-013)** — `store/knowledge.py` is SQLite-coupled (`import sqlite3`,
+3. **FST coverage:** non-finite forms (infinitive கொடுக்க, verbal participle கொடுத்து, adjectival
+   கொடுக்கும்) + more lemmas beyond the 11 curated. ⛔ Non-finite is BLOCKED on ruling (a) below.
+   வீட்டிற்கு is NOT on this list — Saran ruled it புணர்ச்சி-engine work, not பகுபத உறுப்பிலக்கணம்.
+4. **Storage backend abstraction (D-013)** — `store/knowledge.py` is SQLite-coupled (`import sqlite3`,
    `INSERT OR REPLACE`, `AUTOINCREMENT`). `thamizh-ai.org` runs Postgres; **the MCP product keeps
    zero-config SQLite and must NEVER require containers or Postgres.** Both backends tested,
    SQLite default.
-4. **Phase 4 eval** (`thamizh-eval`, D-005) — paused, harness resumable. Coverage fixes raised the
+5. **Phase 4 eval** (`thamizh-eval`, D-005) — paused, harness resumable. Coverage fixes raised the
    ceiling so a re-measure is now meaningful. Prior finding: bare Opus ~97% on BASIC morphology, so
    headroom is in weaker models + harder items.
-5. **Release rungs** — CI runs the suite on every PR (`.github/workflows/tests.yml`,
+6. **Release rungs** — CI runs the suite on every PR (`.github/workflows/tests.yml`,
    Python 3.10 + 3.14, foma installed so the 5 FST tests RUN rather than skip). **`ci-ok` is the
    required status check on `main`** — an aggregating job, NOT the matrix legs: requiring
    `test (3.10)` by name would block every PR forever the day the matrix changes. Both repos'
    `main` carry the same `protect-main` ruleset (PR-only, no force-push, no delete). Version is
    still `0.1.0`; no published release yet.
    uvx → PyPI + Docker/GHCR. Registry + tamil-nlp-catalog listings after.
-6. Network session (batch): TVA கலைச்சொல் snapshot · locate/license Aalamaram (D-008).
-7. Lift `classify_origin` further with Thamizhi Validator.
+7. Network session (batch): TVA கலைச்சொல் snapshot · locate/license Aalamaram (D-008).
+8. Lift `classify_origin` further with Thamizhi Validator.
 
 ### Every source declares its grade and its licence (D-017)
 
@@ -158,9 +223,14 @@ runtime**, `SourceRef.verse_text` carries the நூற்பா verbatim, and t
 - **Quoting obliges attribution.** Project Madurai grants distribution provided its header travels
   with the text, so any surface that quotes must show the credit (`classical.attribution`).
 
-The cost of not having had this: the question of what the second `த்` in வா + த் + த் + ஏன் is called
-took several exchanges, and the answer — **நன்னூல் 133**, which names all six உறுப்பு including
-சந்தி — was in the repo the whole time. It had to be grepped by hand.
+The cost of not having had this: settling what the six உறுப்பு even are took several exchanges, and
+**நன்னூல் 133** — which names all six — was sitting in the repo the whole time. It had to be grepped
+by hand.
+
+⚠️ **133 does NOT settle what the second `த்` in வா + த் + த் + ஏன் is called.** An earlier version of
+this file implied it did, by noting that 133 names சந்தி among the six. `idainilai.json`'s
+`known_gap` records Saran's ruling that a doubled consonant is **not** சந்தி — so that reading is
+ruled OUT, not merely unconfirmed. The slot is still unnamed; see KNOWN DECODER DEFECTS.
 
 ## Design rules (do not violate)
 - **Tholkappiyam-first:** cite Tholkappiyam before Nannool for grammar claims. This drifted once

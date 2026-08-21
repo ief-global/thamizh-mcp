@@ -12,7 +12,7 @@ git checkout develop
 git pull
 git log --format='%an <%ae>' -1     # must read: Saran Saravanan <saravanan3@duck.com>
 ```
-(First time only, if the repo isn't here yet: `git clone -b develop https://github.com/ief-admin/thamizh-mcp.git ~/projects/thamizh-mcp`)
+(First time only, if the repo isn't here yet: `git clone -b develop https://github.com/ief-global/thamizh-mcp.git ~/projects/thamizh-mcp`)
 
 ## 1. One-time setup
 ```bash

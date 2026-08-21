@@ -46,7 +46,7 @@ Requirements: Python 3.10+, [uv](https://docs.astral.sh/uv/), and `foma`
 
 ```bash
 sudo apt install foma        # NOT foma-bin (that package is an empty transitional)
-git clone https://github.com/ief-admin/thamizh-mcp.git
+git clone https://github.com/ief-global/thamizh-mcp.git
 cd thamizh-mcp
 uv sync                      # installs runtime + dev (pytest) dependencies
 uv run pytest -q             # expect all tests to pass
