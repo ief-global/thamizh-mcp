@@ -9,7 +9,7 @@
   "authority": "Nannūl — வினையியல், பகுபத உறுப்பிலக்கணம், நூற்பா 142/143/144; verified against Tamil Virtual Academy course A0212 வினைச்சொல் (Government of Tamil Nadu, degree-level accredited material), which quotes the நூற்பா text directly.",
   "verified_by": "Saran Saravanan (formal TVA A021 coursework)",
   "verified_date": "2026-08-02",
-  "sandhi_rule": "PARKED 2026-11-24 (D-023), no standing ruling. The label of strong-verb doubling (படிக்கிறான், படிப்பான், படித்தான்) is OPEN and will be settled only by a rule found in the grammar texts, not by a ruling: Saran's direction is that the engine must follow a cited rule it can state with confidence. The two earlier entries (2026-08-02: 'it is சந்தி'; 2026-08-08: 'it is not சந்தி') are both WITHDRAWN as rulings. The decoder still emits சந்தி for the doubled consonant; that is an UNRULED label, kept only until the round-trip work (D-023) replaces it, and it must not be cited as a ruling.",
+  "sandhi_rule": "PARKED 2026-11-24 (D-023), no standing ruling. The label of strong-verb doubling (படிக்கிறான், படிப்பான், படித்தான்) is OPEN and will be settled only by a rule found in the grammar texts, not by a ruling. The two earlier entries (2026-08-02: 'it is சந்தி'; 2026-08-08: 'it is not சந்தி') are both WITHDRAWN as rulings. Since the round-trip engine (2026-11-25) the decoder no longer splits the doubling off here: `doubled` below only records which FST surfaces carry it, and data/grammar/punarchi.json (rule irattitha_otru, status parked) names the doubled consonant as an UNLABELLED component so the split still rebuilds its word.",
   "idainilai": {
     "pres": {
       "class": "நிகழ்கால இடைநிலை",
@@ -28,11 +28,11 @@
         },
         "க்கிற்": {
           "idainilai": "கிறு",
-          "sandhi": "க்"
+          "doubled": "க்"
         },
         "க்கின்ற்": {
           "idainilai": "கின்று",
-          "sandhi": "க்"
+          "doubled": "க்"
         },
         "ஆநின்ற்": {
           "idainilai": "ஆநின்று"
@@ -78,15 +78,15 @@
         },
         "த்த்": {
           "idainilai": "த்",
-          "sandhi": "த்"
+          "doubled": "த்"
         },
         "ட்ட்": {
           "idainilai": "ட்",
-          "sandhi": "ட்"
+          "doubled": "ட்"
         },
         "ற்ற்": {
           "idainilai": "ற்",
-          "sandhi": "ற்"
+          "doubled": "ற்"
         }
       },
       "verse": "நன்னூல் 142",
@@ -113,7 +113,7 @@
         },
         "ப்ப்": {
           "idainilai": "ப்",
-          "sandhi": "ப்"
+          "doubled": "ப்"
         }
       },
       "verse": "நன்னூல் 144",
@@ -125,6 +125,6 @@
       "usage_note": "‘இவை சில இல’ — where these இடைநிலை are absent, the பகுதி or விகுதி itself carries the tense."
     }
   },
-  "known_gap": "Two linked gaps, both OPEN (D-023). (1) The decoder builds a split from FST tags and never rebuilds the word to compare, so material absent from the tags is dropped in silence: காத்திருந்தாள் decodes as காத்திரு + த் + ஆள் with its ந் missing. The fix is the round-trip rule: a split is valid only if joining its parts under the same rule tables rebuilds the word; otherwise the answer declares a gap. (2) What the doubled consonant in a strong verb is called (TVA A0212 §2.2.1 shows வா + த் + த் + ஏன் and does not name the second slot). Parked: to be resolved from a textual rule. Candidate sources are the classical உரை, e.g. நச்சினார்க்கினியர் on Tholkappiyam. Do NOT fabricate a label meanwhile.",
+  "known_gap": "(1) FIXED 2026-11-25 by the round-trip engine (D-023, core/punarchi.py): a split is now valid only if joining its parts under data/grammar/punarchi.json rebuilds the word, so காத்திருந்தாள் decodes as காத்திரு + த்(ந்) சந்தி + த் + ஆள் and a split that cannot rebuild declares a gap. (2) STILL OPEN: what the doubled consonant in a strong verb is called (TVA A0212 §2.2.1 shows வா + த் + த் + ஏன் and does not name the slot; C0212 §5.3.5 defines சந்தி only by position). Parked: to be resolved from a textual rule (a நூற்பா or a classical உரை). The decoder names the consonant without a label meanwhile; do NOT fabricate one.",
   "source_extract": "Verified from the TVA A0212 ePUB (clean Unicode). The lesson quotes Nannūl verbatim, so these rules now carry நூற்பா-level citation (D-011) without a separately pinned edition."
 }

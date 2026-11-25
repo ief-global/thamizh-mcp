@@ -4,6 +4,10 @@ Implemented: FST POS tag → சொல் வகை (Tholkappiyam Collatikāram 
 FST case tag → வேற்றுமை (Tholkappiyam வேற்றுமையியல், eight cases);
 FST tags → பகுபத உறுப்பு Formation (Nannūl six-part labels) + verb tense/PNG grammar.
 
+Round-trip validity (D-023): every Formation carries `round_trip` — the split is valid only if
+joining its parts under data/grammar/punarchi.json rebuilds the word (core/punarchi.py). Material the
+FST tags miss (the ந் of வந்தான்) is found that way and named; a split that cannot rebuild says so.
+
 Formation honesty boundary (blueprint §2, tamil-grammar.md §3): decode only what the FST grounds.
 Verbs hand over surface forms (past=த், 3sgm=ஆன்) → பகுதி/இடைநிலை/விகுதி are read directly. Nouns give
 feature tags (infInc, loc) → விகுதி is the case உருபு matched against the surface; சாரியை/விகாரம் are
@@ -15,10 +19,10 @@ from __future__ import annotations
 from typing import NamedTuple, Optional
 
 from thamizh_mcp import config
-from thamizh_mcp.core import classical
+from thamizh_mcp.core import classical, punarchi
 from thamizh_mcp.schema import (
-    Formation, FormationComponent, GrammarCase, MorphAnalysis, Pos, SandhiEvent,
-    WordClass, WordType,
+    Formation, FormationComponent, GrammarCase, JoinStep, MorphAnalysis, Pos, RoundTrip,
+    SandhiEvent, SourceRef, WordClass, WordType,
 )
 
 # Citations QUOTE the நூற்பா (D-018). `retrieved` used to say "edition-pinned in Phase 4" — stale
@@ -113,8 +117,8 @@ def map_case(tags: list[str]) -> Optional[GrammarCase]:
 # --- Formation / grammar decoding (Nannūl six-part உறுப்பு + Tholkappiyam elements) ---
 
 # Verb tense marker (இடைநிலை): FST hands over a SURFACE form (pres=கிற்); the grammatical உறுப்பு is
-# a different thing (கிறு). data/grammar/idainilai.json maps one to the other and splits off any
-# வல்லினம் doubling as its own சந்தி உறுப்பு. See NANNOOL_IDAINILAI below.
+# a different thing (கிறு). data/grammar/idainilai.json maps one to the other. A doubled consonant
+# in the surface (க்கிற்) is left to the round-trip, which names it without a label (D-023).
 _TENSE_ROLE: dict[str, str] = {
     "past": "இறந்தகாலம்", "pres": "நிகழ்காலம்", "fut": "எதிர்காலம்",
 }
@@ -144,19 +148,19 @@ VIKARAM_PIRITHU = "பிறிது ஆதல்"   # Nannūl: திரித
 
 
 def map_idainilai(tense_code: str, fst_surface: str) -> tuple[str, Optional[str], str]:
-    """FST surface tense marker → (canonical இடைநிலை, சந்தி or None, class name).
+    """FST surface tense marker → (canonical இடைநிலை, doubled consonant or None, class name).
 
     Nannūl names the உறுப்பு, not the surface morph: the FST's `pres=கிற்` is the grammatical
-    இடைநிலை **கிறு**, and a strong verb's `pres=க்கிற்` is சந்தி க் + இடைநிலை கிறு (வல்லினம் மிகுதல்
-    is புணர்ச்சி, not part of the marker). Unknown surfaces pass through unchanged rather than being
-    guessed at — an unmapped form is reported as-is, never invented.
+    இடைநிலை **கிறு**, and a strong verb's `pres=க்கிற்` is a doubled க் + இடைநிலை கிறு. Which உறுப்பு
+    that க் is stays parked (D-023), so the decoder does not emit it from here; the round-trip finds
+    it in the word. Unknown surfaces pass through unchanged, never guessed at.
     """
     entry = _IDAINILAI.get(tense_code, {})
     hit = entry.get("from_fst", {}).get(fst_surface)
     cls = entry.get("class", "")
     if not hit:
         return fst_surface, None, cls
-    return hit.get("idainilai", fst_surface), hit.get("sandhi"), cls
+    return hit.get("idainilai", fst_surface), hit.get("doubled"), cls
 
 
 class Vikuthi(NamedTuple):
@@ -374,17 +378,11 @@ def decode_formation(word: str, analysis: MorphAnalysis) -> Formation:
         for tcode, trole in _TENSE_ROLE.items():
             if feats.get(tcode) not in (None, "", "∅"):
                 inflected = True
-                # FST surface → canonical Nannūl உறுப்பு, splitting off வல்லினம் doubling as சந்தி.
-                marker, sandhi_form, cls = map_idainilai(tcode, feats[tcode])
-                if sandhi_form:
-                    comps.append(FormationComponent(
-                        part="சந்தி", form=sandhi_form,
-                        role="வல்லினம் மிகுதல் (strong-verb doubling)", authority="Tholkappiyam"))
-                    sandhi.append(SandhiEvent(
-                        type=VIKARAM_MIKUTHAL,
-                        detail=f"வல்லினம் மிகுதல் — ‘{sandhi_form}’ doubles before the "
-                               f"{cls or 'இடைநிலை'}",
-                        authority="Tholkappiyam"))
+                # FST surface → canonical Nannūl உறுப்பு. A doubled consonant in the surface
+                # (க்கிற், ப்ப்) is NOT split off here any more: the round-trip finds it in the word
+                # and names it without a label, because no cited rule says which உறுப்பு it is
+                # (D-023, ruling (d) parked). Calling it சந்தி was the withdrawn 2026-08-02 entry.
+                marker, _doubled, cls = map_idainilai(tcode, feats[tcode])
                 comps.append(FormationComponent(
                     part="இடைநிலை", form=marker, role=f"{trole} ({cls})" if cls else trole,
                     authority="Nannūl"))
@@ -423,9 +421,91 @@ def decode_formation(word: str, analysis: MorphAnalysis) -> Formation:
         inflected = _decode_noun(lemma, word, bare, comps, sandhi)
 
     word_type: WordType = "பகுபதம்" if (inflected or word != lemma) else "பகாப்பதம்"
+    trip = _round_trip(word, comps, sandhi, verb=_is_verb(pos))
     sources = [NANNOOL_PAKUPADAM, THOLKAPPIYAM_PUNARIYAL]
     if _is_verb(pos):
         sources.append(THOLKAPPIYAM_VINAIYIYAL)
     elif any(c.part == "விகுதி" for c in comps):
         sources.append(THOLKAPPIYAM_VETRUMAI)
-    return Formation(word_type=word_type, components=comps, sandhi=sandhi, sources=sources)
+    return Formation(word_type=word_type, components=comps, sandhi=sandhi, sources=sources,
+                     round_trip=trip)
+
+
+# --- round-trip validity (D-023) -----------------------------------------------------------------
+
+def _kind(c: FormationComponent, verb: bool) -> str:
+    """The join context of a component, which some புணர்ச்சி rules depend on (a case ending vs a
+    verb ending, a சாரியை)."""
+    if c.part == "பகுதி":
+        return "stem"
+    if c.part == "சாரியை":
+        return "sariyai"
+    if c.part == "இடைநிலை":
+        return "idainilai"
+    if verb:
+        return "vikuthi"
+    return "plural" if c.form == "கள்" else "case"
+
+
+# Junction material that is part of the word's OWN structure, so it is shown as a component.
+# Joins between a noun and its case ending (உடம்படுமெய், a doubled ஒற்று) stay as join steps.
+_JUNCTION_COMPONENT = {
+    "santhi_tha_na": dict(part="சந்தி", authority="Nannūl",
+                          role="சந்தி — த் appears as ந் (TVA C0212 §5.3.6; Saran's ruling 2026-08-11)"),
+    "irattitha_otru": dict(part=None, authority=None,
+                           role="இரட்டித்த ஒற்று — a doubled consonant the word really has; which "
+                                "உறுப்பு it is stays OPEN until a cited rule names it (D-023)"),
+}
+
+
+def _round_trip(word: str, comps: list[FormationComponent], sandhi: list[SandhiEvent],
+                verb: bool) -> RoundTrip:
+    """Rebuild `word` from `comps` under the cited joins; annotate comps in place when it holds.
+
+    A split that does not rebuild its word is reported as such, with the letters nothing accounts
+    for. The components are left as the FST tags gave them, so the reader can see what was
+    proposed and why it fails; the engine turns the failure into a Gap.
+    """
+    parts = [punarchi.Part(c.form, _kind(c, verb)) for c in comps]
+    res = punarchi.round_trip(word, parts, verb)
+    if not res.holds:
+        return RoundTrip(
+            holds=False, rebuilt=res.rebuilt, unaccounted=res.unaccounted or None,
+            note=(f"joining the parts gives ‘{res.rebuilt}’, not ‘{word}’, and no cited join "
+                  f"rebuilds it — the split is not valid (D-023)"))
+    for c, p in zip(comps, res.parts):
+        if p.surface and p.surface != c.form:
+            c.surface = p.surface
+    steps = list(res.steps)
+    if res.stem_note:
+        steps.insert(0, _stem_step(comps[0].form, res.stem_note))
+    for j in sorted(res.junctions, key=lambda j: j.after, reverse=True):
+        spec = _JUNCTION_COMPONENT.get(j.rule)
+        if spec is None:
+            continue
+        comps.insert(j.after + 1, FormationComponent(
+            part=spec["part"], form=j.form, role=spec["role"], authority=spec["authority"],
+            surface=j.surface if j.surface != j.form else None))
+        if j.rule == "santhi_tha_na":
+            # Tholkappiyam புணரியல் 7 names a மெய் becoming another மெய் ‘மெய் பிறிது ஆதல்’; TVA
+            # C0212 §5.3.6 says this சந்தி த் ‘ந் என்று மாற்றம் அடைந்து’.
+            sandhi.append(SandhiEvent(type=VIKARAM_PIRITHU,
+                                      detail="சந்தி ‘த்’ → ‘ந்’ (TVA C0212 §5.3.6)",
+                                      authority="Tholkappiyam"))
+    return RoundTrip(holds=True, rebuilt=res.rebuilt, steps=steps)
+
+
+def _stem_step(lemma: str, alt: dict) -> JoinStep:
+    """A பகுதி that surfaces in another shape (வா → வ). Cited when a source states it; when the
+    source does not name the change, no விகாரம் label is asserted."""
+    textbook = alt.get("source", "").startswith("TVA")
+    src = SourceRef(name="thamizh-mcp cited rule tables" if textbook
+                    else "thamizh-mcp curated verb paradigms",
+                    tier="anchor",
+                    ref=alt.get("source", "") + (" (Tamil Virtual Academy, CC BY-SA 4.0)" if textbook else ""),
+                    verse_text=alt.get("quote"))
+    change = alt.get("change")
+    effect = f"பகுதி {lemma} appears as {alt['surface']}" + (f" — {change}" if change else
+                                                              " — the change is not named")
+    return JoinStep(rule="stem_alternant", name="பகுதி வடிவம்", at=lemma, effect=effect,
+                    status="textbook" if textbook else "parked", sources=[src])

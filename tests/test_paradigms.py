@@ -134,7 +134,9 @@ def test_fallback_fills_the_gap_on_fst_miss():
     e = Engine(morph=_FstMiss(), morph_fallback=VerbParadigmAdapter())
     a = asyncio.run(e.analyze("கொடுத்தான்", "கொடுத்தான்", include=["root", "grammar", "formation"]))
     assert a.lemma == "கொடு" and a.grammar.tense == "இறந்தகாலம்"
-    assert [c.form for c in a.formation.components] == ["கொடு", "த்", "ஆன்"]
+    # the doubled த் is named (unlabelled, D-023) so the split rebuilds கொடுத்தான்
+    assert [c.form for c in a.formation.components] == ["கொடு", "த்", "த்", "ஆன்"]
+    assert a.formation.round_trip.holds
 
 
 def test_fallback_also_grounds_origin_as_native():
@@ -156,5 +158,6 @@ def test_causative_marker_is_decoded():
                        tags=["fin", "sim", "caus=வி", "past=த்", "3sgm=ஆன்"])
     f = decoder.decode_formation("செய்வித்தான்", an)
     forms = [(c.part, c.form) for c in f.components]
-    assert forms == [("பகுதி", "செய்"), ("இடைநிலை", "வி"), ("இடைநிலை", "த்"), ("விகுதி", "ஆன்")]
+    assert forms == [("பகுதி", "செய்"), ("இடைநிலை", "வி"), (None, "த்"), ("இடைநிலை", "த்"),
+                     ("விகுதி", "ஆன்")]
     assert any("பிறவினை" in (c.role or "") for c in f.components)

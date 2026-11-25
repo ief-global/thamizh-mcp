@@ -54,11 +54,19 @@ async def show(word: str, with_meaning: bool) -> None:
         print(f"\n  பகுபத உறுப்பு  [{a.formation.word_type}]")
         for c in a.formation.components:
             role = f"   — {c.role}" if c.role else ""
-            print(f"     {c.part:<10} {c.form}{role}")
+            surface = f" (appears as {c.surface})" if c.surface else ""
+            print(f"     {c.part or '(unlabelled)':<10} {c.form}{surface}{role}")
     if a.formation.sandhi:
         print("\n  புணர்ச்சி / சந்தி")
         for s in a.formation.sandhi:
             print(f"     {s.type}: {s.detail}")
+    rt = a.formation.round_trip
+    if rt is not None:
+        verdict = "rebuilds the word" if rt.holds else f"does NOT rebuild the word (gives {rt.rebuilt})"
+        print(f"\n  round-trip (D-023): {verdict}")
+        for st in rt.steps:
+            cited = "; ".join(s.verse or s.ref or s.name for s in st.sources) or "no cited rule"
+            print(f"     [{st.status}] {st.at}: {st.effect}   ← {cited}")
 
     print()
     line("பிறப்பு (origin)", f"{a.origin.class_}"

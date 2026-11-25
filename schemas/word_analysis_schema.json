@@ -250,21 +250,33 @@
             ],
             "properties": {
               "part": {
-                "type": "string",
+                "type": [
+                  "string",
+                  "null"
+                ],
                 "enum": [
                   "பகுதி",
                   "விகுதி",
                   "இடைநிலை",
                   "சாரியை",
                   "சந்தி",
-                  "விகாரம்"
-                ]
+                  "விகாரம்",
+                  null
+                ],
+                "description": "null = material the word has, named so nothing is dropped, that no cited rule labels yet (D-023)"
               },
               "form": {
                 "type": "string"
               },
               "role": {
                 "type": "string"
+              },
+              "surface": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "how the உறுப்பு appears in this word when that differs from its form"
               }
             }
           }
@@ -277,9 +289,12 @@
               "type": {
                 "type": "string",
                 "enum": [
+                  "மிகுதல்",
+                  "குன்றல்",
+                  "பிறிது ஆதல்",
                   "தோன்றல்",
-                  "திரிதல்",
                   "கெடுதல்",
+                  "திரிதல்",
                   "வல்லினம்மிகுதல்",
                   "வல்லினம்மிகாமை"
                 ]
@@ -292,6 +307,74 @@
         },
         "sources": {
           "$ref": "#/definitions/sources"
+        },
+        "round_trip": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "D-023: a split is valid only if joining its parts under the same rules (data/grammar/punarchi.json) rebuilds the word",
+          "required": [
+            "holds",
+            "rebuilt"
+          ],
+          "properties": {
+            "holds": {
+              "type": "boolean"
+            },
+            "rebuilt": {
+              "type": "string"
+            },
+            "steps": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "rule",
+                  "at",
+                  "effect",
+                  "status"
+                ],
+                "properties": {
+                  "rule": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "at": {
+                    "type": "string"
+                  },
+                  "effect": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "classical",
+                      "textbook",
+                      "parked"
+                    ]
+                  },
+                  "sources": {
+                    "$ref": "#/definitions/sources"
+                  }
+                }
+              }
+            },
+            "unaccounted": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "note": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
         }
       }
     },

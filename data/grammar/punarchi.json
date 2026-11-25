@@ -1,0 +1,154 @@
+{
+  "comment": "புணர்ச்சி join rules for the ROUND-TRIP engine (D-023). One rule set serves both directions: a split is found by searching over these joins (analysis by synthesis), and it is valid only if joining its parts under the SAME rules rebuilds the word. A split that does not rebuild its word declares a gap; it never drops material in silence. core/punarchi.py implements each rule's condition and effect by `id`; this table carries what the code must not invent: the citation, the status, and the wording shown to the reader. Every நூற்பா is cited by ADDRESS and quoted at runtime from data/classical/, never from memory.",
+  "source_priority": {
+    "primary": "Tholkappiyam",
+    "primary_ref": "எழுத்ததிகாரம் (புணரியல், உருபியல், குற்றியலுகரப்புணரியல்)",
+    "fallback": "Nannūl",
+    "why": "புணர்ச்சி is Tholkappiyam's ground (tamil-grammar.md; DESIGN.md §4a), so each rule cites Tholkappiyam first. Nannūl is cited where it states the same rule more specifically (162 names WHICH உடம்படுமெய்), and is the sole citation only where a search of the pinned எழுத்ததிகாரம் found no Tholkappiyam verse for the rule; each such rule says so in `tholkappiyam_searched`. Two rules rest on the TVA course books (CC BY-SA 4.0, D-021), which state the analysis verbatim; they are marked `textbook`, not `classical`.",
+    "citation_format": "தொல்காப்பியம் numbers restart per இயல், so a citation is {authority, athikaram, iyal, verse}. நன்னூல் is continuous: {authority, verse}."
+  },
+  "status_values": {
+    "classical": "the rule is stated by a cited நூற்பா, quoted at runtime from the pinned edition",
+    "textbook": "the analysis is stated verbatim by a TVA course book (CC BY-SA 4.0); no நூற்பா located yet",
+    "parked": "the material is real and is NAMED so nothing is dropped, but no cited rule labels it; the label is parked under D-023 and must not be guessed"
+  },
+  "join_rules": [
+    {
+      "id": "uyirmei",
+      "name": "உயிர்மெய் புணர்ச்சி",
+      "effect": "a vowel after a consonant fuses with it into one letter (மெய் + உயிர் → உயிர்மெய்); separating them returns the consonant to its own form",
+      "status": "classical",
+      "always": true,
+      "cites": [
+        {"authority": "Tholkappiyam", "athikaram": "எழுத்ததிகாரம்", "iyal": "புணரியல்", "verse": 36,
+         "role": "the JOIN: புள்ளி ஈற்று முன் உயிர் தனித்து இயலாது மெய்யொடும் சிவணும்"},
+        {"authority": "Tholkappiyam", "athikaram": "எழுத்ததிகாரம்", "iyal": "புணரியல்", "verse": 37,
+         "role": "the SPLIT: மெய் உயிர் நீங்கின் தன் உரு ஆகும்"}
+      ],
+      "note": "This pair is why split and join can be one rule set: the same two நூற்பா define both directions. It applies at every join and is not listed as a step."
+    },
+    {
+      "id": "ukaram_kedal",
+      "name": "உகரம் கெடுதல்",
+      "effect": "a final உ riding a consonant drops when a vowel follows (தூங்கு + இன் → தூங்கின்)",
+      "status": "classical",
+      "cites": [
+        {"authority": "Nannūl", "verse": 164,
+         "role": "உயிர்வரின் உக்குறள் மெய்விட்டு ஓடும் … முற்றும் அற்று ஒரோ வழி: குற்றியலுகரம் always, முற்றியலுகரம் in some places"}
+      ],
+      "tholkappiyam_searched": "எழுத்ததிகாரம் searched 2026-11-25 (குற்றியலுகரப்புணரியல், புணரியல், மொழி மரபு, உருபியல்); the verses found drop உ only in named cases (உருபியல் 4, குற்றியலுகரப்புணரியல் 5, 58, 73). No general verse located, so Nannūl is the citation."
+    },
+    {
+      "id": "udambadumei",
+      "name": "உடம்படுமெய்",
+      "effect": "between two vowels a glide appears: ய் after இ ஈ ஐ, வ் after the other vowels, either after ஏ (கை + ஆல் → கையால்)",
+      "status": "classical",
+      "cites": [
+        {"authority": "Tholkappiyam", "athikaram": "எழுத்ததிகாரம்", "iyal": "புணரியல்", "verse": 38,
+         "role": "every word may take the உடம்படுமெய் when a vowel follows"},
+        {"authority": "Nannūl", "verse": 162,
+         "role": "which glide: இ ஈ ஐ வழி யவ்வும் ஏனை உயிர்வழி வவ்வும் ஏ முன் இவ் இருமையும்"}
+      ]
+    },
+    {
+      "id": "otru_irattal",
+      "name": "ஒற்று இரட்டுதல் (வேற்றுமை)",
+      "effect": "a two-letter word with a long first letter, or a word whose final டு/று follows a vowel, doubles that ட்/ற் before a case ending (வீடு + இல் → வீட்டில்)",
+      "status": "classical",
+      "context": "noun before a case உருபு",
+      "cites": [
+        {"authority": "Tholkappiyam", "athikaram": "எழுத்ததிகாரம்", "iyal": "குற்றியலுகரப்புணரியல்", "verse": 6,
+         "role": "ஈர் எழுத்து மொழியும் உயிர்த்தொடர் மொழியும் வேற்றுமை ஆயின் ஒற்று இடை இனம் மிக"},
+        {"authority": "Nannūl", "verse": 183,
+         "role": "names the consonants: நெடிலோடு உயிர்த்தொடர்க் குற்றுகரங்களுள் ட ற ஒற்று இரட்டும் வேற்றுமை மிகவே"}
+      ],
+      "note": "Restricted to ட and ற, the two Nannūl 183 names; the commentary's examples for the Tholkappiyam verse (யாட்டுக்கால், முயிற்றுக்கால், கயிற்றுப் புறம்) are the same two."
+    },
+    {
+      "id": "urubu_vallinam_mikuthal",
+      "name": "வல்லினம் மிகுதல் (வேற்றுமை உருபு)",
+      "effect": "before a case ending that begins with a hard consonant, that consonant doubles (மணி + கு → மணிக்கு)",
+      "status": "classical",
+      "context": "noun before a case உருபு",
+      "cites": [
+        {"authority": "Tholkappiyam", "athikaram": "எழுத்ததிகாரம்", "iyal": "புணரியல்", "verse": 12,
+         "role": "வல்லெழுத்து முதலிய வேற்றுமை உருபிற்கு ஒல்வழி ஒற்று இடை மிகுதல் வேண்டும்"}
+      ]
+    },
+    {
+      "id": "athu_otru_kedal",
+      "name": "ஒற்று கெடுதல் (அத்து / வற்று முன்)",
+      "effect": "a final consonant drops before the சாரியை அத்து or வற்று (மரம் + அத்து → மர…)",
+      "status": "classical",
+      "cites": [
+        {"authority": "Tholkappiyam", "athikaram": "எழுத்ததிகாரம்", "iyal": "புணரியல்", "verse": 31,
+         "role": "அத்தே வற்றே ஆயிரு மொழிமேல் ஒற்று மெய் கெடுதல்"},
+        {"authority": "Tholkappiyam", "athikaram": "எழுத்ததிகாரம்", "iyal": "உருபியல்", "verse": 13,
+         "role": "a ம்-final word takes அத்து before a case ending: மஃகான் புள்ளி முன் அத்தே சாரியை"}
+      ],
+      "commentary": "நச்சினார்க்கினியர் on உருபியல் 13 gives மரத்தை, மரத்தொடு and says they are completed by புணரியல் 31 and 23 together; this rule and athu_akaram_kedal are those two."
+    },
+    {
+      "id": "athu_akaram_kedal",
+      "name": "அத்தின் அகரம் கெடுதல்",
+      "effect": "the அ of அத்து drops after a word ending in அ (மர + அத்து → மரத்து)",
+      "status": "classical",
+      "cites": [
+        {"authority": "Tholkappiyam", "athikaram": "எழுத்ததிகாரம்", "iyal": "புணரியல்", "verse": 23,
+         "role": "அத்தின் அகரம் அகர முனை இல்லை"},
+        {"authority": "Nannūl", "verse": 252, "role": "the same rule, restated"}
+      ]
+    },
+    {
+      "id": "makaram_inam",
+      "name": "மகரம் இனமாகத் திரிதல்",
+      "effect": "a final ம் becomes the nasal of the hard consonant that follows (மரம் + கள் → மரங்கள்)",
+      "status": "classical",
+      "cites": [
+        {"authority": "Nannūl", "verse": 219,
+         "role": "மவ்வீறு ஒற்று அழிந்து உயிர் ஈறு ஒப்பவும் வன்மைக்கு இனமாத் திரிபவும் ஆகும்"}
+      ],
+      "tholkappiyam_searched": "புள்ளிமயங்கியல் 15 covers ம்-final words in the வேற்றுமை join (the ம் drops and the hard consonant doubles); no verse located for this join before கள், so Nannūl is the citation."
+    },
+    {
+      "id": "santhi_tha_na",
+      "name": "சந்தி த் → ந்",
+      "effect": "between a verb's பகுதி and the past இடைநிலை த், a சந்தி த் appears and surfaces as ந் (வா + த் + த் + ஆன் → வந்தான்)",
+      "status": "textbook",
+      "context": "verb, before the past இடைநிலை த்",
+      "part": "சந்தி",
+      "form": "த்",
+      "surface": "ந்",
+      "textbook": {
+        "source": "TVA C0212 §5.3.6 (விகாரம்)",
+        "quote": "வந்தனன் -வா+த்+த்+அன்+அன் … இதில் வரும் வா என்னும் பகுதி வ எனக் குறுகியும், த் என்னும் சந்தி ந் என்று மாற்றம் அடைந்தும், விகாரமாகியுள்ளன."
+      },
+      "ruling": "Saran, 2026-08-11: காத்திருந்தாள் = காத்திரு(பகுதி) + ந்(சந்தி) + த்(இடைநிலை) + ஆள்(விகுதி). It agrees with நன்னூல் 142, which lists the past இடைநிலை as த்/ட்/ற்/இன் only, so ந் cannot be the இடைநிலை.",
+      "cites": [
+        {"authority": "Nannūl", "verse": 142,
+         "role": "the past இடைநிலை are த் ட் ற் இன் only, so the ந் is not the இடைநிலை"}
+      ]
+    },
+    {
+      "id": "irattitha_otru",
+      "name": "இரட்டித்த ஒற்று (label parked)",
+      "effect": "a hard consonant appears doubled where a verb's parts meet (படி + த் + ஆன் → படித்தான்; படி + கிறு + ஆன் → படிக்கிறான்)",
+      "status": "parked",
+      "context": "verb, before a part that begins with a hard consonant",
+      "parked": "D-023, ruling (d). The doubled consonant is NAMED so the round-trip never drops it, but no cited rule says which உறுப்பு it is. TVA C0212 §5.3.5 defines சந்தி by position (between பகுதி and இடைநிலை, e.g. நட + த் + தல்) and A0212 §2.2.1 shows வா + த் + த் + ஏன் without naming the slot; neither is a நூற்பா or a classical உரை. The two earlier entries (2026-08-02 'it is சந்தி', 2026-08-08 'it is not சந்தி') are withdrawn as rulings.",
+      "cites": []
+    }
+  ],
+  "stem_alternants": {
+    "comment": "How a பகுதி may surface inside a word. Tried only when the பகுதி itself does not rebuild the word. Each entry carries its source; an entry that names the change as விகாரம் says so, one that does not makes no claim about it. Curated paradigm stems (data/verb_paradigms.json) are added at runtime, and their விகாரம் labels stay open under ruling (a).",
+    "entries": [
+      {"lemma": "வா", "surface": "வ", "change": "குறுகல் (விகாரம்)",
+       "source": "TVA C0212 §5.3.6", "quote": "வா என்னும் பகுதி வ எனக் குறுகியும்"},
+      {"lemma": "காண்", "surface": "கண்", "change": "குறுகல் (விகாரம்)",
+       "source": "TVA C0212, பகுபத உறுப்பு வினா 8", "quote": "கண்டான் – காண்+ட்+ஆன் காண் எனும்பகுதி ‘கண்‘ எனக் குறுகியது"},
+      {"lemma": "வா", "surface": "வரு", "change": null,
+       "source": "TVA A0212 §2.2.1", "quote": "வருகிறேன் … வா+ கிறு +ஏன்; வருவேன் … வா+ வ் +ஏன்",
+       "note": "TVA gives the split with வா as the பகுதி but does not name the வா → வரு change; no label is asserted."}
+    ]
+  }
+}

@@ -158,14 +158,23 @@ async def main():
     print("\n" + "=" * 100)
     print("FORMATION SWEEP")
     print("=" * 100)
-    gaps, decoded = [], []
+    # D-023: a word counts as DECODED only if its split rebuilds the word under the same join
+    # rules. Before this, ‘decoded’ meant ‘more than one component’, which counted வந்தான் =
+    # வா + த் + ஆன் (its ந் missing) as a success. A split that does not rebuild is a gap.
+    gaps, decoded, no_rebuild = [], [], []
     for word in FORMS:
         a = await eng.analyze(word, word, include=["formation"])
         comps = a.formation.components if a.formation else []
+        rt = a.formation.round_trip if a.formation else None
         if not comps or len(comps) == 1:
             gaps.append(word)
+        elif rt is None or not rt.holds:
+            no_rebuild.append((word, rt.rebuilt if rt else "?", rt.unaccounted if rt else ""))
         else:
-            decoded.append((word, " + ".join(f"{c.form}({c.part})" for c in comps)))
+            parked = sum(s.status == "parked" for s in rt.steps)
+            decoded.append((word, " + ".join(
+                f"{c.form}{'→' + c.surface if c.surface else ''}({c.part or 'unlabelled'})"
+                for c in comps) + (f"   [{parked} parked]" if parked else "")))
 
     # Saran's ruling 2026-08-08: forms whose split turns on a சாரியை/உருபு புணர்ச்சி (வீட்டிற்கு)
     # belong to the **புணர்ச்சி engine**, not to பகுபத உறுப்பிலக்கணம். They are not decoder gaps, so
@@ -173,11 +182,16 @@ async def main():
     out_of_scope = [w for w in gaps if w in PUNARCHI_SCOPE]
     real_gaps = [w for w in gaps if w not in PUNARCHI_SCOPE]
     in_scope = len(FORMS) - len(out_of_scope)
-    print(f"\ndecoded: {len(decoded)}/{in_scope} in-scope   "
+    print(f"\ndecoded AND rebuilds: {len(decoded)}/{in_scope} in-scope   "
+          f"does not rebuild: {len(no_rebuild)}   "
           f"no-analysis gaps: {len(real_gaps)}   "
           f"out of scope (புணர்ச்சி engine): {len(out_of_scope)}\n")
     for w, s in decoded:
         print(f"   {w:<16} {s}")
+    if no_rebuild:
+        print("\n--- SPLIT DOES NOT REBUILD THE WORD (D-023 gap) ---")
+        for w, rebuilt, missing in no_rebuild:
+            print(f"   {w:<16} joins to {rebuilt}   unaccounted: {missing}")
     if real_gaps:
         print("\n--- NO ANALYSIS (genuine coverage gap) ---")
         print("   " + ", ".join(real_gaps))

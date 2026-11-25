@@ -164,8 +164,17 @@ class Engine:
             a.gaps.append(Gap(field="formation",
                               note="no FST analysis — formation cannot be decoded (no invented split)"))
             return
-        a.formation = decoder.decode_formation(normalized, a.all_analyses[0])
+        # D-023: decode from the first analysis whose split REBUILDS the word. The FST's order is
+        # not a judgement (it lists செய்தான் as the noun செய் + a focus tag first, which cannot
+        # account for -தான்), so a split that rebuilds its word is preferred over one that does not.
+        decoded = [decoder.decode_formation(normalized, m) for m in a.all_analyses]
+        a.formation = next((f for f in decoded if f.round_trip and f.round_trip.holds), decoded[0])
         a.sources.extend(a.formation.sources)
+        rt = a.formation.round_trip
+        if rt is not None and not rt.holds:
+            a.gaps.append(Gap(field="formation", note=(
+                f"the split does not rebuild the word: {rt.note}"
+                + (f"; letters nothing accounts for: {rt.unaccounted}" if rt.unaccounted else ""))))
         if len({m.lemma for m in a.all_analyses}) > 1:
             a.gaps.append(Gap(field="formation",
                               note="structural ambiguity — formation shown for the primary analysis; "
