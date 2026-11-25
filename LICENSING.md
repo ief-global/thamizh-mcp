@@ -41,7 +41,7 @@ provenance machinery that makes answers auditable also makes licences classifiab
 | Tamil Virtual Academy — course books, கலைச்சொல் glossaries, annotated corpus (D-021) | CC BY-SA 4.0 | use + public serving + redistribution with attribution | attribution to TVA; stays CC BY-SA, never Apache-2.0 |
 | foma / flookup | Apache-2.0 | runtime dep (not redistributed) | — |
 | Tholkappiyam / Nannūl — the *works* | classical, public domain | everything | cite அதிகாரம்/இயல் + நூற்பா |
-| Tholkappiyam / Nannūl — the pinned **Project Madurai etexts** (`data/classical/*.json`) | Project Madurai: free distribution **provided the header is kept intact** | use + redistribution incl. public serving | reproduce the © Project Madurai header + edition credits wherever the text or its verses travel |
+| Tholkappiyam / Nannūl, and நச்சினார்க்கினியர்'s உரை on எழுத்ததிகாரம் — the pinned **Project Madurai etexts** (`data/classical/*.json`) | Project Madurai: free distribution **provided the header is kept intact** | use + redistribution incl. public serving | reproduce the © Project Madurai header + edition credits wherever the text or its verses travel |
 
 ## What this means in practice
 

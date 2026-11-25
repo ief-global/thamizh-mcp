@@ -33,7 +33,7 @@ from thamizh_mcp.schema import SourceRef
 NANNUL_TOTAL = 462
 
 
-@lru_cache(maxsize=2)
+@lru_cache(maxsize=4)
 def _load(name: str) -> dict:
     """The pinned artifact, or {} if absent. A missing text costs quotation, never a crash."""
     try:
@@ -57,6 +57,33 @@ def tholkappiyam_verse(athikaram: str, iyal: str, verse: int | str) -> Optional[
     node = _load("tholkappiyam").get("athikaram", {}).get(athikaram, {}).get(iyal, {})
     v = node.get(str(verse))
     return _clean(v) if v else None
+
+
+# Which pinned commentary covers which அதிகாரம். Only எழுத்ததிகாரம் has one so far (D-024).
+_URAI = {"எழுத்ததிகாரம்": "tholkappiyam_eluthu_urai"}
+
+
+@lru_cache(maxsize=4)
+def _urai_index(athikaram: str) -> dict[tuple[str, str], dict]:
+    """(இயல், நூற்பா) of OUR text → the commentary unit aligned to it, merged units included."""
+    units = _load(_URAI[athikaram]).get("units", []) if athikaram in _URAI else []
+    idx: dict[tuple[str, str], dict] = {}
+    for u in units:
+        for c in [u.get("aligned_to")] + (u.get("also_covers") or []):
+            if c:
+                idx[(c["iyal"], str(c["verse"]))] = u
+    return idx
+
+
+def tholkappiyam_urai(athikaram: str, iyal: str, verse: int | str) -> Optional[dict]:
+    """The classical commentary on one Tholkappiyam நூற்பா, or None where we hold none.
+
+    Keyed by OUR coordinates. The commentary edition numbers continuously and divides two இயல்
+    differently, so it is matched to our verses by text at build time, never by number. The unit
+    carries the verse as the commentary prints it, the உரை, its `examples` (எ-டு … என வரும்), and
+    footnotes. Quoting it obliges `attribution("tholkappiyam_eluthu_urai")`.
+    """
+    return _urai_index(athikaram).get((iyal, str(verse)))
 
 
 def cite_nannul(verse: int | str, ref: str) -> SourceRef:

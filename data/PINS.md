@@ -64,18 +64,20 @@ re-sync any verbatim quote in `data/grammar/concept_map.json` (the citation guar
 do, which is intended).
 
 
-Built by `scripts/build_classical.py` into `data/classical/{tholkappiyam,nannul}.json`. Re-run with
+Built by `scripts/build_classical.py` into `data/classical/{tholkappiyam,nannul,tholkappiyam_eluthu_urai}.json`. Re-run with
 `--verify` to detect upstream drift; the `source_sha256` below is over the raw fetched bytes.
 
 | Anchor | Pin | Retrieved | Licence |
 |---|---|---|---|
-| Tholkappiyam — எழுத்ததிகாரம் | tamilnation.org/literature/grammar/mp100a · sha256 `22f70b3d7547…` | 2026-08-02 | Project Madurai — free distribution with header intact |
-| Tholkappiyam — சொல்லதிகாரம் | tamilnation.org/literature/grammar/mp100b · sha256 `ab144c62aeb4…` | 2026-08-02 | ″ |
-| Tholkappiyam — பொருளதிகாரம் | tamilnation.org/literature/grammar/mp100c · sha256 `a99c78000a86…` | 2026-08-02 | ″ |
+| Tholkappiyam — all three அதிகாரம் (Project Madurai's own etext, D-024) | projectmadurai.org/pm_etexts/utf8/pmuni0100.html · sha256 `cb039426f90d…` | 2026-11-24 | Project Madurai — free distribution with header intact |
 | Nannūl — primary (rev. 2021-08-31) | projectmadurai.org/pm_etexts/utf8/pmuni0147.html · sha256 `bfc865ddc2e4…` | 2026-08-02 | ″ |
 | Nannūl — supplement (rev. 2002-05-15), gap-fill only | projectmadurai.org/pm_etexts/utf8/pmuni0152.html · sha256 `fde8734d0b8b…` | 2026-08-02 | ″ |
+| Tholkappiyam எழுத்ததிகாரம் — நச்சினார்க்கினியர் உரை, part 1 (D-024) | projectmadurai.org/pm_etexts/utf8/pmuni0516_01.html · sha256 `1b58e190f6a3…` | 2026-11-24 | ″ (header © 1998-2015, reproduced in the artifact) |
+| ″ part 2 | projectmadurai.org/pm_etexts/utf8/pmuni0516_02.html · sha256 `00e249e8f3a3…` | 2026-11-24 | ″ |
 
-Attribution (required, travels with the text — reproduced in both artifacts):
+Attribution (required, travels with the text). Each artifact reproduces the header of ITS OWN
+source file verbatim in its `attribution` field: the three files carry different dates. The Nannūl
+header:
 
 > © Project Madurai 1999-2001. Project Madurai is an open, voluntary, worldwide initiative devoted
 > to preparation of electronic texts of tamil literary works and to distribute them free on the
@@ -83,13 +85,32 @@ Attribution (required, travels with the text — reproduced in both artifacts):
 > file, provided this header page is kept intact.
 
 Edition credits: Tholkappiyam — etext Dr. K. Kalyanasundaram, proof-reading N. D. Logasundaram.
+Commentary — the South India Saiva Siddhanta Works Publishing Society (கழகம்) edition with footnotes
+by புலவர் ஞா. தேவநேயப் பாவாணர்; scan from the Digital Library of India; Project Madurai Distributed
+Proof-reading volunteers; HTML by Dr. K. Kalyanasundaram.
 Nannūl — etext Dr. Thomas Malten (Univ. of Köln), conforming to the edition of Mani
 Thirunavukkarasu Mudaliar (Vavilla Ramasamy Sastrulu & Sons, Madras, 1926); proof-reading
 N. D. Logasundaram.
 
-**Coverage.** Tholkappiyam 1486 நூற்பா across 3 அதிகாரம் / 26 இயல்; the grammar-critical இயல்
-(எழுத்ததிகாரம்/புணரியல், சொல்லதிகாரம்/வேற்றுமையியல்) are gap-free. Four verses elsewhere in
-பொருளதிகாரம்/வினையியல் remain unextracted; see the `coverage` block in the artifact.
+**Coverage.** Tholkappiyam **1602** நூற்பா across 3 அதிகாரம் / 27 இயல் (எழுத்து 483 · சொல் 463 ·
+பொருள் 656), every இயல் gap-free. **Re-pinned 2026-11-24 (D-024)** from Project Madurai's own etext.
+The tamilnation.org mirror pinned 2026-08-02 was lossy, and against this etext it had: ஃ lost both
+as U+FFFD (repaired then) and as a literal `?` (21 verses, never repaired); the vowel sign ொ dropped
+(85 verses); ~130 verses missing other characters; four verses glued into a neighbour; and மரபியல்
+filed under செய்யுளியல், with the real செய்யுளியல் absent. **Every character of the old pin is present
+in the new one.** The mirror also returned HTTP 503 on the day it was retired.
+
+**Commentary.** `tholkappiyam_eluthu_urai.json`: நச்சினார்க்கினியர் on எழுத்ததிகாரம், 480 units, 373+
+with worked examples. Its numbers are CONTINUOUS and two இயல் are divided differently, so units are
+aligned to our verses **by text**, never by number: 479 of our 483 aligned (median similarity 0.98),
+பிறப்பியல் 21 printed merged with 20, and three verses (its 132, 219, 391) absent from the etext. Its
+unit 441 has no counterpart in our text. Runtime: `classical.tholkappiyam_urai(அதிகாரம், இயல், n)`.
+
+⚠️ **Nannūl upstream was REVISED after we pinned it** (primary sha256 `bfc865ddc2e4…` → `b970b4ee13b4…`,
+seen 2026-11-24). The parser reads the new page into a different text for all but 14 verses, so the
+builder now REFUSES to overwrite `nannul.json` and keeps the verified pin. Adopting the revision is
+open work: diff it verse by verse, as was done for Tholkappiyam, before switching.
+
 **Nannūl is complete — all 462.** நூற்பா 73 and 176 are absent from the primary etext (72→74,
 175→177) and are filled from Project Madurai's older Nannūl page, marked per-verse in
 `supplemented`. The primary is deliberately NOT switched: pmuni0147 is the 2021 revision with

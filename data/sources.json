@@ -45,7 +45,7 @@
       "attribution_required": true,
       "attribution": "© Project Madurai 1999-2001. Etext: Dr. K. Kalyanasundaram; proof-reading: N. D. Logasundaram.",
       "maintenance": "stable — a pinned etext of a fixed classical work; drift is detectable via scripts/build_classical.py --verify",
-      "pin": "tamilnation.org/literature/grammar/mp100{a,b,c}; sha256 recorded in data/PINS.md; retrieved 2026-08-02",
+      "pin": "projectmadurai.org/pm_etexts/utf8/pmuni0100.html (Project Madurai's own etext; the tamilnation.org mirror was retired 2026-11-24, D-024); sha256 recorded in data/PINS.md",
       "supersession": null,
       "notes": "நூற்பா RESTART per இயல் — a citation must name அதிகாரம் › இயல் › நூற்பா. Never take a number from a secondary source; TVA's 336 is 337 here."
     },
