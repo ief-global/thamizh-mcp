@@ -9,7 +9,7 @@
   "authority": "Nannūl — வினையியல், பகுபத உறுப்பிலக்கணம், நூற்பா 142/143/144; verified against Tamil Virtual Academy course A0212 வினைச்சொல் (Government of Tamil Nadu, degree-level accredited material), which quotes the நூற்பா text directly.",
   "verified_by": "Saran Saravanan (formal TVA A021 coursework)",
   "verified_date": "2026-08-02",
-  "sandhi_rule": "SETTLED 2026-11-25 (D-028) on a CLASSICAL COMMENTARY, superseding D-026. The doubled consonant of a strong verb (படிக்கிறான், படிப்பான், படித்தான்) is an இடைநிலை எழுத்து: நச்சினார்க்கினியர் counts a doubled ஒற்று among the இடைநிலை எழுத்துக்கள் (சொல். பெயரியல் 11, p. 174) and calls a verb's medial letter an இடைநிலை எழுத்து (எச்சவியல் 67, pp. 467, 469); he never calls a part of a verb சந்தி. Saran ruled 2026-11-25 that a classical commentary ALWAYS outranks a TVA course book, so D-026's சந்தி (TVA C0212 §5.3.5) is superseded. No commentator splits a strong verb's two த் explicitly; the label applies his name for a medial letter. The decoder does not split the doubling off here: `doubled` below only records which FST surfaces carry it, and data/grammar/punarchi.json (rule irattitha_otru, status urai) finds it in the word and labels it இடைநிலை.",
+  "sandhi_rule": "SETTLED 2026-11-25 (D-031) on தேவநேயப் பாவாணர், superseding D-028. The letter that appears where a verb's பகுதி meets the next part is the சந்தி: 'படித்தான் – படி + த் + தான் – த் சந்தி. வந்தான் – வ + ந் + தான் – ந் – சந்தி' (இயற்றமிழ் இலக்கணம் §57, p. 66). Saran ruled that பாவாணர் breaks ties; no classical commentator splits a strong verb's two த், and நச்சினார்க்கினியர்'s 'இடைநிலை எழுத்து' (D-028) describes a medial letter in Tholkappiyam's frame rather than naming one of Nannūl 133's six. பாவாணர் limits சந்தி to the பகுதி's join, so a doubled letter after another part (செய்வித்தான் after வி) keeps D-028's இடைநிலை எழுத்து. The decoder does not split the doubling off here: `doubled` below only records which FST surfaces carry it; data/grammar/punarchi.json (santhi_otru, santhi_na, irattitha_otru) finds it in the word and labels it.",
   "idainilai": {
     "pres": {
       "class": "நிகழ்கால இடைநிலை",
@@ -69,10 +69,11 @@
           "idainilai": "இன்"
         },
         "ன்": {
-          "idainilai": "ன்",
-          "role_note": "not among நூற்பா 142's four; 144's 'இவை சில இல' admits another இடைநிலை (சங்கர நமச்சிவாயர்), and கூழங்கைத் தம்பிரான் names சொன்னான், போனான் for it",
-          "urai": ["sankara-144-pira-idainilai", "tampiran-144-sonnan"],
-          "note": "போனான் (போ + ன் + ஆன்), சொன்னான் (சொல் → சொன் + ன் + ஆன்; the ல் → ன் is the பகுதி விகாரம் eetrumei_varumei_thirithal, punarchi.json). Cited since D-030; it was an uncited curated-paradigm surface before."
+          "idainilai": "இன்",
+          "role_note": "the இடைநிலை இன், its first letter dropped (பாவாணர், இயற்றமிழ் இலக்கணம் §104: போனான் – போ + ன் + ஆன்)",
+          "urai": ["pavanar-104-in"],
+          "note": "போனான் (போ + இன்(ன்) + ஆன்), சொன்னான் (சொல் → சொன் + இன்(ன்) + ஆன்). The round-trip shows இன் surfacing as ன் (rule in_muthal_kurai, punarchi.json). D-031 replaced D-030's reading (another இடைநிலை under நன்னூல் 144, after சங்கர நமச்சிவாயர் and கூழங்கைத் தம்பிரான்) on பாவாணர்'s statement.",
+          "superseded_urai": ["sankara-144-pira-idainilai", "tampiran-144-sonnan"]
         },
         "ன்ற்": {
           "idainilai": "ற்",

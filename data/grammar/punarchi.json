@@ -10,6 +10,7 @@
   "status_values": {
     "classical": "the rule is stated by a cited நூற்பா, quoted at runtime from the pinned edition",
     "urai": "the analysis is stated by a classical commentary on Tholkappiyam (நச்சினார்க்கினியர், இளம்பூரணர், சேனாவரையர்) or, where none states it, by a commentary on Nannūl (D-030), in a passage read against its scan page (`urai` lists ids in data/classical/verified_quotations.json; `urai_scope` says exactly what the passage covers). It ALWAYS outranks a course book (Saran, D-028); a நூற்பா still outranks it",
+    "scholar": "தேவநேயப் பாவாணர் states it, in a passage of his books read against the scan page (data/classical/verified_quotations.json). Saran, 2026-11-25 (D-031): his statements are authoritative and break ties where the classical sources are silent or disagree. Ranked after a classical உரை when two splits both rebuild the word",
     "textbook": "the analysis is stated verbatim by a TVA course book (CC BY-SA 4.0); no நூற்பா or classical உரை located yet",
     "parked": "the material is real and is NAMED so nothing is dropped, but no cited rule labels it; the label is parked under D-023 and must not be guessed"
   },
@@ -112,56 +113,89 @@
       "tholkappiyam_searched": "புள்ளிமயங்கியல் 15 covers ம்-final words in the வேற்றுமை join (the ம் drops and the hard consonant doubles); no verse located for this join before கள், so Nannūl is the citation."
     },
     {
-      "id": "idainilai_na",
-      "name": "இடைநிலை எழுத்து ந் (கால எழுத்திற்கு ஏற்ற)",
-      "effect": "between a verb's பகுதி and the past tense letter த், an இடைநிலை எழுத்து ந் that suits the tense letter appears, after a vowel or after ய், ர், ழ் (வா → வ + ந் + த் + ஆன் → வந்தான்; வாழ் + ந் + த் + ஆன் → வாழ்ந்தான்)",
-      "status": "urai",
+      "id": "santhi_na",
+      "name": "சந்தி ந் (தோன்றல்)",
+      "effect": "between a verb's பகுதி and the past tense letter த், the சந்தி ந் appears, after a vowel or after ய், ர், ழ் (வா → வ + ந் + த் + ஆன் → வந்தான்; வாழ் + ந் + த் + ஆன் → வாழ்ந்தான்)",
+      "status": "scholar",
       "context": "verb, before the past tense letter த், after a vowel or after ய், ர், ழ்",
-      "part": "இடைநிலை",
+      "part": "சந்தி",
       "form": "ந்",
-      "urai": ["nacc-eccha-67-vaa", "nacc-eccha-67-aa-idainilai", "visakap-137-examples", "visakap-137-sernthan", "ramanuja-137-theynthan"],
-      "urai_scope": "நச்சினார்க்கினியர் states it for வந்தான் (p. 467). He has no சந்தி among a verb's parts: every letter between the முதனிலை and the ஈறு that is not the root is an இடைநிலை எழுத்து (the ஆ of உண்ணாநின்றான், p. 469). WHERE the ந் comes is read from the Nannūl commentators' lists of past forms (D-030): after a vowel (நடந்தான், மடிந்தான், வெந்தான்), after ழ் (வாழ்ந்தான்), after ர் (சேர்ந்தான், கொணர்ந்தான்) and after ய் (தேய்ந்தான், முகவை இராமானுச கவிராயர் p. 117). Before 2026-11-25 the rule fired after a vowel only, so சேர்ந்தான், வாழ்ந்தான், தேய்ந்தான் failed to rebuild. சேனாவரையர் and இளம்பூரணர் do not split this letter out; neither calls it சந்தி.",
-      "ruling": "Saran, 2026-11-25 (D-028): a classical commentary (நச்சினார்க்கினியர், இளம்பூரணர், சேனாவரையர்) ALWAYS takes precedence over a TVA course book.",
+      "urai": ["pavanar-57-santhi", "pavanar-57-na", "nacc-eccha-67-vaa", "visakap-137-examples", "visakap-137-sernthan", "ramanuja-137-theynthan"],
+      "urai_scope": "பாவாணர் names the letter: 'வந்தான், இருந்தான் முதலிய சொற்களில், ந் என்பதே சந்தி' (இயற்றமிழ் இலக்கணம் §57, p. 66), and defines சந்தி as the letter that appears where the பகுதி meets the next part. நச்சினார்க்கினியர் (p. 467) describes the same letter as 'கால வெழுத்திற் கேற்ற இடைநிலை யெழுத்து', a medial letter; he works in Tholkappiyam's frame, which does not use Nannūl's six உறுப்பு, so his passage is cited as a description, not as the label. WHERE the ந் comes is read from the Nannūl commentators' lists of past forms (D-030): after a vowel (நடந்தான், மடிந்தான்), after ழ் (வாழ்ந்தான்), after ர் (சேர்ந்தான், கொணர்ந்தான்), after ய் (தேய்ந்தான்).",
+      "ruling": "Saran, 2026-11-25 (D-031): பாவாணர்'s statements break ties; for this letter he chose சந்தி over D-028's இடைநிலை எழுத்து.",
       "superseded": {
-        "label": "சந்தி (த் surfacing as ந்)",
-        "source": "TVA C0212 §5.3.6 (விகாரம்), with Saran's ruling of 2026-08-11 and the reading of நன்னூல் 142 that 'ந் cannot be the இடைநிலை'",
-        "by": "D-028 — நச்சினார்க்கினியர் names the letter an இடைநிலை எழுத்து. நன்னூல் 142 lists the TENSE-SHOWING இடைநிலை; it does not exclude other medial letters."
+        "label": "இடைநிலை எழுத்து",
+        "source": "நச்சினார்க்கினியர் உரை (D-028), which calls a letter between the முதனிலை and the ஈறு an இடைநிலை எழுத்து",
+        "by": "D-031 (Saran, 2026-11-25) — பாவாணர் places the letter within Nannūl 133's six உறுப்பு and names it சந்தி. நச்சினார்க்கினியர்'s passage stays cited as a description of the letter.",
+        "earlier": "TVA C0212 §5.3.5–5.3.6 called it சந்தி (D-026), as பாவாணர் does; D-028 relabelled it from the commentary."
       },
       "cites": [
-        {"authority": "Tholkappiyam", "athikaram": "சொல்லதிகாரம்", "iyal": "எச்சவியல்", "verse": 67,
-         "role": "the அதிகாரப் புறனடை asks that words be divided for the learner (சொல் வரைந்து அறியப் பிரித்தனர் காட்டல்); நச்சினார்க்கினியர்'s உரை on it gives this division"}
+        {"authority": "Tholkappiyam", "athikaram": "எழுத்ததிகாரம்", "iyal": "புணரியல்", "verse": 7, "role": "மெய் பிறிது ஆதல் மிகுதல் குன்றல் — a letter APPEARING (மிகுதல்; Nannūl's தோன்றல்) is one of the three changes at a join"},
+        {"authority": "Nannūl", "verse": 133, "role": "names சந்தி among the six பகுபத உறுப்பு"},
+        {"authority": "Nannūl", "verse": 154, "role": "தோன்றல் திரிதல் கெடுதல் — பாவாணர்: சந்தி is the தோன்றல் alone"},
+        {"authority": "Tholkappiyam", "athikaram": "சொல்லதிகாரம்", "iyal": "எச்சவியல்", "verse": 67, "role": "the அதிகாரப் புறனடை asks that words be divided for the learner (சொல் வரைந்து அறியப் பிரித்தனர் காட்டல்); நச்சினார்க்கினியர்'s உரை on it gives this division"}
+      ]
+    },
+    {
+      "id": "santhi_otru",
+      "name": "சந்தி (வல்லொற்று தோன்றல்)",
+      "effect": "between a strong verb's பகுதி and a part that begins with a hard consonant, that consonant appears once more as the சந்தி (படி + த் + த் + ஆன் → படித்தான்; படி + க் + கிறு + ஆன் → படிக்கிறான்)",
+      "status": "scholar",
+      "context": "verb, at the join of the பகுதி with the next part, before a hard consonant",
+      "part": "சந்தி",
+      "urai": ["pavanar-57-santhi", "nacc-peyar-11-doubled-tha"],
+      "urai_scope": "பாவாணர் splits படித்தான் explicitly: 'படி + த் + தான் (த் + ஆன்) – த் சந்தி' (§57, p. 66), and gives the order பகுதி + சந்தி + இடைநிலை + விகுதி (படித்தான், §60, p. 67). No classical commentator splits a strong verb's two த். He limits சந்தி to the join of the பகுதி with the part after it, so this rule fires only there; a doubled letter after another part (செய்வித்தான்'s த்த் after வி) stays irattitha_otru. நச்சினார்க்கினியர் counts a doubled த ஒற்று among the medial letters of a NOUN (p. 174); cited as a description.",
+      "ruling": "Saran, 2026-11-25 (D-031), as for santhi_na.",
+      "superseded": {
+        "label": "இடைநிலை எழுத்து",
+        "source": "நச்சினார்க்கினியர் உரை (D-028), which calls a letter between the முதனிலை and the ஈறு an இடைநிலை எழுத்து",
+        "by": "D-031 (Saran, 2026-11-25) — பாவாணர் places the letter within Nannūl 133's six உறுப்பு and names it சந்தி. நச்சினார்க்கினியர்'s passage stays cited as a description of the letter.",
+        "earlier": "TVA C0212 §5.3.5–5.3.6 called it சந்தி (D-026), as பாவாணர் does; D-028 relabelled it from the commentary."
+      },
+      "cites": [
+        {"authority": "Tholkappiyam", "athikaram": "எழுத்ததிகாரம்", "iyal": "புணரியல்", "verse": 7, "role": "மெய் பிறிது ஆதல் மிகுதல் குன்றல் — a letter APPEARING (மிகுதல்; Nannūl's தோன்றல்) is one of the three changes at a join"},
+        {"authority": "Nannūl", "verse": 133, "role": "names சந்தி among the six பகுபத உறுப்பு"},
+        {"authority": "Nannūl", "verse": 154, "role": "தோன்றல் திரிதல் கெடுதல் — பாவாணர்: சந்தி is the தோன்றல் alone"}
       ]
     },
     {
       "id": "irattitha_otru",
       "name": "இடைநிலை எழுத்து (இரட்டித்த ஒற்று)",
-      "effect": "an இடைநிலை எழுத்து appears where a verb's parts meet, the same hard consonant as the part that follows (படி + த் + த் + ஆன் → படித்தான்; படி + க் + கிறு + ஆன் → படிக்கிறான்)",
+      "effect": "a hard consonant appears doubled where a verb's parts meet AFTER the பகுதி's own join (செய் + வி + த் + த் + ஆன் → செய்வித்தான்): an இடைநிலை எழுத்து",
       "status": "urai",
-      "context": "verb, before a part that begins with a hard consonant",
+      "context": "verb, at a join that is not the பகுதி's, before a part that begins with a hard consonant",
       "part": "இடைநிலை",
       "urai": ["nacc-peyar-11-doubled-tha", "nacc-eccha-67-fem-idainilai", "nacc-eccha-67-aa-idainilai"],
-      "urai_scope": "நச்சினார்க்கினியர் counts a doubled த ஒற்று among 'இரண்டு இடைநிலை எழுத்துக்கள்' (p. 174) and calls the ச/த/ட of feminine nouns இடைநிலை (p. 468): those are NOUNS. For a verb he calls a letter between the முதனிலை and the ஈறு an இடைநிலை எழுத்து (the ஆ of உண்ணாநின்றான், p. 469; the ந் of வந்தான், p. 467); it is his only name for such a letter, and he never calls one சந்தி. No commentator splits a strong verb's two த் (கொடுத்தான்) explicitly; this rule applies his name for a medial letter to the first of them. சேனாவரையர் calls the tense-showing letters 'the letters above the ஈறு' without splitting them, and is silent here.",
+      "urai_scope": "Since D-031 this rule covers only a doubled letter that does NOT follow the பகுதி; the one that does is santhi_otru (பாவாணர்). பாவாணர் calls only the பகுதி's join சந்தி, so this letter is not one; நச்சினார்க்கினியர்'s name for a letter between the முதனிலை and the ஈறு, இடைநிலை எழுத்து (D-028), is kept for it. நச்சினார்க்கினியர் counts a doubled த ஒற்று among 'இரண்டு இடைநிலை எழுத்துக்கள்' (p. 174) and calls the ச/த/ட of feminine nouns இடைநிலை (p. 468): those are NOUNS. For a verb he calls a letter between the முதனிலை and the ஈறு an இடைநிலை எழுத்து (the ஆ of உண்ணாநின்றான், p. 469; the ந் of வந்தான், p. 467); it is his only name for such a letter, and he never calls one சந்தி. No commentator splits a strong verb's two த் (கொடுத்தான்) explicitly; this rule applies his name for a medial letter to the first of them. சேனாவரையர் calls the tense-showing letters 'the letters above the ஈறு' without splitting them, and is silent here.",
       "ruling": "Saran, 2026-11-25 (D-028), on the question put to him (do these passages name the slot?): yes, a classical commentary takes precedence, so the slot is relabelled from the commentary.",
-      "superseded": {
-        "label": "சந்தி",
-        "source": "TVA C0212 §5.3.5 (சந்தி), D-026 (provisional until a classical சொல்லதிகாரம் உரை was found)",
-        "by": "D-028 — the உரை was pinned (D-027) and read; நச்சினார்க்கினியர் names such letters இடைநிலை எழுத்து."
-      },
+      "superseded": {"label": "சந்தி", "source": "TVA C0212 §5.3.5 (சந்தி), D-026 (provisional until a classical சொல்லதிகாரம் உரை was found)", "by": "D-028 — the உரை was pinned (D-027) and read; நச்சினார்க்கினியர் names such letters இடைநிலை எழுத்து."},
       "cites": [
-        {"authority": "Tholkappiyam", "athikaram": "சொல்லதிகாரம்", "iyal": "பெயரியல்", "verse": 11,
-         "role": "நச்சினார்க்கினியர்'s உரை on this நூற்பா counts a doubled த ஒற்று among the இடைநிலை எழுத்துக்கள்"},
-        {"authority": "Tholkappiyam", "athikaram": "சொல்லதிகாரம்", "iyal": "எச்சவியல்", "verse": 67,
-         "role": "the அதிகாரப் புறனடை asks that words be divided; நச்சினார்க்கினியர்'s உரை on it names the medial letters of verbs and nouns இடைநிலை"},
-        {"authority": "Nannūl", "verse": 133,
-         "role": "names இடைநிலை among the six பகுபத உறுப்பு"}
+        {"authority": "Tholkappiyam", "athikaram": "சொல்லதிகாரம்", "iyal": "பெயரியல்", "verse": 11, "role": "நச்சினார்க்கினியர்'s உரை on this நூற்பா counts a doubled த ஒற்று among the இடைநிலை எழுத்துக்கள்"},
+        {"authority": "Tholkappiyam", "athikaram": "சொல்லதிகாரம்", "iyal": "எச்சவியல்", "verse": 67, "role": "the அதிகாரப் புறனடை asks that words be divided; நச்சினார்க்கினியர்'s உரை on it names the medial letters of verbs and nouns இடைநிலை"},
+        {"authority": "Nannūl", "verse": 133, "role": "names இடைநிலை among the six பகுபத உறுப்பு"}
       ]
+    },
+    {
+      "id": "in_muthal_kurai",
+      "name": "இன் முதல் குறைதல்",
+      "effect": "the past இடைநிலை இன் appears as ன், its first letter dropped (போ + இன் + ஆன் → போனான்; சொல் + இன் + ஆன் → சொன்னான்)",
+      "status": "scholar",
+      "context": "verb, the past இடைநிலை இன் where the word shows ன்",
+      "urai": ["pavanar-104-in"],
+      "urai_scope": "பாவாணர் states it and gives போனான் (இயற்றமிழ் இலக்கணம் §104, p. 32): 'இன் என்னும் இடைநிலை ன் என முதல் குறைந்தும் … நிற்கும்'. He does not name சொன்னான்; its ன் is the same letter after the same kind of verb, so the rule applies to it. Before D-031 the ன் was read as some other இடைநிலை under நன்னூல் 144 'இவை சில இல' (சங்கர நமச்சிவாயர்; கூழங்கைத் தம்பிரான் names சொன்னான், போனான்); பாவாணர's reading breaks that tie, as Saran ruled his statements do.",
+      "superseded": {"label": "another இடைநிலை (ன்), outside 142's four", "source": "நன்னூல் 144 with சங்கர நமச்சிவாயர் and கூழங்கைத் தம்பிரான் (D-030)", "by": "D-031 — பாவாணர் §104"},
+      "cites": [
+        {"authority": "Nannūl", "verse": 142, "role": "lists இன் among the past இடைநிலை"},
+        {"authority": "Nannūl", "verse": 156, "role": "ஒருமொழி மூவழிக் குறைதலும் அனைத்தே — a letter may drop at the start (முதற்குறை)"}
+      ],
+      "tholkappiyam_searched": "Tholkappiyam does not enumerate the tense இடைநிலை (tamil-grammar.md); Nannūl 142 is the list this rule reads from."
     }
   ],
   "pakuthi_vikaram": {
     "comment": "How a verb's பகுதி changes when it joins the rest of the word (D-030). ONE catalogue of cited changes, not a list of verbs: the engine tries every change on every verb and keeps the split whose join rebuilds the word, so a verb it has never seen (கொன்றான், வென்றான், நீண்டது) is decoded the same way as one it has. The catalogue is விசாகப் பெருமாளையர்'s list of the kinds of change, in his உரை on நன்னூல் 137 (p. 114), each cited first to the Tholkappiyam commentator who states it where one does. Why not a rule per root shape: he says roots of the same shape (கல், நில், சொல்) change in different ways, so they cannot be listed one by one and the change is found from usage (visakap-137-vazhakku). The word in front of the engine IS the usage. `applies`: 'stem' changes the பகுதி before it joins; 'boundary' changes its last letter at the join with the next part (implemented beside the join rules in core/punarchi.py).",
     "framework": {
       "statement": "A பகுதி's changes lie within the three changes at a join and the nine விகாரம் (சங்கர நமச்சிவாயர் – சிவஞான முனிவர் on நன்னூல் 139, and four later commentators the same). Tholkappiyam names the three (புணரியல் 7) and the six விகாரம் (சொல். எச்சவியல் 7); Nannūl names them in 154, 155 and 156. Each rule's `kind` is its name among these.",
-      "urai": ["sivagnana-139-matteru", "visakap-137-vazhakku"],
+      "urai": ["sivagnana-139-matteru", "visakap-137-vazhakku", "pavanar-60-vikaram"],
       "cites": [
         {"authority": "Tholkappiyam", "athikaram": "எழுத்ததிகாரம்", "iyal": "புணரியல்", "verse": 7, "role": "மெய் பிறிது ஆதல் மிகுதல் குன்றல் — the three changes at a join"},
         {"authority": "Tholkappiyam", "athikaram": "சொல்லதிகாரம்", "iyal": "எச்சவியல்", "verse": 7, "role": "வலித்தல் மெலித்தல் விரித்தல் தொகுத்தல் நீட்டல் குறுக்கல் — the six விகாரம் of joined words"},
@@ -310,7 +344,7 @@
         "kind": "நீட்டல், தொகுத்தல்",
         "effect": "the பகுதி appears both unchanged and changed (முழுகு → முழுகினான், மூழ்கினான்)",
         "urai": ["visakap-137-kona-virava"],
-        "why_not_applied": "the changed form lengthens the first vowel AND drops the second (மூழ்கு); the text names the alternation, not the two steps."
+        "why_not_applied": "NOT NEEDED (Saran, 2026-11-25): மூழ்கு is the written verb and முழுகு its colloquial form. So the commentator's example is two roots, not one root changing: each form decodes from its own root by the ordinary joins (மூழ்கினான் = மூழ்கு + இன் + ஆன், உகரம் கெடுதல், as ThamizhiMorph gives it; முழுகினான் = முழுகு + இன் + ஆன்). No rule joins them."
       }
     ],
     "fallback": "Where no Tholkappiyam commentator (நச்சினார்க்கினியர், இளம்பூரணர், சேனாவரையர்) states a change, a Nannūl commentator is cited (Saran, 2026-11-25, D-030), from நன்னூல் உரைவளம் 5, read on the scan page. Each rule's `urai_scope` says which commentator states which example."

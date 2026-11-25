@@ -25,7 +25,7 @@ integration. Loop: work on `develop` here → push → open PR `develop → main
 milestones. After any history rewrite, other clones must `git reset --hard origin/main`
 (not merge/rebase).
 
-## Current state (2026-11-25) — 439 tests pass (the FST tests skip without live foma)
+## Current state (2026-11-25) — 442 tests pass (the FST tests skip without live foma)
 
 **Everything below is live and merged to `main`.** Nine MCP tools + web/REST + CLI over ONE engine
 (blueprint §8 — the web head needed zero engine changes, which validated that design).
@@ -57,10 +57,9 @@ to fix.** கொடு now states cognates only → honest `unknown`. Per-word t
 
 The formation figure now means something it did not before 2026-11-25: a word counts only if its
 split **rebuilds the word** (D-023). The same 26 pass, but five of them (வந்தான், வந்தனன், வந்தார்கள்,
-வந்தீர்கள், நடந்தன) used to pass with a letter missing. "Cited" includes `urai` steps (a classical
-commentary, quoted as read on the scan page): since D-028 that covers the strong-verb doubled
-consonant, வந்தான்'s ந், and every பகுதி change (D-030). No sweep word rests on a course book, and
-none is parked.
+வந்தீர்கள், நடந்தன) used to pass with a letter missing. "Cited" includes `urai` steps (a commentary,
+quoted as read on the scan page; every பகுதி change, D-030) and `scholar` steps (பாவாணர், D-031: the
+சந்தி after the பகுதி and போனான்'s இன் → ன்). No sweep word rests on a course book, and none is parked.
 
 Re-run: `uv run python scripts/quality_sweep.py` (network on; ~3 min). It is the only honest
 read on quality — expected labels inside are ASSESSMENTS, not authority, and need Saran's eye.
@@ -85,23 +84,23 @@ analysis that rebuilds (செய்தான்'s FST lists a noun reading firs
   and the table records that search. `tests/test_roundtrip.py` fails a classical rule without a cite.
 - **Fixtures are the commentary's own examples**: மரத்தை, மரத்தொடு, நுகத்தை (உருபியல் 13, where
   நச்சினார்க்கினியர் himself says they are finished by புணரியல் 31 + 23), மணிக்கு, கிளியழகிது … rebuild.
-- **Defect 1 is FIXED.** காத்திருந்தாள் = காத்திரு + ந்(இடைநிலை) + த்(இடைநிலை) + ஆள். Rule `idainilai_na`
-  (was `santhi_tha_na`), status `urai`: நச்சினார்க்கினியர் calls வந்தான்'s ந் "கால வெழுத்திற் கேற்ற இடைநிலை
-  யெழுத்து" (சொல். எச்சவியல் 67, p. 467). It was a சந்தி த் → ந் on TVA C0212 §5.3.6 and Saran's ruling of
-  2026-08-11 until D-028. The same passage names வா → வ AND வா → வரு "முதனிலை குறுகி" (stem alternants).
-- **Defect 2 is SETTLED ON THE COMMENTARY (D-028, 2026-11-25).** The strong-verb doubled consonant is
-  an **இடைநிலை எழுத்து**: நச்சினார்க்கினியர் counts a doubled ஒற்று among the "இடைநிலை யெழுத்துக்கள்"
-  (சொல். பெயரியல் 11, p. 174, a NOUN passage) and calls a verb's medial letter an இடைநிலை எழுத்து (the ஆ
-  of உண்ணாநின்றான், p. 469); none of the three commentators calls any part of a verb சந்தி. So
-  படிக்கிறான் = படி + க்(இடைநிலை) + கிறு(இடைநிலை) + ஆன். Rule `irattitha_otru`, status `urai`; its
-  `urai_scope` says exactly what the passages cover: **no commentator splits a strong verb's two த்
-  explicitly**, so the label applies his only name for a medial letter. D-026's சந்தி (TVA C0212 §5.3.5)
-  is kept in the rule as `superseded`. No மிகுதல் event. The withdrawn 2026-08-02/08-08 entries stay withdrawn.
-- Statuses: `classical` (a நூற்பா states it) · `urai` (a classical commentary states it, in a passage
-  listed in `verified_quotations.json`) · `textbook` (a TVA course book states it verbatim) · `parked`
-  (named, never labelled). **Precedence (Saran, D-028): நூற்பா > உரை > course book, always**; `_cost`
-  prefers the higher one when two splits rebuild. No rule is `textbook` any more (காண் → கண் moved to
-  `urai` with D-030).
+- **Defect 1 is FIXED.** காத்திருந்தாள் = காத்திரு + ந்(சந்தி) + த்(இடைநிலை) + ஆள். Rule `santhi_na`
+  (was `idainilai_na`, before that `santhi_tha_na`), status `scholar`.
+- **Defects 1 and 2 are labelled on பாவாணர் (D-031, Saran 2026-11-25).** The letter that appears
+  where a verb's பகுதி meets the next part is the **சந்தி**: "படித்தான் – படி + த் + தான் – த் சந்தி.
+  வந்தான் – வ + ந் + தான் – ந் – சந்தி" (இயற்றமிழ் இலக்கணம் §57, p. 66). So படிக்கிறான் = படி +
+  க்(சந்தி) + கிறு(இடைநிலை) + ஆன் (rule `santhi_otru`). History: TVA said சந்தி (D-026); D-028
+  relabelled both இடைநிலை எழுத்து from நச்சினார்க்கினியர், who never splits a strong verb's two த் and
+  works in Tholkappiyam's frame, not Nannūl 133's six உறுப்பு; Saran then chose பாவாணர்'s சந்தி.
+  நச்சினார்க்கினியர்'s passages stay cited as descriptions of the letter. **பாவாணர் calls only the பகுதி's
+  join சந்தி**, so a doubled letter after another part (செய்வித்தான்'s த்த் after வி) keeps D-028's
+  இடைநிலை எழுத்து (`irattitha_otru`). No மிகுதல் event.
+- Statuses: `classical` (a நூற்பா states it) · `urai` (a commentary states it, in a passage listed in
+  `verified_quotations.json`) · `scholar` (தேவநேயப் பாவாணர் states it, read on the page; D-031) ·
+  `textbook` (a TVA course book states it verbatim) · `parked` (named, never labelled). **Precedence:
+  நூற்பா > உரை > course book, always (D-028); பாவாணர் breaks ties where the others are silent or
+  disagree (D-031)**. `_cost` ranks parked, textbook, scholar, urai when two splits both rebuild. No rule
+  is `textbook` any more (காண் → கண் moved to `urai` with D-030).
 - **A பகுதி's changes are RULES, not a list of verbs (D-030, Saran 2026-11-25; superseded D-029's
   per-verb list).** `punarchi.json → pakuthi_vikaram` is ONE catalogue, from விசாகப் பெருமாளையர்'s list
   of the kinds of change (உரை on நன்னூல் 137, p. 114), each rule cited first to the Tholkappiyam
@@ -117,7 +116,9 @@ analysis that rebuilds (செய்தான்'s FST lists a noun reading firs
     `ayal_kurukki_ra_virithal` (கொணா → கொணர்) · `eetrumei_varumei_thirithal` (ல்/ள் → ற்/ட் before a hard
     consonant, ன்/ண் before a nasal: கற்றான், கேட்டான், நிற்பான், **சொன்னான்**; Tholkappiyam
     புள்ளிமயங்கியல் 71/37/72, 101/7/102) · `eetrumei_inam_thirithal` (ல் → ன் before ற், ள் → ண் before ட்:
-    நின்றான், கொண்டான்). Two catalogued kinds are NOT applied and say why (`catalogued_not_applied`).
+    நின்றான், கொண்டான்). `catalogued_not_applied` says why the rest are not: முதல் நீளல் (சேறல்) needs a
+    rule not yet stated; உறழ்தல் is not needed, because மூழ்கு is the written verb and முழுகு its colloquial
+    form (Saran, 2026-11-25), so each word decodes from its own root.
   - **Fallback (Saran, D-030): where no Tholkappiyam commentator states a change, a Nannūl commentator
     is cited.** சொன்னான்'s ன் is a tense letter outside 142's four, admitted by 144's "இவை சில இல"
     (சங்கர நமச்சிவாயர்) and named by கூழங்கைத் தம்பிரான் with போனான் (`idainilai.json`).
@@ -177,10 +178,11 @@ Orthography proves a word is **not native**; it can NEVER say which language it 
      contradicts itself in two places: 139/242 share a structure but get opposite verdicts, as do
      181/182.
    - **(c) எச்சவினை விகுதி** — FOUND: தொல். சொல். வினையியல் 31 and நன்னூல் 343 both enumerate the
-     class, so this is a Tholkappiyam-FIRST citation. Open part: they name the FORMS, not the விகுதி
-     letters, and **நன்னூல் 140 lists `து` where `vikuthi.json` (following TVA) has `உ`**.
-   - ~~**(d) What the doubled `த்` slot is called.**~~ **SETTLED 2026-11-25 (D-028): இடைநிலை எழுத்து, on
-     நச்சினார்க்கினியர்** (superseding D-026's சந்தி on TVA C0212 §5.3.5). See Defect 2 above.
+     class, so this is a Tholkappiyam-FIRST citation. **The letter is settled (D-031): the past
+     வினையெச்ச விகுதி is `உ`** (with இ, ய்), on பாவாணர், இயற்றமிழ் இலக்கணம் §116, against reading
+     நன்னூல் 140's `து` as it (`vikuthi.json → echchavinai.vinaiyeccham.tense_vikuthi`).
+   - ~~**(d) What the doubled `த்` slot is called.**~~ **SETTLED 2026-11-25 (D-031): சந்தி, on பாவாணர்**
+     (D-026 சந்தி on TVA → D-028 இடைநிலை எழுத்து on நச்சினார்க்கினியர் → D-031). See Defects 1 and 2.
    - ~~**(e) Does வடசொல் cover Prakrit borrowings?**~~ **RULED 2026-11-24 (D-022): no.** பிராகிருதம் is
      its own origin class, assigned only when a source names Prakrit (`classifier.PRAKRIT_CODES`).
      Pali is NOT included; it stays `loanword` until ruled.
@@ -289,6 +291,9 @@ labelled it சந்தி on TVA C0212 §5.3.5; **D-028 relabelled it இட�
 - **A classical commentary ALWAYS outranks a course book (Saran, D-028).** நச்சினார்க்கினியர்,
   இளம்பூரணர், சேனாவரையர் > TVA. Cite the commentary only from a passage read against its scan page
   and listed in `data/classical/verified_quotations.json`, and say in `urai_scope` how far it reaches.
+- **தேவநேயப் பாவாணர் breaks ties (Saran, D-031).** Where the classical sources are silent or disagree,
+  his statement decides; cite it from a passage read on the scan page (status `scholar`). He is cited
+  after the நூற்பா and the commentators he is weighed against, never in place of a நூற்பா.
 - **Sources: look in archive.org's TamilVirtualAcademy collection FIRST** (Saran, 2026-11-25). Pin
   what you use once (djvu.xml + page map + PDF), mirrored in the design repo, so nothing depends on a
   server being up.
@@ -352,6 +357,13 @@ labelled it சந்தி on TVA C0212 §5.3.5; **D-028 relabelled it இட�
   பெருமாளையர் and later, side by side), archive.org `tdl.6041-5`. Built by `scripts/build_nannul_uraivalam.py`
   (add a leaf to `LEAVES` before citing it); mirror in the design repo `sources/classical/nannul-urai/`.
   This edition numbers one lower in places (its 138 is our 139): quotations use OUR number.
+- **பாவாணர் (D-031):** `data/classical/pavanar_iyatramil_ilakkanam.json` holds the cited pages of
+  இயற்றமிழ் இலக்கணம் (பாவாணர் தமிழ்க் களஞ்சியம் 25, `tdl.48547-25`, a typeset PDF: render pages to read
+  them; its font prints ய் as "-"). Also pinned by checksum, no page cited yet: களஞ்சியம் 19 வேர்ச்சொற்
+  கட்டுரைகள் 3 (`tdl.48510-19-3`) and the 1972 கழகம் எழுத்ததிகாரம் with நச்சினார்க்கினியர் உரை and his
+  footnotes (`dli.jZY9lup2kZl6TuXGlZQdjZMdl0Uy`). Built by `scripts/build_pavanar.py` (add a leaf before
+  citing it); mirror in the design repo `sources/classical/pavanar/`. The other களஞ்சியம் volumes (17,
+  18, 20 வேர்ச்சொற் கட்டுரைகள், 21, 37, 41) are in the same collection.
 - **Grammar rule tables:** `data/grammar/*.json` — each with `source_priority` + நூற்பா citations.
   `punarchi.json` holds the JOIN rules and the பகுதி விகாரம் catalogue the round-trip uses
   (`core/punarchi.py`, guard `tests/test_roundtrip.py`).

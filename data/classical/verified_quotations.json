@@ -376,6 +376,67 @@
       "as_printed": "திருமினான், தின்றான், தேய்ந்தான், பார்த்தான், சென்றான், வவ்வினான், வாழ்ந்தான்",
       "bears_on": "his list of the same 23 roots gives தேய்ந்தான் (ந் before த் after ய்) where விசாகப் பெருமாளையர் gives the strong தேய்த்தான்; both are in use (the commentators on நூற்பா 138 pair them as தன்வினை / பிறவினை).",
       "verified_on": "2026-11-25"
+    },
+    {
+      "id": "pavanar-57-santhi",
+      "artifact": "pavanar_iyatramil_ilakkanam",
+      "author": "தேவநேயப் பாவாணர்",
+      "work": "இயற்றமிழ் இலக்கணம்",
+      "section": "§57",
+      "leaf": 83,
+      "printed_page": "66",
+      "as_printed": "சந்தியென்பது புணர்ச்சி. அது தோன்றல், திரிதல், கெடுதல் என்னும் மூவகைப் புணர்ச்சி விகாரங்களுள், தோன்றல் ஒன்றையே குறிக்கும். பகுபதத்திற் பல உறுப்புகள் சேரும்போது பல புணர்ச்சிகள் தோன்றுமேனும், பகுதியும் அதற்கடுத்த உறுப்பும் புணரும் புணர்ச்சியே சந்தியாகக் கூறப்படும். படித்தான் – படி + த் + தான் (த் + ஆன்) – த் சந்தி. வந்தான் – வ + ந் + தான் (த் + ஆன்) – ந் – சந்தி.",
+      "bears_on": "D-031: the letter that APPEARS (தோன்றல்) where the பகுதி meets the next part is the சந்தி, and only that join is called சந்தி. படித்தான்'s first த் and வந்தான்'s ந் are சந்தி. Places these letters within Nannūl 133's six உறுப்பு.",
+      "verified_on": "2026-11-25"
+    },
+    {
+      "id": "pavanar-57-na",
+      "artifact": "pavanar_iyatramil_ilakkanam",
+      "author": "தேவநேயப் பாவாணர்",
+      "work": "இயற்றமிழ் இலக்கணம்",
+      "section": "§57",
+      "leaf": 83,
+      "printed_page": "66",
+      "as_printed": "வந்தான், இருந்தான் முதலிய சொற்களில், ந் என்பதே சந்தி. திரிதலும் கெடுதலும் தனியெழுத்துகள் அன்மையின் பகுபத வுறுப்பாகா.",
+      "bears_on": "D-031: the ந் of வந்தான், இருந்தான் is the சந்தி. A changed or dropped letter is not itself an உறுப்பு.",
+      "verified_on": "2026-11-25"
+    },
+    {
+      "id": "pavanar-60-vikaram",
+      "artifact": "pavanar_iyatramil_ilakkanam",
+      "author": "தேவநேயப் பாவாணர்",
+      "work": "இயற்றமிழ் இலக்கணம்",
+      "section": "§60",
+      "leaf": 84,
+      "printed_page": "67",
+      "as_printed": "விகாரம் என்பது பகுதியின் விகாரமென்றும், புணர்ச்சி விகாரமாகிய திரிதல் என்றும், இருவகையாகக் கூறுவர் ஆசிரியர். புணர்ச்சி விகாரம் சந்தியுளடங்குதலாற் பகுதியின் விகாரம் என்பதே சிறந்த கொள்கையாகும்.",
+      "bears_on": "the விகாரம் உறுப்பு is the change in the பகுதி (வந்தான் = வா, வ எனக் குறுகிற்று): the பகுதி விகாரம் catalogue of D-030.",
+      "verified_on": "2026-11-25"
+    },
+    {
+      "id": "pavanar-104-in",
+      "artifact": "pavanar_iyatramil_ilakkanam",
+      "author": "தேவநேயப் பாவாணர்",
+      "work": "இயற்றமிழ் இலக்கணம்",
+      "section": "§104",
+      "leaf": 49,
+      "printed_page": "32",
+      "as_printed": "இன் என்னும் இடைநிலை ன் என முதல் குறைந்தும், இ எனக் கடை குறைந்தும் நிற்கும். உ-ம். போனான் – போ + ன் + ஆன்",
+      "bears_on": "D-031: the ன் of போனான் (and சொன்னான்) is the நூற்பா-142 இடைநிலை இன் with its first letter dropped. It breaks the tie with the reading that it is some other இடைநிலை under 144 (sankara-144-pira-idainilai, tampiran-144-sonnan).",
+      "verified_on": "2026-11-25"
+    },
+    {
+      "id": "pavanar-116-echcham",
+      "artifact": "pavanar_iyatramil_ilakkanam",
+      "author": "தேவநேயப் பாவாணர்",
+      "work": "இயற்றமிழ் இலக்கணம்",
+      "section": "§116",
+      "leaf": 54,
+      "printed_page": "37",
+      "as_printed": "உ, இ, - என்பன இறந்தகால வினையெச்ச விகுதிகள்; அ என்பது நிகழ்கால வினையெச்ச விகுதி; இன் என்பது எதிர்கால வினையெச்ச விகுதி.",
+      "bears_on": "ruling (c): the past வினையெச்ச விகுதி is உ (படித்து), with இ (ஓடி) and ய் (போய்); அ for the present (படிக்க). Settles the letter vikuthi.json carries against the reading of நன்னூல் 140's து.",
+      "note": "This edition's font prints ய் as '-' (செ-து for செய்து); the transcription keeps the page as printed.",
+      "verified_on": "2026-11-25"
     }
   ]
 }

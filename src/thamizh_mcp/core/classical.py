@@ -136,6 +136,15 @@ def cite_urai(quotation_id: str, ref: str) -> SourceRef:
     commentator = q.get("commentator") or d.get("commentator")
     page = ((f"vol. {q['volume']}, " if q.get("volume") else "") + f"p. {q['printed_page']}"
             if q.get("printed_page") else "proof-read etext")
+    if q.get("author"):
+        # A scholar's own book (தேவநேயப் பாவாணர், D-031), cited by section and printed page.
+        return SourceRef(
+            name=f"{q['author']}, {q.get('work', '')}", tier="anchor",
+            ref=f"{q['author']}, {q.get('work', '')} {q.get('section', '')}, "
+                f"{d.get('edition', {}).get('series', '')}, {page} — {ref}",
+            verse=f"{q.get('work', '')} {q.get('section', '')} ({q['author']})",
+            verse_text=q["as_printed"],
+            retrieved=(d.get("edition") or {}).get("publisher"))
     if q.get("nannul_verse"):
         return SourceRef(
             name=NANNUL_URAI_SOURCE_NAME, tier="anchor", authority="Nannūl",

@@ -386,7 +386,7 @@ def decode_formation(word: str, analysis: MorphAnalysis) -> Formation:
                 inflected = True
                 # FST surface → canonical Nannūl உறுப்பு. A doubled consonant in the surface
                 # (க்கிற், ப்ப்) is NOT split off here: the round-trip finds it in the word and
-                # labels it சந்தி under TVA C0212 §5.3.5 (D-026, closing ruling (d)).
+                # labels it சந்தி on பாவாணர் (rule santhi_otru, D-031).
                 marker, _doubled, cls = map_idainilai(tcode, feats[tcode])
                 role = f"{trole} ({cls})" if cls else trole
                 if note := idainilai_role_note(tcode, feats[tcode]):
@@ -457,13 +457,18 @@ def _kind(c: FormationComponent, verb: bool) -> str:
 # Junction material that is part of the word's OWN structure, so it is shown as a component.
 # Joins between a noun and its case ending (உடம்படுமெய், a doubled ஒற்று) stay as join steps.
 _JUNCTION_COMPONENT = {
-    "idainilai_na": dict(part="இடைநிலை", authority="Tholkappiyam",
-                         role="இடைநிலை எழுத்து — the ந் that suits the tense letter த் (நச்சினார்க்கினியர் "
-                              "உரை, சொல். எச்சவியல் 67, p. 467, 'கால வெழுத்திற் கேற்ற இடைநிலை யெழுத்து'; D-028)"),
+    "santhi_na": dict(part="சந்தி", authority="Nannūl",
+                      role="சந்தி — the ந் that appears where the பகுதி meets the tense letter த் "
+                           "(பாவாணர், இயற்றமிழ் இலக்கணம் §57, p. 66: 'ந் என்பதே சந்தி'; Nannūl 133; D-031)"),
+    "santhi_otru": dict(part="சந்தி", authority="Nannūl",
+                        role="சந்தி — the hard consonant that appears where the பகுதி meets the next part "
+                             "(பாவாணர், இயற்றமிழ் இலக்கணம் §57, p. 66: 'படி + த் + தான் – த் சந்தி'; "
+                             "Nannūl 133; D-031)"),
     "irattitha_otru": dict(part="இடைநிலை", authority="Tholkappiyam",
-                           role="இடைநிலை எழுத்து — the hard consonant doubled where the பகுதி meets the next "
-                                "part (நச்சினார்க்கினியர் உரை: a doubled ஒற்று is among the இடைநிலை எழுத்துக்கள், "
-                                "சொல். பெயரியல் 11, p. 174; D-028)"),
+                           role="இடைநிலை எழுத்து — a hard consonant doubled where two parts meet after the "
+                                "பகுதி's own join, which பாவாணர் does not call சந்தி (நச்சினார்க்கினியர் உரை: a "
+                                "doubled ஒற்று is among the இடைநிலை எழுத்துக்கள், சொல். பெயரியல் 11, p. 174; "
+                                "D-028, D-031)"),
 }
 
 
