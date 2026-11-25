@@ -149,12 +149,31 @@ def _etymology_source(ety: dict) -> SourceRef:
                      ref=ety.get("citation"), retrieved=ety.get("retrieved"))
 
 
+# Wiktionary codes for Prakrit. Ruling (e), 2026-11-24 (D-022): பிராகிருதம் is NOT வடசொல் and
+# gets its own class when a source names it. Only the codes that NAME Prakrit belong here: Pali
+# (`pi`) is a related Middle Indo-Aryan language but was not part of the ruling, so it stays a
+# `loanword` until ruled.
+PRAKRIT_CODES = frozenset({"pra", "pmh", "psu", "pka"})
+
+
+def borrowed_class(code: str | None) -> str:
+    """Origin class for a BORROWING from the language `code`.
+
+    வடசொல் is precisely "borrowed from Sanskrit"; பிராகிருதம் is its own class (D-022); any other
+    source language is a `loanword`.
+    """
+    if code == "sa":
+        return "வடசொல்"
+    if code in PRAKRIT_CODES:
+        return "பிராகிருதம்"
+    return "loanword"
+
+
 def _sense_class(s: dict) -> str:
     """The Tholkappiyam origin class for ONE sense."""
     if s["relation"] == "inherited":
         return "இயற்சொல்"
-    # vadasol is precisely "borrowed from Sanskrit"; any other source language is a loanword.
-    return "வடசொல்" if s.get("source_lang") == "sa" else "loanword"
+    return borrowed_class(s.get("source_lang"))
 
 
 def _sense_phrase(s: dict) -> str:
@@ -276,6 +295,18 @@ def _from_etymology(normalized: str, ety: dict, fst_native_parse: Optional[bool]
             alternatives=[{"class": "loanword",
                            "note": "if the Sanskrit derivation is disputed"}],
             sources=[_etymology_source(ety), THOLKAPPIYAM_MOZIMARABU])
+
+    if code in PRAKRIT_CODES:
+        # Ruling (e), D-022: a Prakrit borrowing is பிராகிருதம், never folded into வடசொல். The class
+        # lies outside Tholkappiyam's four, so no மொழிமரபு verse is cited for it: the evidence is the
+        # etymology itself.
+        return Origin(
+            class_="பிராகிருதம்", is_native=False, borrowed_from=lang, confidence=conf,
+            evidence=evidence + " பிராகிருதம் is kept distinct from வடசொல் (project ruling, D-022).",
+            senses=sense_origins,
+            alternatives=[{"class": "வடசொல்",
+                           "note": "only if the word was taken directly from Sanskrit instead"}],
+            sources=[_etymology_source(ety)])
 
     # Any other language: a borrowing that is NOT Sanskrit -- `loanword`, with the source named.
     return Origin(
