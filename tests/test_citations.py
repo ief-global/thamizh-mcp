@@ -89,12 +89,34 @@ def test_tholkappiyam_artifact_grammar_iyal_complete(tholkappiyam):
     assert cov["சொல்லதிகாரம்"]["வேற்றுமையியல்"]["count"] == 22
 
 
-def test_tholkappiyam_upstream_corruption_repaired(tholkappiyam):
-    """The upstream pages bake U+FFFD in; the build repairs it to ஃ mechanically."""
-    blob = json.dumps(tholkappiyam, ensure_ascii=False)
-    assert "�" not in blob
-    assert "அஃறிணை" in blob
-    assert tholkappiyam["repairs"]["aytham_restored"] > 0
+def test_tholkappiyam_text_is_clean(tholkappiyam):
+    """D-024: pinned from Project Madurai's own etext. The old tamilnation mirror lost ஃ as U+FFFD
+    AND as a literal '?', and dropped the vowel sign ொ. Assert the TEXT is clean, rather than that a
+    repair ran: a repair counter cannot see a corruption nobody wrote a repair for, which is exactly
+    how 21 '?' verses shipped for three months."""
+    blob = json.dumps(tholkappiyam["athikaram"], ensure_ascii=False)
+    assert "\ufffd" not in blob
+    assert not re.search(r"[\u0B80-\u0BFF]\?|\?[\u0B80-\u0BFF]", blob), "a '?' inside Tamil text"
+    eluthu = tholkappiyam["athikaram"]["எழுத்ததிகாரம்"]
+    assert "முப்பஃது" in eluthu["நூல் மரபு"]["1"]
+    assert "மெய்யொடு" in eluthu["நூல் மரபு"]["10"]          # the dropped ொ
+    assert "tamilnation.org" not in json.dumps(tholkappiyam["sources"])
+
+
+def test_tholkappiyam_complete_structure(tholkappiyam):
+    """The mirror glued four verses into neighbours and lost மரபியல். All present now."""
+    ath = tholkappiyam["athikaram"]
+    assert sum(len(v) for v in ath["எழுத்ததிகாரம்"].values()) == 483
+    assert "9" in ath["சொல்லதிகாரம்"]["வினையியல்"]
+    assert "மரபியல்" in ath["பொருளதிகாரம்"]
+    for iyals in tholkappiyam["coverage"].values():
+        for iyal, cov in iyals.items():
+            assert cov["missing"] == [], iyal
+
+
+def test_retired_mirror_is_recorded_with_its_reason(tholkappiyam):
+    rm = tholkappiyam["retired_mirror"]
+    assert "mp100a" in rm["urls"]["எழுத்ததிகாரம்"] and "D-024" in rm["why"]
 
 
 def _walk(node):

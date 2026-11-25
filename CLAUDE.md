@@ -25,7 +25,7 @@ integration. Loop: work on `develop` here → push → open PR `develop → main
 milestones. After any history rewrite, other clones must `git reset --hard origin/main`
 (not merge/rebase).
 
-## Current state (2026-11-24) — 270 tests pass (5 skip without live foma)
+## Current state (2026-11-24) — 279 tests pass (5 skip without live foma)
 
 **Everything below is live and merged to `main`.** Nine MCP tools + web/REST + CLI over ONE engine
 (blueprint §8 — the web head needed zero engine changes, which validated that design).
@@ -101,7 +101,7 @@ ruling.** Saran's direction: the label must come from a rule found in the gramma
 citation. What the sources say so far: TVA A0212 §2.2.1 shows the four-slot split வா + த் + த் + ஏன்
 without naming slot 3; the listed இடைநிலை (நன்னூல் 142–144) are all single; TVA C0212 §6.3.1's
 பகுதி-இரட்டித்தல் is defined only where there is NO இடைநிலை. Candidate source for the rule: a classical
-உரை (the எழுத்ததிகாரம் உரை of நச்சினார்க்கினியர் is queued for pinning; the verb question may need a
+உரை (the எழுத்ததிகாரம் உரை of நச்சினார்க்கினியர் is now pinned, D-024; the verb question may need a
 சொல்லதிகாரம் உரை). Fixing defect 1 will EXPOSE this on படித்தான், கொடுத்தான், பார்த்தான், செய்வித்தான்,
 and the label touches every strong-verb form already decoded (கொடுக்கிறான், படிக்கிறான், படிப்பான்,
 கொடுப்பான் …): until a rule is found, the round-trip work should keep the doubled consonant as named
@@ -267,6 +267,12 @@ ruled OUT, not merely unconfirmed. The slot is still unnamed; see KNOWN DECODER 
 
 ## Gotchas
 - Install package **`foma`**, NOT `foma-bin` (empty transitional deb).
+- **Project Madurai's Nannūl page was revised upstream after we pinned it** (sha `bfc865ddc2e4…` →
+  `b970b4ee13b4…`). The builder now refuses to overwrite `nannul.json` when the parse falls back to
+  the supplement for more than two verses, and keeps the verified pin. Adopting the revision is open
+  work: diff verse by verse first, as D-024 did for Tholkappiyam.
+- **Assert the text is clean, not that a repair ran.** A repair counter cannot see a corruption no
+  one wrote a repair for; that is how 21 `?`-for-ஃ verses shipped for three months.
 - **NEVER write a நூற்பா number from memory — or from a secondary source.** TVA renumbers: its
   336/319/136 are **337/320/137** in the pinned edition. All three were wrong in shipped tables
   before `data/classical/` existed. Look the verse up in `data/classical/*.json`.
@@ -296,6 +302,14 @@ ruled OUT, not merely unconfirmed. The slot is still unnamed; see KNOWN DECODER 
 - **Etymology:** `adapters/etymology.py` → source language; feeds `classifier.classify_origin`.
 - **Classical texts:** `data/classical/{tholkappiyam,nannul}.json` — verse-addressable, checksummed
   in `data/PINS.md`. Rebuild/verify: `scripts/build_classical.py`. Guard: `tests/test_citations.py`.
+  **Tholkappiyam comes from Project Madurai's OWN etext (pmuni0100) since 2026-11-24 (D-024)** — the
+  tamilnation.org mirror it replaced was lossy (ஃ as `?`, dropped ொ, glued verses, மரபியல் misfiled),
+  and 1,602 verses now replace 1,486. Never repoint it at a mirror.
+- **Classical commentary (D-024):** `data/classical/tholkappiyam_eluthu_urai.json` — நச்சினார்க்கினியர்
+  on எழுத்ததிகாரம், 480 units with `urai`, `examples` (எ-டு … என வரும்) and footnotes. Its numbers are
+  CONTINUOUS, so it is aligned to our verses BY TEXT (`aligned_to`), never by number. Runtime:
+  `classical.tholkappiyam_urai(அதிகாரம், இயல், n)`. Guard: `tests/test_urai.py`. Its worked examples are
+  the intended fixtures for the round-trip engine (D-023).
 - **Grammar rule tables:** `data/grammar/*.json` — each with `source_priority` + நூற்பா citations.
 - **TVA material is CC BY-SA 4.0 (D-021, 2026-11-24)** — derived data may ship with attribution and
   stays share-alike. tamilvu.org is unreliable: read from `archive.org/details/TamilVirtualAcademy`
