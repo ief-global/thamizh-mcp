@@ -1,0 +1,138 @@
+{
+  "comment": "Passages of the OCR'd commentaries (D-027) that were read against the SCAN PAGE IMAGE, not just the OCR. The OCR is not proof-read, so a rule may cite a commentary passage only if it is listed here. `as_printed` is transcribed from the page image, the edition's own misprints included (noted where seen). tests/test_sol_urai.py checks that each passage (by `id`, which a rule's `urai` list names) is still found, by text, in the unit it is filed under, and that its leaf belongs to that unit.",
+  "quotations": [
+    {
+      "id": "nacc-vinai-5-tense-letters",
+      "artifact": "tholkappiyam_sol_urai_nacchinarkkiniyar",
+      "unit": {
+        "iyal": "வினையியல்",
+        "verse": "5"
+      },
+      "leaf": 233,
+      "printed_page": "205",
+      "as_printed": "இக் கட தறக்கள் முதனிலையை யடுத்து வருங்கா லிறப்பு மீற்றினை யடுத்து வருங்கா லெதிர்வு முணர்த்தும்",
+      "bears_on": "tense letters: க ட த ற next to the முதனிலை mark the past, next to the ஈறு the future",
+      "verified_on": "2026-11-25"
+    },
+    {
+      "id": "nacc-vinai-27-causative-idainilai",
+      "artifact": "tholkappiyam_sol_urai_nacchinarkkiniyar",
+      "unit": {
+        "iyal": "வினையியல்",
+        "verse": "27"
+      },
+      "leaf": 265,
+      "printed_page": "237",
+      "as_printed": "எனவருங்கா லிடை நிலையாகிய வெழுத்துக்களும் பெற்று முன்னரெடுத்த லோசையா யிடை நின்ற வீறாகிய விகரம் படுத்த லோசைப்பட்டிடை நிலையாய் நிற்கு மென்றுணர்க",
+      "bears_on": "causatives (நடப்பித்தான் …): they take 'the letters that are இடைநிலை', and the இ of வி becomes an இடைநிலை (agrees with ruling B1, வி = இடைநிலை)",
+      "verified_on": "2026-11-25"
+    },
+    {
+      "id": "nacc-peyar-11-doubled-tha",
+      "artifact": "tholkappiyam_sol_urai_nacchinarkkiniyar",
+      "unit": {
+        "iyal": "பெயரியல்",
+        "verse": "11"
+      },
+      "leaf": 202,
+      "printed_page": "174",
+      "as_printed": "மற்றடூஉப் பெயர்கள் டகரவொற்றிட்டியும், இச்சுப் பெற்றும், தகர வொற்றிரட்டியு மிரண்டிடை நிலை யெழுத்துக்களைப் பெற்றும், பெறாதும் வருமாறுணர்க. இவை யிங்ஙன மிடைநிலை யெழுத்துக்களும் பெற்றுப் பாலுணர்த்துதற்குரிய விகாரமும் பெற்று நிற்கு மென்பது",
+      "edition_misprints": "'மற்றடூஉப்' is printed for மகடூஉப் (feminine), and 'டகரவொற்றிட்டியும்' apparently for டகரவொற்றிரட்டியும். Transcribed as printed.",
+      "bears_on": "feminine nouns (வண்ணாத்தி, அருவாட்டி …): a doubled த ஒற்று is described among the இடைநிலை எழுத்துக்கள், with a விகாரம. Nouns, not verbs.",
+      "verified_on": "2026-11-25"
+    },
+    {
+      "id": "nacc-eccha-67-kol",
+      "artifact": "tholkappiyam_sol_urai_nacchinarkkiniyar",
+      "unit": {
+        "iyal": "எச்சவியல்",
+        "verse": "67"
+      },
+      "leaf": 495,
+      "printed_page": "467",
+      "as_printed": "'கொல், செல், வெல்' என்பன லகாரம் னகாரமாய்த் திரிந்து, தனக்கேற்ற றகர வொற்றுப் பெற்றுப் பாலு மிடனுங் காட்டு 'மா'னேறிக். 'கொன்றான், சென்றான், வென்றான்' என நின்றன",
+      "bears_on": "ruling (a): ல்-final roots — ல் becomes ன் (திரிந்து) and takes the ற் that suits it, then ஆன்",
+      "verified_on": "2026-11-25"
+    },
+    {
+      "id": "nacc-eccha-67-vaa",
+      "artifact": "tholkappiyam_sol_urai_nacchinarkkiniyar",
+      "unit": {
+        "iyal": "எச்சவியல்",
+        "verse": "67"
+      },
+      "leaf": 495,
+      "printed_page": "467",
+      "as_printed": "'வா' வென்பது 'வந்தான், வருகின்றான்' என முதனிலை குறுகி, கால வெழுத்திற் கேற்ற விடை நிலை யெழுத்துப் பெற்று வந்தன",
+      "bears_on": "வந்தான்: the முதனிலை shortens (வா → வ) and takes 'the இடைநிலை letter that suits the tense letter'. No சந்தி is named.",
+      "verified_on": "2026-11-25"
+    },
+    {
+      "id": "nacc-eccha-67-kol-l",
+      "artifact": "tholkappiyam_sol_urai_nacchinarkkiniyar",
+      "unit": {
+        "iyal": "எச்சவியல்",
+        "verse": "67"
+      },
+      "leaf": 495,
+      "printed_page": "467",
+      "as_printed": "'கொள்' ளென்பது, 'கொண்டான், கோடு, கோடு'மென ளகாரம் ணகாரமாயுங், கெட்டு முதனிலை நீண்டும் வந்தன",
+      "bears_on": "ruling (a): கொள் — ள் becomes ண் (கொண்டான்), or drops with the முதனிலை lengthened (கோடு)",
+      "verified_on": "2026-11-25"
+    },
+    {
+      "id": "nacc-eccha-67-fem-idainilai",
+      "artifact": "tholkappiyam_sol_urai_nacchinarkkiniyar",
+      "unit": {
+        "iyal": "எச்சவியல்",
+        "verse": "67"
+      },
+      "leaf": 496,
+      "printed_page": "468",
+      "as_printed": "'வலைச்சி' பனத்தி, வெள்ளாட்டி' முதலியன, சகரமுந் தகரமும் டகரமுமாகிய விடை நிலை பெற்றன",
+      "bears_on": "feminine nouns: the letters ச, த, ட that come between the base and the ஈறு are called இடைநிலை. With p. 174 (பெயரியல் 11), a doubled ஒற்று counts as இடைநிலை letters.",
+      "verified_on": "2026-11-25"
+    },
+    {
+      "id": "nacc-eccha-67-aa-idainilai",
+      "artifact": "tholkappiyam_sol_urai_nacchinarkkiniyar",
+      "unit": {
+        "iyal": "எச்சவியல்",
+        "verse": "67"
+      },
+      "leaf": 497,
+      "printed_page": "469",
+      "as_printed": "'உண்ணா நின்றா' னென்புழி, 'ஆ' வென்ப திடை நிலை யெழுத்தென் றுணர்க",
+      "bears_on": "a VERB: the ஆ of உண்ணாநின்றான், a letter between the முதனிலை and the tense part, is an இடைநிலை எழுத்து. His only name for such a letter.",
+      "verified_on": "2026-11-25"
+    },
+    {
+      "id": "sena-vinai-4-eetrumisai",
+      "artifact": "tholkappiyam_sol_urai_senavaraiyar",
+      "unit": {
+        "iyal": "வினையியல்",
+        "verse": "4"
+      },
+      "volume": 2,
+      "leaf": 35,
+      "printed_page": "11",
+      "as_printed": "நெறிப் பாடாவது அவ் வீற்றுமிசை நிற்கும் எழுத்து வேறுபாடு. அவை முற்றவுணர்த்தலாகா வாயினும், அவ்வீறுணர்த்தும்வழிச் சிறிய சொல்லுதும்",
+      "bears_on": "சேனாவரையர் names the tense-showing letters 'the letters that stand above the ஈறு', not இடைநிலை and not சந்தி (கணேசையர்'s note 7 on this verse, vol. 2 p. 56, says so in as many words). He does not split them further, so he says nothing on a doubled consonant or on வந்தான்'s ந்.",
+      "verified_on": "2026-11-25"
+    },
+    {
+      "id": "sena-vinai-5-nil",
+      "artifact": "tholkappiyam_sol_urai_senavaraiyar",
+      "unit": {
+        "iyal": "வினையியல்",
+        "verse": "5"
+      },
+      "volume": 2,
+      "leaf": 37,
+      "printed_page": "13",
+      "as_printed": "இனி அவை நிகழ்காலம் பற்றி வருங்கால், நில், கின்று என்பனவற்றொடு வரும். நில்லென்பது லகாரம் னகாரமாய் றகாரம் பெற்று நிற்கும்",
+      "bears_on": "ruling (a): the same shape as நச்சினார்க்கினியர் on கொல்/செல்/வெல் — ல் becomes ன் and takes ற் (நின்று)",
+      "verified_on": "2026-11-25"
+    }
+  ]
+}

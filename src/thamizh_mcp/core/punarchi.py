@@ -117,6 +117,8 @@ def cite(rule_id: str) -> list[SourceRef]:
                 c["athikaram"], c["iyal"], c["verse"], f"{r.get('name')} — {c.get('role', '')}"))
         elif c.get("authority") == "Nannūl":
             refs.append(classical.cite_nannul(c["verse"], f"{r.get('name')} — {c.get('role', '')}"))
+    for qid in r.get("urai", []):
+        refs.append(classical.cite_urai(qid, r.get("name", rule_id)))
     tb = r.get("textbook")
     if tb:
         refs.append(SourceRef(name="thamizh-mcp cited rule tables", tier="anchor",
@@ -245,23 +247,25 @@ def _apply(rule_id: str, st: _State, left: Part, right: Part, rp: list[str],
             segs[-1][1] = lp[:-1] + [_INAM[rp[0]]]
             return _State(segs, st.steps + [_step(rule_id, at, f"ம் becomes {_INAM[rp[0]]} before {rp[0]}")]), rp
         return None
-    if rule_id == "santhi_tha_na":
+    if rule_id == "idainilai_na":
         if verb and right.kind == "idainilai" and right.form == "த்" and lp[-1] in UYIR:
             segs.append([("j", rule_id), ["ந்"]])
-            return _State(segs, st.steps + [_step(rule_id, at, "சந்தி த் appears as ந்")]), rp
+            return _State(segs, st.steps + [_step(
+                rule_id, at, "இடைநிலை எழுத்து ந் comes before the tense letter த்")]), rp
         return None
     if rule_id == "irattitha_otru":
         if verb and rp[0] in VALLINAM and right.kind in ("idainilai", "vikuthi"):
             segs.append([("j", rule_id), [rp[0]]])
-            return _State(segs, st.steps + [_step(rule_id, at, f"சந்தி {rp[0]} appears before {rp[0]}")]), rp
+            return _State(segs, st.steps + [_step(
+                rule_id, at, f"இடைநிலை எழுத்து {rp[0]} appears before {rp[0]}")]), rp
         return None
     return None
 
 
-# Rules tried at a boundary, alone or as an ordered pair. Classical first, then the textbook rules,
-# so a course book is used only when no நூற்பா rebuilds the word.
+# Rules tried at a boundary, alone or as an ordered pair. Classical first, then the rules a
+# commentary states (D-028), so an உரை is used only when no நூற்பா rebuilds the word.
 _ORDER = ["athu_otru_kedal", "athu_akaram_kedal", "otru_irattal", "ukaram_kedal", "udambadumei",
-          "urubu_vallinam_mikuthal", "makaram_inam", "santhi_tha_na", "irattitha_otru"]
+          "urubu_vallinam_mikuthal", "makaram_inam", "idainilai_na", "irattitha_otru"]
 _COMBOS: list[tuple[str, ...]] = [()] + [(r,) for r in _ORDER] + [
     ("athu_otru_kedal", "athu_akaram_kedal"),
     ("otru_irattal", "ukaram_kedal"),
@@ -303,11 +307,12 @@ def _search(parts: list[Part], stem_ps: list[str], target: list[str], verb: bool
     return found
 
 
-def _cost(st: _State) -> tuple[int, int, int]:
-    """Fewest parked steps, then fewest textbook steps (a நூற்பா outranks a course book), then
-    fewest steps."""
+def _cost(st: _State) -> tuple[int, int, int, int]:
+    """Fewest parked steps, then fewest textbook steps, then fewest commentary steps, then fewest
+    steps: a நூற்பா outranks a classical உரை, which outranks a course book (D-028)."""
     return (sum(s.status == "parked" for s in st.steps),
-            sum(s.status == "textbook" for s in st.steps), len(st.steps))
+            sum(s.status == "textbook" for s in st.steps),
+            sum(s.status == "urai" for s in st.steps), len(st.steps))
 
 
 def round_trip(word: str, parts: list[Part], verb: bool) -> RoundTripResult:

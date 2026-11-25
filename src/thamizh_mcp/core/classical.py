@@ -59,14 +59,40 @@ def tholkappiyam_verse(athikaram: str, iyal: str, verse: int | str) -> Optional[
     return _clean(v) if v else None
 
 
-# Which pinned commentary covers which அதிகாரம். Only எழுத்ததிகாரம் has one so far (D-024).
-_URAI = {"எழுத்ததிகாரம்": "tholkappiyam_eluthu_urai"}
+# Which pinned commentary covers which அதிகாரம், by commentator. நச்சினார்க்கினியர் covers
+# எழுத்ததிகாரம் (D-024, a proof-read Project Madurai etext) and சொல்லதிகாரம் (D-027, OCR of a TVA
+# scan); இளம்பூரணர் covers சொல்லதிகாரம் (D-027, OCR of a TVA scan); சேனாவரையர் covers
+# சொல்லதிகாரம் (D-028, OCR of a two-volume TVA-collection edition). நச்சினார்க்கினியர் is the
+# default so the அதிகாரம் read uniformly.
+DEFAULT_COMMENTATOR = "நச்சினார்க்கினியர்"
+_URAI = {
+    ("எழுத்ததிகாரம்", "நச்சினார்க்கினியர்"): "tholkappiyam_eluthu_urai",
+    ("சொல்லதிகாரம்", "நச்சினார்க்கினியர்"): "tholkappiyam_sol_urai_nacchinarkkiniyar",
+    ("சொல்லதிகாரம்", "இளம்பூரணர்"): "tholkappiyam_sol_urai_ilampuranar",
+    ("சொல்லதிகாரம்", "சேனாவரையர்"): "tholkappiyam_sol_urai_senavaraiyar",
+}
+_ATHIKARAM_OF = {name: a for (a, _), name in _URAI.items()}
+# The registry entry (data/sources.json) a commentary citation is graded under.
+URAI_SOURCE_NAME = ("Tholkappiyam சொல்லதிகாரம் — classical commentaries "
+                    "(நச்சினார்க்கினியர், இளம்பூரணர், சேனாவரையர்)")
 
 
-@lru_cache(maxsize=4)
-def _urai_index(athikaram: str) -> dict[tuple[str, str], dict]:
+def commentators(athikaram: str) -> list[str]:
+    """The commentators whose உரை we hold for this அதிகாரம், default first."""
+    held = [c for a, c in _URAI if a == athikaram]
+    return sorted(held, key=lambda c: c != DEFAULT_COMMENTATOR)
+
+
+def urai_artifact(athikaram: str, commentator: str = DEFAULT_COMMENTATOR) -> Optional[str]:
+    """The data/classical artifact name for this commentary (for `attribution`), or None."""
+    return _URAI.get((athikaram, commentator))
+
+
+@lru_cache(maxsize=8)
+def _urai_index(athikaram: str, commentator: str) -> dict[tuple[str, str], dict]:
     """(இயல், நூற்பா) of OUR text → the commentary unit aligned to it, merged units included."""
-    units = _load(_URAI[athikaram]).get("units", []) if athikaram in _URAI else []
+    name = _URAI.get((athikaram, commentator))
+    units = _load(name).get("units", []) if name else []
     idx: dict[tuple[str, str], dict] = {}
     for u in units:
         for c in [u.get("aligned_to")] + (u.get("also_covers") or []):
@@ -75,15 +101,45 @@ def _urai_index(athikaram: str) -> dict[tuple[str, str], dict]:
     return idx
 
 
-def tholkappiyam_urai(athikaram: str, iyal: str, verse: int | str) -> Optional[dict]:
+def tholkappiyam_urai(athikaram: str, iyal: str, verse: int | str,
+                      commentator: str = DEFAULT_COMMENTATOR) -> Optional[dict]:
     """The classical commentary on one Tholkappiyam நூற்பா, or None where we hold none.
 
-    Keyed by OUR coordinates. The commentary edition numbers continuously and divides two இயல்
-    differently, so it is matched to our verses by text at build time, never by number. The unit
-    carries the verse as the commentary prints it, the உரை, its `examples` (எ-டு … என வரும்), and
-    footnotes. Quoting it obliges `attribution("tholkappiyam_eluthu_urai")`.
+    Keyed by OUR coordinates. The commentary editions number continuously and divide some இயல்
+    differently, so they are matched to our verses by text at build time, never by number. The
+    unit carries the verse as the commentary prints it and the உரை. Quoting it obliges
+    `attribution(urai_artifact(athikaram, commentator))`.
+
+    ⚠️ The சொல்லதிகாரம் commentaries are archive.org OCR, not proof-read: each unit names the scan
+    `pages` it came from, and a quotation must be checked against that page before a rule cites it
+    (data/classical/verified_quotations.json records the ones that were).
     """
-    return _urai_index(athikaram).get((iyal, str(verse)))
+    return _urai_index(athikaram, commentator).get((iyal, str(verse)))
+
+
+@lru_cache(maxsize=1)
+def verified_quotations() -> dict[str, dict]:
+    """id → a commentary passage that was read against its SCAN PAGE (D-027). The OCR is not
+    proof-read, so these are the only commentary passages a rule may cite."""
+    return {q["id"]: q for q in _load("verified_quotations").get("quotations", [])}
+
+
+def cite_urai(quotation_id: str, ref: str) -> SourceRef:
+    """A SourceRef quoting a verified commentary passage, as printed, with its page (D-028).
+
+    The verse label names the நூற்பா the commentary is written on, by OUR coordinates; the page is
+    the edition's printed page (and volume, for a multi-volume edition)."""
+    q = verified_quotations()[quotation_id]
+    d = _load(q["artifact"])
+    u = q["unit"]
+    page = (f"vol. {q['volume']}, " if q.get("volume") else "") + f"p. {q['printed_page']}"
+    return SourceRef(
+        name=URAI_SOURCE_NAME, tier="anchor", authority="Tholkappiyam",
+        ref=f"{d.get('commentator')} உரை, {page} — {ref}",
+        verse=f"{_ATHIKARAM_OF.get(q['artifact'], 'சொல்லதிகாரம்')} › {u['iyal']} › நூற்பா {u['verse']} "
+              f"({d.get('commentator')} உரை)",
+        verse_text=q["as_printed"],
+        retrieved=(d.get("edition") or {}).get("publisher"))
 
 
 def cite_nannul(verse: int | str, ref: str) -> SourceRef:

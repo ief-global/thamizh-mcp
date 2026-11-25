@@ -9,7 +9,8 @@
   },
   "status_values": {
     "classical": "the rule is stated by a cited நூற்பா, quoted at runtime from the pinned edition",
-    "textbook": "the analysis is stated verbatim by a TVA course book (CC BY-SA 4.0); no நூற்பா located yet",
+    "urai": "the analysis is stated by a classical commentary on Tholkappiyam (நச்சினார்க்கினியர், இளம்பூரணர், சேனாவரையர்), in a passage read against its scan page (`urai` lists ids in data/classical/verified_quotations.json; `urai_scope` says exactly what the passage covers). It ALWAYS outranks a course book (Saran, D-028); a நூற்பா still outranks it",
+    "textbook": "the analysis is stated verbatim by a TVA course book (CC BY-SA 4.0); no நூற்பா or classical உரை located yet",
     "parked": "the material is real and is NAMED so nothing is dropped, but no cited rule labels it; the label is parked under D-023 and must not be guessed"
   },
   "join_rules": [
@@ -111,53 +112,62 @@
       "tholkappiyam_searched": "புள்ளிமயங்கியல் 15 covers ம்-final words in the வேற்றுமை join (the ம் drops and the hard consonant doubles); no verse located for this join before கள், so Nannūl is the citation."
     },
     {
-      "id": "santhi_tha_na",
-      "name": "சந்தி த் → ந்",
-      "effect": "between a verb's பகுதி and the past இடைநிலை த், a சந்தி த் appears and surfaces as ந் (வா + த் + த் + ஆன் → வந்தான்)",
-      "status": "textbook",
-      "context": "verb, before the past இடைநிலை த்",
-      "part": "சந்தி",
-      "form": "த்",
-      "surface": "ந்",
-      "textbook": {
-        "source": "TVA C0212 §5.3.6 (விகாரம்)",
-        "quote": "வந்தனன் -வா+த்+த்+அன்+அன் … இதில் வரும் வா என்னும் பகுதி வ எனக் குறுகியும், த் என்னும் சந்தி ந் என்று மாற்றம் அடைந்தும், விகாரமாகியுள்ளன."
+      "id": "idainilai_na",
+      "name": "இடைநிலை எழுத்து ந் (கால எழுத்திற்கு ஏற்ற)",
+      "effect": "between a verb's பகுதி and the past tense letter த், an இடைநிலை எழுத்து ந் that suits the tense letter appears (வா → வ + ந் + த் + ஆன் → வந்தான்)",
+      "status": "urai",
+      "context": "verb, before the past tense letter த்",
+      "part": "இடைநிலை",
+      "form": "ந்",
+      "urai": ["nacc-eccha-67-vaa", "nacc-eccha-67-aa-idainilai"],
+      "urai_scope": "நச்சினார்க்கினியர் states it for வந்தான் (p. 467). He has no சந்தி among a verb's parts: every letter between the முதனிலை and the ஈறு that is not the root is an இடைநிலை எழுத்து (the ஆ of உண்ணாநின்றான், p. 469). The rule applies the same reading to the other vowel-final verbs the FST gives (காத்திருந்தாள்). சேனாவரையர் and இளம்பூரணர் do not split this letter out; neither calls it சந்தி.",
+      "ruling": "Saran, 2026-11-25 (D-028): a classical commentary (நச்சினார்க்கினியர், இளம்பூரணர், சேனாவரையர்) ALWAYS takes precedence over a TVA course book.",
+      "superseded": {
+        "label": "சந்தி (த் surfacing as ந்)",
+        "source": "TVA C0212 §5.3.6 (விகாரம்), with Saran's ruling of 2026-08-11 and the reading of நன்னூல் 142 that 'ந் cannot be the இடைநிலை'",
+        "by": "D-028 — நச்சினார்க்கினியர் names the letter an இடைநிலை எழுத்து. நன்னூல் 142 lists the TENSE-SHOWING இடைநிலை; it does not exclude other medial letters."
       },
-      "ruling": "Saran, 2026-08-11: காத்திருந்தாள் = காத்திரு(பகுதி) + ந்(சந்தி) + த்(இடைநிலை) + ஆள்(விகுதி). It agrees with நன்னூல் 142, which lists the past இடைநிலை as த்/ட்/ற்/இன் only, so ந் cannot be the இடைநிலை.",
       "cites": [
-        {"authority": "Nannūl", "verse": 142,
-         "role": "the past இடைநிலை are த் ட் ற் இன் only, so the ந் is not the இடைநிலை"}
+        {"authority": "Tholkappiyam", "athikaram": "சொல்லதிகாரம்", "iyal": "எச்சவியல்", "verse": 67,
+         "role": "the அதிகாரப் புறனடை asks that words be divided for the learner (சொல் வரைந்து அறியப் பிரித்தனர் காட்டல்); நச்சினார்க்கினியர்'s உரை on it gives this division"}
       ]
     },
     {
       "id": "irattitha_otru",
-      "name": "சந்தி (இரட்டித்த ஒற்று)",
-      "effect": "a சந்தி consonant appears where a verb's parts meet, doubling the hard consonant that follows (படி + த் + த் + ஆன் → படித்தான்; படி + க் + கிறு + ஆன் → படிக்கிறான்)",
-      "status": "textbook",
+      "name": "இடைநிலை எழுத்து (இரட்டித்த ஒற்று)",
+      "effect": "an இடைநிலை எழுத்து appears where a verb's parts meet, the same hard consonant as the part that follows (படி + த் + த் + ஆன் → படித்தான்; படி + க் + கிறு + ஆன் → படிக்கிறான்)",
+      "status": "urai",
       "context": "verb, before a part that begins with a hard consonant",
-      "part": "சந்தி",
-      "textbook": {
-        "source": "TVA C0212 §5.3.5 (சந்தி)",
-        "quote": "சந்தி பெரும்பாலும் முதனிலை (பகுதி)க்கும் இடைநிலைக்கும் இடையில் வரும். பகுதிக்கும் விகுதிக்கும் இடையிலும் சிறுபான்மை வரக்கூடும். உறுப்புகளின் இணைவில் (சந்தி), அவற்றை இணைக்க வருவது சந்தி. நடத்தல் என்னும் பகுபதம் நட+த்+தல் என்று பிரிந்து வரும்."
+      "part": "இடைநிலை",
+      "urai": ["nacc-peyar-11-doubled-tha", "nacc-eccha-67-fem-idainilai", "nacc-eccha-67-aa-idainilai"],
+      "urai_scope": "நச்சினார்க்கினியர் counts a doubled த ஒற்று among 'இரண்டு இடைநிலை எழுத்துக்கள்' (p. 174) and calls the ச/த/ட of feminine nouns இடைநிலை (p. 468): those are NOUNS. For a verb he calls a letter between the முதனிலை and the ஈறு an இடைநிலை எழுத்து (the ஆ of உண்ணாநின்றான், p. 469; the ந் of வந்தான், p. 467); it is his only name for such a letter, and he never calls one சந்தி. No commentator splits a strong verb's two த் (கொடுத்தான்) explicitly; this rule applies his name for a medial letter to the first of them. சேனாவரையர் calls the tense-showing letters 'the letters above the ஈறு' without splitting them, and is silent here.",
+      "ruling": "Saran, 2026-11-25 (D-028), on the question put to him (do these passages name the slot?): yes, a classical commentary takes precedence, so the slot is relabelled from the commentary.",
+      "superseded": {
+        "label": "சந்தி",
+        "source": "TVA C0212 §5.3.5 (சந்தி), D-026 (provisional until a classical சொல்லதிகாரம் உரை was found)",
+        "by": "D-028 — the உரை was pinned (D-027) and read; நச்சினார்க்கினியர் names such letters இடைநிலை எழுத்து."
       },
-      "ruling": "Saran, 2026-11-25 (D-026), closing ruling (d): the TVA course book is a sufficient text to label this slot சந்தி for now. It was parked under D-023 because no நூற்பா or classical உரை had been found; the two earlier entries (2026-08-02 'it is சந்தி', 2026-08-08 'it is not சந்தி') stay withdrawn, and this label rests on the text, not on them.",
-      "supersede_when": "PROVISIONAL. A classical உரை on தொல்காப்பியம் சொல்லதிகாரம் (or a நூற்பா) that names this slot takes PRECEDENCE over the course book, whatever it says. Finding and pinning an authentic சொல்லதிகாரம் உரை is an open item (CLAUDE.md, Next tasks 0).",
       "cites": [
+        {"authority": "Tholkappiyam", "athikaram": "சொல்லதிகாரம்", "iyal": "பெயரியல்", "verse": 11,
+         "role": "நச்சினார்க்கினியர்'s உரை on this நூற்பா counts a doubled த ஒற்று among the இடைநிலை எழுத்துக்கள்"},
+        {"authority": "Tholkappiyam", "athikaram": "சொல்லதிகாரம்", "iyal": "எச்சவியல்", "verse": 67,
+         "role": "the அதிகாரப் புறனடை asks that words be divided; நச்சினார்க்கினியர்'s உரை on it names the medial letters of verbs and nouns இடைநிலை"},
         {"authority": "Nannūl", "verse": 133,
-         "role": "names சந்தி as one of the six பகுபத உறுப்பு; it does not say where சந்தி comes, which is what the course book supplies"}
+         "role": "names இடைநிலை among the six பகுபத உறுப்பு"}
       ]
     }
   ],
   "stem_alternants": {
     "comment": "How a பகுதி may surface inside a word. Tried only when the பகுதி itself does not rebuild the word. Each entry carries its source; an entry that names the change as விகாரம் says so, one that does not makes no claim about it. Curated paradigm stems (data/verb_paradigms.json) are added at runtime, and their விகாரம் labels stay open under ruling (a).",
     "entries": [
-      {"lemma": "வா", "surface": "வ", "change": "குறுகல் (விகாரம்)",
-       "source": "TVA C0212 §5.3.6", "quote": "வா என்னும் பகுதி வ எனக் குறுகியும்"},
+      {"lemma": "வா", "surface": "வ", "change": "குறுகல் (விகாரம்)", "urai": "nacc-eccha-67-vaa",
+       "source": "நச்சினார்க்கினியர் உரை, சொல். எச்சவியல் 67, p. 467", "quote": "'வா' வென்பது 'வந்தான், வருகின்றான்' என முதனிலை குறுகி",
+       "superseded": "TVA C0212 §5.3.6 ('வா என்னும் பகுதி வ எனக் குறுகியும்') said the same; the commentary outranks it (D-028)"},
       {"lemma": "காண்", "surface": "கண்", "change": "குறுகல் (விகாரம்)",
        "source": "TVA C0212, பகுபத உறுப்பு வினா 8", "quote": "கண்டான் – காண்+ட்+ஆன் காண் எனும்பகுதி ‘கண்‘ எனக் குறுகியது"},
-      {"lemma": "வா", "surface": "வரு", "change": null,
-       "source": "TVA A0212 §2.2.1", "quote": "வருகிறேன் … வா+ கிறு +ஏன்; வருவேன் … வா+ வ் +ஏன்",
-       "note": "TVA gives the split with வா as the பகுதி but does not name the வா → வரு change; no label is asserted."}
+      {"lemma": "வா", "surface": "வரு", "change": "குறுகல் (விகாரம்)", "urai": "nacc-eccha-67-vaa",
+       "source": "நச்சினார்க்கினியர் உரை, சொல். எச்சவியல் 67, p. 467", "quote": "'வா' வென்பது 'வந்தான், வருகின்றான்' என முதனிலை குறுகி",
+       "note": "நச்சினார்க்கினியர் names the change for வருகின்றான் too: the long ஆ of the முதனிலை is shortened (குறுகி). TVA A0212 §2.2.1 gave the split (வா + கிறு + ஏன்) without naming it; the commentary now does (D-028)."}
     ]
   }
 }

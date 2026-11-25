@@ -106,6 +106,40 @@ aligned to our verses **by text**, never by number: 479 of our 483 aligned (medi
 பிறப்பியல் 21 printed merged with 20, and three verses (its 132, 219, 391) absent from the etext. Its
 unit 441 has no counterpart in our text. Runtime: `classical.tholkappiyam_urai(அதிகாரம், இயல், n)`.
 
+**சொல்லதிகாரம் commentaries (D-027, D-028).** Built by `scripts/build_sol_urai.py` (not `build_classical.py`)
+into `data/classical/tholkappiyam_sol_urai_{nacchinarkkiniyar,ilampuranar,senavaraiyar}.json`. All are
+Tamil Digital Library items in TVA's archive.org collection, **CC BY-SA 4.0** under D-021. The text is
+archive.org's **OCR, not proof-read**: each unit names its scan leaf and printed page, and a passage
+is citable by a rule only once it has been read against the page image and listed in
+`data/classical/verified_quotations.json`. A mirror of every pinned file, scans included, is kept in the
+design repo at `sources/classical/sol-urai/` (PDFs gitignored for size); build from it with
+`--mirror`. archive.org's own MD5s matched every file on download.
+
+| Commentary | File | sha256 | Retrieved |
+|---|---|---|---|
+| நச்சினார்க்கினியர் — சரசுவதி மகால் நூலகம், தஞ்சாவூர், 1999 · archive.org `dli.jZY9lup2kZl6TuXGlZQdjZM3kZpy.TVA_BOK_0008472` | `_djvu.xml` (OCR, read by the build) | `a9e7819f5b9e…` | 2026-11-25 |
+| ″ | `_page_numbers.json` (leaf → printed page) | `a6be52bceec7…` | 2026-11-25 |
+| ″ | `.pdf` (scan, 766 leaves, 267,617,873 bytes; for checking quotations) | `8e71d5a3f7b9…` | 2026-11-25 |
+| இளம்பூரணர் — தமிழ்ப் பல்கலைக்கழகம், தஞ்சாவூர், 1988 · archive.org `dli.jZY9lup2kZl6TuXGlZQdjZMdlupy` | `_djvu.xml` | `92f1d32b660a…` | 2026-11-25 |
+| ″ | `_page_numbers.json` | `ae3c88f34e05…` | 2026-11-25 |
+| ″ | `.pdf` (scan, 526 leaves, 211,340,206 bytes) | `3a731b6b3f44…` | 2026-11-25 |
+| சேனாவரையர் vol. 1 (கிளவியாக்கம் … பெயரியல்) — தொல்காப்பிய உரைத்தொகை 6, தமிழ்மண் பதிப்பகம், 2018 (சி. கணேசையர்'s 1938 edition reprinted) · archive.org `tdl.49552-6-1` | `_djvu.xml` | `6475353d5b1b…` | 2026-11-25 |
+| ″ | `_page_numbers.json` | `1fea04f99697…` | 2026-11-25 |
+| ″ | `.pdf` (typeset, not a scan; 385 pages, 10,184,202 bytes) | `aedd5ceb6020…` | 2026-11-25 |
+| சேனாவரையர் vol. 2 (வினையியல் … எச்சவியல்) — தொல்காப்பிய உரைத்தொகை 7 · archive.org `tdl.49554-7-2` | `_djvu.xml` | `1b3d3fcdd6ff…` | 2026-11-25 |
+| ″ | `_page_numbers.json` | `87daf0514313…` | 2026-11-25 |
+| ″ | `.pdf` (typeset; 409 pages, 10,071,951 bytes) | `2f98b6632fb7…` | 2026-11-25 |
+
+Full hashes are in `scripts/build_sol_urai.py` (`SOURCES`), which refuses to build from changed bytes.
+**Coverage:** நச்சினார்க்கினியர் 463/463 of our சொல்லதிகாரம் verses aligned; இளம்பூரணர் 462/463
+(உரியியல் 68 not found by text); சேனாவரையர் 461/463 (விளிமரபு 13, உரியியல் 27). Alignment is by consonant skeleton, monotonic, median similarity
+above 0.9. Where an edition prints two of our verses as one, the first carries
+`urai_in_next_unit`. Each book's back matter is cut at its colophon ("சொல்லதிகாரம் முற்றும்" /
+"சொல்லதிகாரம் உண்மைப் பொருளும் உதாரணமும் முடிந்தன" / "எச்சவியல் முற்றிற்று"). The சேனாவரையர்
+edition prints சி. கணேசையர்'s notes after each இயல், so a unit also stops at "… முற்றிற்று" and at his
+note headings; the notes and his running heads are not in any unit. Its PDF is the publisher's typeset
+file, so its OCR is cleaner than the other two, and pages are read by rendering, not image extraction.
+
 ⚠️ **Nannūl upstream was REVISED after we pinned it** (primary sha256 `bfc865ddc2e4…` → `b970b4ee13b4…`,
 seen 2026-11-24). The parser reads the new page into a different text for all but 14 verses, so the
 builder now REFUSES to overwrite `nannul.json` and keeps the verified pin. Adopting the revision is

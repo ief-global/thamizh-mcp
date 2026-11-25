@@ -66,7 +66,7 @@ def test_runtime_accessor_uses_our_coordinates():
     u = classical.tholkappiyam_urai("எழுத்ததிகாரம்", "நூல் மரபு", 26)
     assert u is not None and "னஃகான்" in u["verse"]
     assert any("வரும்" in e and "எண்கு" in e for e in u["examples"])   # "… எனவும் வரும்"
-    assert classical.tholkappiyam_urai("சொல்லதிகாரம்", "வேற்றுமையியல்", 1) is None
+    assert classical.tholkappiyam_urai("பொருளதிகாரம்", "அகத்திணையியல்", 1) is None   # not pinned yet
 
 
 def test_a_verse_printed_merged_still_resolves():

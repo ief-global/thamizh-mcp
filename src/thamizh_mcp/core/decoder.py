@@ -449,11 +449,13 @@ def _kind(c: FormationComponent, verb: bool) -> str:
 # Junction material that is part of the word's OWN structure, so it is shown as a component.
 # Joins between a noun and its case ending (உடம்படுமெய், a doubled ஒற்று) stay as join steps.
 _JUNCTION_COMPONENT = {
-    "santhi_tha_na": dict(part="சந்தி", authority="Nannūl",
-                          role="சந்தி — த் appears as ந் (TVA C0212 §5.3.6; Saran's ruling 2026-08-11)"),
-    "irattitha_otru": dict(part="சந்தி", authority="Nannūl",
-                           role="சந்தி — joins the பகுதி to the next part, doubling its hard consonant "
-                                "(TVA C0212 §5.3.5; provisional until a சொல்லதிகாரம் உரை is found, D-026)"),
+    "idainilai_na": dict(part="இடைநிலை", authority="Tholkappiyam",
+                         role="இடைநிலை எழுத்து — the ந் that suits the tense letter த் (நச்சினார்க்கினியர் "
+                              "உரை, சொல். எச்சவியல் 67, p. 467, 'கால வெழுத்திற் கேற்ற இடைநிலை யெழுத்து'; D-028)"),
+    "irattitha_otru": dict(part="இடைநிலை", authority="Tholkappiyam",
+                           role="இடைநிலை எழுத்து — the hard consonant doubled where the பகுதி meets the next "
+                                "part (நச்சினார்க்கினியர் உரை: a doubled ஒற்று is among the இடைநிலை எழுத்துக்கள், "
+                                "சொல். பெயரியல் 11, p. 174; D-028)"),
 }
 
 
@@ -485,12 +487,6 @@ def _round_trip(word: str, comps: list[FormationComponent], sandhi: list[SandhiE
         comps.insert(j.after + 1, FormationComponent(
             part=spec["part"], form=j.form, role=spec["role"], authority=spec["authority"],
             surface=j.surface if j.surface != j.form else None))
-        if j.rule == "santhi_tha_na":
-            # Tholkappiyam புணரியல் 7 names a மெய் becoming another மெய் ‘மெய் பிறிது ஆதல்’; TVA
-            # C0212 §5.3.6 says this சந்தி த் ‘ந் என்று மாற்றம் அடைந்து’.
-            sandhi.append(SandhiEvent(type=VIKARAM_PIRITHU,
-                                      detail="சந்தி ‘த்’ → ‘ந்’ (TVA C0212 §5.3.6)",
-                                      authority="Tholkappiyam"))
     return RoundTrip(holds=True, rebuilt=res.rebuilt, steps=steps)
 
 
@@ -498,13 +494,18 @@ def _stem_step(lemma: str, alt: dict) -> JoinStep:
     """A பகுதி that surfaces in another shape (வா → வ). Cited when a source states it; when the
     source does not name the change, no விகாரம் label is asserted."""
     textbook = alt.get("source", "").startswith("TVA")
-    src = SourceRef(name="thamizh-mcp cited rule tables" if textbook
-                    else "thamizh-mcp curated verb paradigms",
-                    tier="anchor",
-                    ref=alt.get("source", "") + (" (Tamil Virtual Academy, CC BY-SA 4.0)" if textbook else ""),
-                    verse_text=alt.get("quote"))
+    if alt.get("urai"):
+        # A classical commentary names the change (D-028); it is quoted as read on the scan page.
+        src = classical.cite_urai(alt["urai"], f"பகுதி {lemma} → {alt['surface']}")
+    else:
+        src = SourceRef(name="thamizh-mcp cited rule tables" if textbook
+                        else "thamizh-mcp curated verb paradigms",
+                        tier="anchor",
+                        ref=alt.get("source", "") + (" (Tamil Virtual Academy, CC BY-SA 4.0)" if textbook else ""),
+                        verse_text=alt.get("quote"))
     change = alt.get("change")
     effect = f"பகுதி {lemma} appears as {alt['surface']}" + (f" — {change}" if change else
                                                               " — the change is not named")
     return JoinStep(rule="stem_alternant", name="பகுதி வடிவம்", at=lemma, effect=effect,
-                    status="textbook" if textbook else "parked", sources=[src])
+                    status="urai" if alt.get("urai") else "textbook" if textbook else "parked",
+                    sources=[src])
