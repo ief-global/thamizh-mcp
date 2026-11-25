@@ -310,7 +310,7 @@
         "kind": "நீட்டல், தொகுத்தல்",
         "effect": "the பகுதி appears both unchanged and changed (முழுகு → முழுகினான், மூழ்கினான்)",
         "urai": ["visakap-137-kona-virava"],
-        "why_not_applied": "NOT NEEDED (Saran, 2026-11-25): மூழ்கினான் is the written form, from its own root மூழ்; முழுகு is a colloquial form of it. So the commentator's example is two roots, not one root changing: each form decodes from its own root by the ordinary joins (மூழ்கினான் = மூழ்கு + இன் + ஆன், உகரம் கெடுதல், as ThamizhiMorph gives it; முழுகினான் = முழுகு + இன் + ஆன்). No rule joins them."
+        "why_not_applied": "NOT NEEDED (Saran, 2026-11-25): மூழ்கு is the written verb and முழுகு its colloquial form. So the commentator's example is two roots, not one root changing: each form decodes from its own root by the ordinary joins (மூழ்கினான் = மூழ்கு + இன் + ஆன், உகரம் கெடுதல், as ThamizhiMorph gives it; முழுகினான் = முழுகு + இன் + ஆன்). No rule joins them."
       }
     ],
     "fallback": "Where no Tholkappiyam commentator (நச்சினார்க்கினியர், இளம்பூரணர், சேனாவரையர்) states a change, a Nannūl commentator is cited (Saran, 2026-11-25, D-030), from நன்னூல் உரைவளம் 5, read on the scan page. Each rule's `urai_scope` says which commentator states which example."

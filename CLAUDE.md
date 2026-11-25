@@ -118,7 +118,7 @@ analysis that rebuilds (செய்தான்'s FST lists a noun reading firs
     consonant, ன்/ண் before a nasal: கற்றான், கேட்டான், நிற்பான், **சொன்னான்**; Tholkappiyam
     புள்ளிமயங்கியல் 71/37/72, 101/7/102) · `eetrumei_inam_thirithal` (ல் → ன் before ற், ள் → ண் before ட்:
     நின்றான், கொண்டான்). `catalogued_not_applied` says why the rest are not: முதல் நீளல் (சேறல்) needs a
-    rule not yet stated; உறழ்தல் is not needed, because மூழ் is the written root and முழுகு its colloquial
+    rule not yet stated; உறழ்தல் is not needed, because மூழ்கு is the written verb and முழுகு its colloquial
     form (Saran, 2026-11-25), so each word decodes from its own root.
   - **Fallback (Saran, D-030): where no Tholkappiyam commentator states a change, a Nannūl commentator
     is cited.** சொன்னான்'s ன் is a tense letter outside 142's four, admitted by 144's "இவை சில இல"

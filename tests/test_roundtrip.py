@@ -409,7 +409,7 @@ def test_a_step_cites_the_verses_for_its_own_letter_only():
 
 def test_muzhku_and_moozhku_each_decode_from_their_own_root():
     """விசாகப் பெருமாளையர் gives முழுகு → முழுகினான், மூழ்கினான் as one root changing. Saran
-    (2026-11-25): மூழ் is the written root and முழுகு its colloquial form, so each word decodes from
+    (2026-11-25): மூழ்கு is the written verb and முழுகு its colloquial form, so each word decodes from
     its own root by the ordinary joins, with no பகுதி விகாரம் between them."""
     vikaram = {r["id"] for r in punarchi.vikaram_rules()}
     for word, lemma in (("மூழ்கினான்", "மூழ்கு"), ("முழுகினான்", "முழுகு")):
