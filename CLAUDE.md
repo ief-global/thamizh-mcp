@@ -25,7 +25,7 @@ integration. Loop: work on `develop` here → push → open PR `develop → main
 milestones. After any history rewrite, other clones must `git reset --hard origin/main`
 (not merge/rebase).
 
-## Current state (2026-11-25) — 361 tests pass (the FST tests skip without live foma)
+## Current state (2026-11-25) — 376 tests pass (the FST tests skip without live foma)
 
 **Everything below is live and merged to `main`.** Nine MCP tools + web/REST + CLI over ONE engine
 (blueprint §8 — the web head needed zero engine changes, which validated that design).
@@ -165,14 +165,19 @@ Orthography proves a word is **not native**; it can NEVER say which language it 
      its own origin class, assigned only when a source names Prakrit (`classifier.PRAKRIT_CODES`).
      Pali is NOT included; it stays `loanword` until ruled.
 
-1. 🔶 **Find and pin an authentic classical உரை on தொல்காப்பியம் சொல்லதிகாரம் — RESOLVE SOON (Saran,
-   2026-11-25).** Ruling (d)'s சந்தி label rests on a TVA course book only; a classical commentary
-   that names the doubled consonant's slot **takes precedence over it, whatever it says**. Several
-   commentators wrote on சொல்லதிகாரம், among them சேனாவரையர் and நச்சினார்க்கினியர். Pin it the
-   way D-024 pinned the எழுத்ததிகாரம் உரை: from its publisher (Project Madurai first), checksummed in
-   `data/PINS.md`, aligned to our verses BY TEXT, registered in `data/sources.json`. Then read what it
-   says under வினையியல் and either cite it on `irattitha_otru` (status `classical`) or change the label.
-   It also serves rulings (a) and (c), which are verb questions too.
+1. 🔶 **The சொல்லதிகாரம் உரை — PINNED 2026-11-25 (D-027); what it means for (d) is SARAN'S CALL.**
+   நச்சினார்க்கினியர் and இளம்பூரணர் are pinned from TVA scans (`data/classical/tholkappiyam_sol_urai_*.json`,
+   OCR, every unit with its scan leaf). Read against the scan pages (`data/classical/verified_quotations.json`),
+   **நச்சினார்க்கினியர் never calls any part of a verb சந்தி.** His parts are முதனிலை, the tense letter
+   (க ட த ற after the முதனிலை = past; வினையியல் 5, p. 205), இடைநிலை எழுத்து, ஈறு, and விகாரம். He calls
+   வந்தான்'s extra letter "கால வெழுத்திற் கேற்ற இடைநிலை யெழுத்து" (p. 467), causatives take
+   "இடைநிலையாகிய வெழுத்துக்கள்" (p. 237), and in feminine nouns a doubled த ஒற்று is among the
+   "இடைநிலை யெழுத்துக்கள்" (p. 174). He does NOT split a strong verb's two த் (கொடுத்தான்) explicitly.
+   இளம்பூரணர் is silent on tense letters. Under D-026 a commentary that names the slot outranks the
+   course book; whether these passages name it (and whether `santhi_tha_na`'s ந் moves too) is open.
+   The same page settles the SHAPE of ruling (a) for ல்/ள் roots: "லகாரம் னகாரமாய்த் திரிந்து, தனக்கேற்ற
+   றகர வொற்றுப் பெற்று" (கொன்றான்), "ளகாரம் ணகாரமாயும்" (கொண்டான்). Do not apply either until he rules.
+   சேனாவரையர் (whom நச்சினார்க்கினியர் says separates the tense letters) is not pinned.
 ✓ ~~**The ந் surface-reconciliation fix**~~ **DONE 2026-11-25 (D-025)** — the round-trip engine.
    Natural next steps on it: non-finite forms once ruling (a) allows, and the noun joins the sweep
    does not cover yet (இன் சாரியை, so வீட்டிற்கு moves from "out of scope" to rebuildable).
@@ -314,6 +319,13 @@ until a classical சொல்லதிகாரம் உரை is found. Do no
   CONTINUOUS, so it is aligned to our verses BY TEXT (`aligned_to`), never by number. Runtime:
   `classical.tholkappiyam_urai(அதிகாரம், இயல், n)`. Guard: `tests/test_urai.py`. Its worked examples are
   fixtures for the round-trip engine (`tests/test_roundtrip.py`, D-025).
+- **சொல்லதிகாரம் commentaries (D-027):** `data/classical/tholkappiyam_sol_urai_{nacchinarkkiniyar,ilampuranar}.json`,
+  built by `scripts/build_sol_urai.py` from TVA scans on archive.org (CC BY-SA 4.0). **OCR, not proof-read**:
+  every unit carries `pages[].leaf`; quote a passage in a rule only after reading it against the scan
+  and adding it to `data/classical/verified_quotations.json`. Runtime:
+  `classical.tholkappiyam_urai("சொல்லதிகாரம்", இயல், n, commentator=…)` (default நச்சினார்க்கினியர்).
+  The scans and raw OCR are mirrored in the design repo `sources/classical/sol-urai/` (not in git; see
+  its README). Guard: `tests/test_sol_urai.py`.
 - **Grammar rule tables:** `data/grammar/*.json` — each with `source_priority` + நூற்பா citations.
   `punarchi.json` holds the JOIN rules the round-trip uses (`core/punarchi.py`, guard `tests/test_roundtrip.py`).
 - **TVA material is CC BY-SA 4.0 (D-021, 2026-11-24)** — derived data may ship with attribution and

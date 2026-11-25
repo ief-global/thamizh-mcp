@@ -229,6 +229,25 @@
       "supersession": null,
       "adapter_status": "stub — raises NotImplementedError",
       "notes": "The intended authenticated replacement for S2PT's job. Licence resolved 2026-11-24 (D-021): CC BY-SA 4.0, so TVA-derived data may ship with attribution and stays share-alike, never Apache-2.0. TVA's own servers are unreliable; read from the archive.org mirror (archive.org/details/TamilVirtualAcademy) when tamilvu.org is down."
+    },
+    "tholkappiyam_sol_urai": {
+      "name": "Tholkappiyam சொல்லதிகாரம் — classical commentaries (நச்சினார்க்கினியர், இளம்பூரணர்)",
+      "adapter": null,
+      "used_by": [
+        "core/classical.py"
+      ],
+      "authority": "Tholkappiyam",
+      "tier": "anchor",
+      "grade": "B",
+      "licence": "CC BY-SA 4.0 — Tamil Virtual Academy material (D-021); scans from the Tamil Digital Library via archive.org/details/TamilVirtualAcademy. The commentaries themselves are classical works.",
+      "licence_status": "stated",
+      "redistribution": "serve-with-attribution",
+      "attribution_required": true,
+      "attribution": "Scan: Tamil Digital Library, Tamil Virtual Academy, Government of Tamil Nadu (CC BY-SA 4.0). Editions: சரசுவதி மகால் நூலகம், 1999 (நச்சினார்க்கினியர்); தமிழ்ப் பல்கலைக்கழகம், 1988 (இளம்பூரணர்).",
+      "maintenance": "stable — pinned scans and OCR of fixed editions; drift detectable via scripts/build_sol_urai.py --verify",
+      "pin": "archive.org _djvu.xml + _page_numbers.json + scan PDF per edition; sha256 in data/PINS.md and scripts/build_sol_urai.py; mirror in the design repo sources/classical/sol-urai/",
+      "supersession": null,
+      "notes": "Graded B, not A, for the PIN, not the commentators: the text is unproof-read OCR. A passage may back a rule only after it is read against the scan page and listed in data/classical/verified_quotations.json. A proof-read etext of the same commentary would grade A."
     }
   }
 }
