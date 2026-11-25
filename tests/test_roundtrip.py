@@ -105,10 +105,12 @@ def test_verb_components_spell_the_word(word):
 
 def test_defect_1_the_missing_na_is_named():
     """KNOWN DECODER DEFECT 1: காத்திருந்தாள் decoded as காத்திரு + த் + ஆள், the ந் gone.
-    Saran's ruling 2026-08-11 and TVA C0212 §5.3.6: it is a சந்தி த் surfacing as ந்."""
+    Since D-028 the ந் is an இடைநிலை எழுத்து: நச்சினார்க்கினியர் names வந்தான்'s ந் 'கால வெழுத்திற்
+    கேற்ற இடைநிலை யெழுத்து' (சொல். எச்சவியல் 67, p. 467). It was a சந்தி த் → ந் on TVA C0212 §5.3.6
+    and Saran's ruling of 2026-08-11; a classical commentary outranks both."""
     f = _decode("காத்திருந்தாள்")
     assert [(c.part, c.form, c.surface) for c in f.components] == [
-        ("பகுதி", "காத்திரு", None), ("சந்தி", "த்", "ந்"), ("இடைநிலை", "த்", None),
+        ("பகுதி", "காத்திரு", None), ("இடைநிலை", "ந்", None), ("இடைநிலை", "த்", None),
         ("விகுதி", "ஆள்", None)]
 
 
@@ -162,6 +164,11 @@ def test_every_rule_declares_a_known_status_and_classical_rules_cite_a_verse():
             assert r["cites"], f"{r['id']} is classical but cites nothing"
         if r["status"] == "textbook":
             assert r["textbook"]["quote"] and r["textbook"]["source"].startswith("TVA")
+        if r["status"] == "urai":
+            # Only a passage read against its scan page may back a rule (D-027, D-028).
+            assert r["urai"] and r["urai_scope"], r["id"]
+            assert set(r["urai"]) <= set(classical.verified_quotations()), r["id"]
+            assert "textbook" not in r, f"{r['id']}: a commentary outranks the course book (D-028)"
         if r["status"] == "parked":
             assert "D-023" in r["parked"]
 
@@ -194,18 +201,31 @@ def test_a_parked_rule_never_carries_a_label():
             assert not r.get("part"), f"{r['id']} is parked, so it must not name an உறுப்பு"
 
 
-def test_strong_verb_doubling_is_a_santhi_and_marked_provisional():
-    """Ruling (d), closed 2026-11-25 (D-026): TVA C0212 §5.3.5 labels the slot சந்தி. The rule says
-    in the table that a classical சொல்லதிகாரம் உரை would take precedence."""
-    rule = punarchi.rules()["irattitha_otru"]
-    assert rule["status"] == "textbook" and rule["part"] == "சந்தி"
-    assert "§5.3.5" in rule["textbook"]["source"]
-    assert "சொல்லதிகாரம்" in rule["supersede_when"] and "PRECEDENCE" in rule["supersede_when"]
-    for word in ("படித்தான்", "படிக்கிறான்", "படிப்பான்", "பார்த்தான்", "கொடுத்தான்", "செய்வித்தான்"):
+def test_no_verb_part_is_labelled_santhi_once_the_commentary_is_read():
+    """D-028 (Saran, 2026-11-25): a classical commentary ALWAYS outranks a TVA course book.
+    நச்சினார்க்கினியர் never calls a part of a verb சந்தி; the medial letters are இடைநிலை எழுத்து. So
+    the strong-verb doubled consonant (D-026's சந்தி, TVA C0212 §5.3.5) and வந்தான்'s ந் (TVA
+    C0212 §5.3.6) are both இடைநிலை now, each citing the scan-verified passage it rests on."""
+    for rid in ("irattitha_otru", "idainilai_na"):
+        rule = punarchi.rules()[rid]
+        assert rule["status"] == "urai" and rule["part"] == "இடைநிலை", rid
+        assert "TVA" in rule["superseded"]["source"] and "D-028" in rule["superseded"]["by"], rid
+        assert rule["cites"][0]["authority"] == "Tholkappiyam", rid
+    for word in ("படித்தான்", "படிக்கிறான்", "படிப்பான்", "பார்த்தான்", "கொடுத்தான்", "செய்வித்தான்",
+                 "வந்தான்", "காத்திருந்தாள்"):
         f = _decode(word)
         assert all(c.part is not None for c in f.components), word
-        assert [c.part for c in f.components].count("சந்தி") == 1, word
-        assert not any(s.status == "parked" for s in f.round_trip.steps), word
+        assert "சந்தி" not in [c.part for c in f.components], word
+        assert not any(s.status in ("parked", "textbook") for s in f.round_trip.steps
+                       if s.rule in ("irattitha_otru", "idainilai_na")), word
+
+
+def test_a_commentary_step_quotes_the_page_it_was_read_on():
+    for rid in ("irattitha_otru", "idainilai_na"):
+        refs = punarchi.cite(rid)
+        urai = [r for r in refs if "உரை" in (r.verse or "")]
+        assert urai and all(r.verse_text and "p. " in r.ref for r in urai), rid
+        assert refs[0].name == "Tholkappiyam", f"{rid}: the நூற்பா is cited first"
 
 
 # --- fixtures from நச்சினார்க்கினியர்'s உரை: the commentary's own worked examples -------------

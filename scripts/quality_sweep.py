@@ -173,7 +173,9 @@ async def main():
         else:
             parked = sum(s.status == "parked" for s in rt.steps)
             textbook = sum(s.status == "textbook" for s in rt.steps)
-            tags = ", ".join(t for t in (f"{textbook} textbook" if textbook else "",
+            urai = sum(s.status == "urai" for s in rt.steps)
+            tags = ", ".join(t for t in (f"{urai} urai" if urai else "",
+                                         f"{textbook} textbook" if textbook else "",
                                          f"{parked} parked" if parked else "") if t)
             decoded.append((word, " + ".join(
                 f"{c.form}{'→' + c.surface if c.surface else ''}({c.part or 'unlabelled'})"

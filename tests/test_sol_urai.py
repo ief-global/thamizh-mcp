@@ -1,4 +1,5 @@
-"""The classical commentaries on சொல்லதிகாரம் (D-027): pinned scans, OCR aligned to our verses BY TEXT."""
+"""The classical commentaries on சொல்லதிகாரம் (D-027, D-028): pinned scans, OCR aligned to our
+verses BY TEXT."""
 import difflib
 import json
 import re
@@ -16,7 +17,8 @@ from thamizh_mcp.core import classical
 import build_sol_urai
 
 ARTIFACTS = {"நச்சினார்க்கினியர்": "tholkappiyam_sol_urai_nacchinarkkiniyar",
-             "இளம்பூரணர்": "tholkappiyam_sol_urai_ilampuranar"}
+             "இளம்பூரணர்": "tholkappiyam_sol_urai_ilampuranar",
+             "சேனாவரையர்": "tholkappiyam_sol_urai_senavaraiyar"}
 CONS = re.compile(r"[க-ஹ]")
 
 
@@ -64,10 +66,13 @@ def test_it_says_it_is_ocr_and_carries_its_licence(name):
 def test_the_artifact_was_built_from_the_pinned_bytes(key):
     src = build_sol_urai.SOURCES[key]
     d = _load(src["artifact"])
-    built = {kind: s["sha256"] for s in d["sources"] for kind in src["sha256"]
-             if s["file"].endswith(kind)}
-    assert built == src["sha256"]
-    assert d["scan"]["sha256"] == src["scan_pdf"]["sha256"]
+    vols = build_sol_urai.volumes(src)
+    for vol in vols:
+        built = {kind: s["sha256"] for s in d["sources"] for kind in vol["sha256"]
+                 if s["file"] == f"{vol['stem']}_{kind}"}
+        assert built == vol["sha256"], vol["stem"]
+    scans = d["scan"].get("volumes") or [d["scan"]]
+    assert [s["sha256"] for s in scans] == [v["scan_pdf"]["sha256"] for v in vols]
 
 
 @pytest.mark.parametrize("name", ARTIFACTS.values())
@@ -83,8 +88,10 @@ def test_back_matter_is_not_swallowed_by_the_last_unit(name):
     assert len(last["urai"]) < 20000
 
 
-def test_runtime_accessor_serves_both_commentators():
-    assert classical.commentators("சொல்லதிகாரம்") == ["நச்சினார்க்கினியர்", "இளம்பூரணர்"]
+def test_runtime_accessor_serves_every_commentator():
+    assert classical.commentators("சொல்லதிகாரம்") == ["நச்சினார்க்கினியர்", "இளம்பூரணர்", "சேனாவரையர்"]
+    s = classical.tholkappiyam_urai("சொல்லதிகாரம்", "வினையியல்", 5, commentator="சேனாவரையர்")
+    assert s and "நில்லென்பது" in s["urai"]
     n = classical.tholkappiyam_urai("சொல்லதிகாரம்", "வினையியல்", 1)
     i = classical.tholkappiyam_urai("சொல்லதிகாரம்", "வினையியல்", 1, commentator="இளம்பூரணர்")
     assert n and i and n is not i
@@ -100,8 +107,28 @@ def test_verified_quotations_are_still_in_their_units():
     for q in vq["quotations"]:
         d = _load(q["artifact"])
         u = next(x for x in d["units"] if x["aligned_to"] == q["unit"])
-        assert q["leaf"] in [p["leaf"] for p in u["pages"]], q["as_printed"][:30]
+        assert (q.get("volume"), q["leaf"]) in [(p.get("volume"), p["leaf"]) for p in u["pages"]], \
+            q["as_printed"][:30]
         a, b = _skel(q["as_printed"]), _skel(u["verse"] + u["urai"])
         found = sum(m.size for m in difflib.SequenceMatcher(None, a, b, autojunk=False)
                     .get_matching_blocks())
         assert found / len(a) >= 0.9, q["as_printed"][:30]
+
+
+def test_quotation_ids_are_unique_and_every_rule_citation_resolves():
+    vq = json.loads((config.CLASSICAL_DIR / "verified_quotations.json").read_text("utf-8"))
+    ids = [q["id"] for q in vq["quotations"]]
+    assert len(ids) == len(set(ids))
+    g = json.loads((config.GRAMMAR_PUNARCHI_FILE).read_text("utf-8"))
+    cited = [i for r in g["join_rules"] for i in r.get("urai", [])]
+    cited += [e["urai"] for e in g["stem_alternants"]["entries"] if e.get("urai")]
+    assert cited and set(cited) <= set(ids)
+
+
+def test_the_editors_notes_are_not_in_senavaraiyars_units():
+    """The 2018 edition prints சி. கணேசையர்'s notes after each இயல் and its running heads name him.
+    A unit is சேனாவரையர்'s verse and உரை only, so neither may leak in."""
+    d = _load(ARTIFACTS["சேனாவரையர்"])
+    for u in d["units"]:
+        assert "கணேசையர்" not in u["urai"] and "முற்றிற்று" not in u["urai"], u["aligned_to"]
+        assert all(p.get("volume") in (1, 2) for p in u["pages"])

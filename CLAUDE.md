@@ -25,7 +25,7 @@ integration. Loop: work on `develop` here → push → open PR `develop → main
 milestones. After any history rewrite, other clones must `git reset --hard origin/main`
 (not merge/rebase).
 
-## Current state (2026-11-25) — 376 tests pass (the FST tests skip without live foma)
+## Current state (2026-11-25) — 385 tests pass (the FST tests skip without live foma)
 
 **Everything below is live and merged to `main`.** Nine MCP tools + web/REST + CLI over ONE engine
 (blueprint §8 — the web head needed zero engine changes, which validated that design).
@@ -57,8 +57,9 @@ to fix.** கொடு now states cognates only → honest `unknown`. Per-word t
 
 The formation figure now means something it did not before 2026-11-25: a word counts only if its
 split **rebuilds the word** (D-023). The same 26 pass, but five of them (வந்தான், வந்தனன், வந்தார்கள்,
-வந்தீர்கள், நடந்தன) used to pass with a letter missing. "Cited" includes `textbook` steps (a TVA
-course book quoted verbatim): since D-026 that covers the strong-verb doubled consonant (8 words).
+வந்தீர்கள், நடந்தன) used to pass with a letter missing. "Cited" includes `urai` steps (a classical
+commentary, quoted as read on the scan page): since D-028 that covers the strong-verb doubled
+consonant, வந்தான்'s ந் and the வா → வ/வரு stem (15 words). No sweep word rests on a course book now.
 "Parked" = a curated stem whose change is unnamed under ruling (a) (சொன்னான்).
 
 Re-run: `uv run python scripts/quality_sweep.py` (network on; ~3 min). It is the only honest
@@ -84,20 +85,22 @@ analysis that rebuilds (செய்தான்'s FST lists a noun reading firs
   and the table records that search. `tests/test_roundtrip.py` fails a classical rule without a cite.
 - **Fixtures are the commentary's own examples**: மரத்தை, மரத்தொடு, நுகத்தை (உருபியல் 13, where
   நச்சினார்க்கினியர் himself says they are finished by புணரியல் 31 + 23), மணிக்கு, கிளியழகிது … rebuild.
-- **Defect 1 is FIXED.** காத்திருந்தாள் = காத்திரு + த்(ந்) சந்தி + த் + ஆள். The ந் is a `textbook` rule:
-  TVA C0212 §5.3.6 says it verbatim ("த் என்னும் சந்தி ந் என்று மாற்றம் அடைந்தும்"), and it agrees with
-  Saran's 2026-08-11 ruling and நன்னூல் 142. The same section gives வா → வ (குறுகல்); A0212 §2.2.1
-  pairs வா with வரு (change not named, so no label asserted).
-- **Defect 2 is SETTLED PROVISIONALLY (D-026, closing ruling (d), 2026-11-25).** The strong-verb
-  doubled consonant is a **சந்தி** on TVA C0212 §5.3.5 ("சந்தி பெரும்பாலும் முதனிலை (பகுதி)க்கும்
-  இடைநிலைக்கும் இடையில் வரும்", e.g. நட + த் + தல்), so படிக்கிறான் = படி + க்(சந்தி) + கிறு + ஆன். Rule
-  `irattitha_otru`, status `textbook`, with Nannūl 133 (names சந்தி among the six உறுப்பு) alongside.
-  Saran ruled the course book sufficient **until an authentic classical உரை on சொல்லதிகாரம் is found;
-  that உரை takes PRECEDENCE** (the rule's `supersede_when`; open item in Next tasks). No மிகுதல் event:
-  the text names an உறுப்பு, not a change. The withdrawn 2026-08-02/08-08 entries stay withdrawn.
-- Statuses: `classical` (a நூற்பா states it) · `textbook` (a TVA course book states it verbatim; a
-  classical source found later outranks it, and the search prefers a நூற்பா when both rebuild) ·
-  `parked` (named, never labelled). A stem alternant from `verb_paradigms.json` is `parked` too: its
+- **Defect 1 is FIXED.** காத்திருந்தாள் = காத்திரு + ந்(இடைநிலை) + த்(இடைநிலை) + ஆள். Rule `idainilai_na`
+  (was `santhi_tha_na`), status `urai`: நச்சினார்க்கினியர் calls வந்தான்'s ந் "கால வெழுத்திற் கேற்ற இடைநிலை
+  யெழுத்து" (சொல். எச்சவியல் 67, p. 467). It was a சந்தி த் → ந் on TVA C0212 §5.3.6 and Saran's ruling of
+  2026-08-11 until D-028. The same passage names வா → வ AND வா → வரு "முதனிலை குறுகி" (stem alternants).
+- **Defect 2 is SETTLED ON THE COMMENTARY (D-028, 2026-11-25).** The strong-verb doubled consonant is
+  an **இடைநிலை எழுத்து**: நச்சினார்க்கினியர் counts a doubled ஒற்று among the "இடைநிலை யெழுத்துக்கள்"
+  (சொல். பெயரியல் 11, p. 174, a NOUN passage) and calls a verb's medial letter an இடைநிலை எழுத்து (the ஆ
+  of உண்ணாநின்றான், p. 469); none of the three commentators calls any part of a verb சந்தி. So
+  படிக்கிறான் = படி + க்(இடைநிலை) + கிறு(இடைநிலை) + ஆன். Rule `irattitha_otru`, status `urai`; its
+  `urai_scope` says exactly what the passages cover: **no commentator splits a strong verb's two த்
+  explicitly**, so the label applies his only name for a medial letter. D-026's சந்தி (TVA C0212 §5.3.5)
+  is kept in the rule as `superseded`. No மிகுதல் event. The withdrawn 2026-08-02/08-08 entries stay withdrawn.
+- Statuses: `classical` (a நூற்பா states it) · `urai` (a classical commentary states it, in a passage
+  listed in `verified_quotations.json`) · `textbook` (a TVA course book states it verbatim) · `parked`
+  (named, never labelled). **Precedence (Saran, D-028): நூற்பா > உரை > course book, always**; `_cost`
+  prefers the higher one when two splits rebuild. Only காண் → கண் is still `textbook`. A stem alternant from `verb_paradigms.json` is `parked` too: its
   விகாரம் is ruling (a). நில் → நி + ன்ற் looks odd because the curated marker is `ன்ற்`; that is ruling (a).
 
 ### How origin works now (the hard-won part)
@@ -159,25 +162,22 @@ Orthography proves a word is **not native**; it can NEVER say which language it 
    - **(c) எச்சவினை விகுதி** — FOUND: தொல். சொல். வினையியல் 31 and நன்னூல் 343 both enumerate the
      class, so this is a Tholkappiyam-FIRST citation. Open part: they name the FORMS, not the விகுதி
      letters, and **நன்னூல் 140 lists `து` where `vikuthi.json` (following TVA) has `உ`**.
-   - ~~**(d) What the doubled `த்` slot is called.**~~ **RULED 2026-11-25 (D-026): சந்தி, on TVA C0212
-     §5.3.5, provisionally** — a classical சொல்லதிகாரம் உரை takes precedence once found (task 1 below).
+   - ~~**(d) What the doubled `த்` slot is called.**~~ **SETTLED 2026-11-25 (D-028): இடைநிலை எழுத்து, on
+     நச்சினார்க்கினியர்** (superseding D-026's சந்தி on TVA C0212 §5.3.5). See Defect 2 above.
    - ~~**(e) Does வடசொல் cover Prakrit borrowings?**~~ **RULED 2026-11-24 (D-022): no.** பிராகிருதம் is
      its own origin class, assigned only when a source names Prakrit (`classifier.PRAKRIT_CODES`).
      Pali is NOT included; it stays `loanword` until ruled.
 
-1. 🔶 **The சொல்லதிகாரம் உரை — PINNED 2026-11-25 (D-027); what it means for (d) is SARAN'S CALL.**
-   நச்சினார்க்கினியர் and இளம்பூரணர் are pinned from TVA scans (`data/classical/tholkappiyam_sol_urai_*.json`,
-   OCR, every unit with its scan leaf). Read against the scan pages (`data/classical/verified_quotations.json`),
-   **நச்சினார்க்கினியர் never calls any part of a verb சந்தி.** His parts are முதனிலை, the tense letter
-   (க ட த ற after the முதனிலை = past; வினையியல் 5, p. 205), இடைநிலை எழுத்து, ஈறு, and விகாரம். He calls
-   வந்தான்'s extra letter "கால வெழுத்திற் கேற்ற இடைநிலை யெழுத்து" (p. 467), causatives take
-   "இடைநிலையாகிய வெழுத்துக்கள்" (p. 237), and in feminine nouns a doubled த ஒற்று is among the
-   "இடைநிலை யெழுத்துக்கள்" (p. 174). He does NOT split a strong verb's two த் (கொடுத்தான்) explicitly.
-   இளம்பூரணர் is silent on tense letters. Under D-026 a commentary that names the slot outranks the
-   course book; whether these passages name it (and whether `santhi_tha_na`'s ந் moves too) is open.
-   The same page settles the SHAPE of ruling (a) for ல்/ள் roots: "லகாரம் னகாரமாய்த் திரிந்து, தனக்கேற்ற
-   றகர வொற்றுப் பெற்று" (கொன்றான்), "ளகாரம் ணகாரமாயும்" (கொண்டான்). Do not apply either until he rules.
-   சேனாவரையர் (whom நச்சினார்க்கினியர் says separates the tense letters) is not pinned.
+1. ✓ **The சொல்லதிகாரம் உரை — PINNED AND APPLIED 2026-11-25 (D-027, D-028).** நச்சினார்க்கினியர்,
+   இளம்பூரணர் and சேனாவரையர் are pinned (`data/classical/tholkappiyam_sol_urai_*.json`, OCR, every unit
+   with its scan page). Read against the page images (`verified_quotations.json`), none calls a part of a
+   verb சந்தி; the slots were relabelled (Defects 1 and 2 above). சேனாவரையர் names the tense letters
+   "ஈற்றுமிசை நிற்கும் எழுத்து" (vol. 2 p. 11) and does not split them further; his editor சி. கணேசையர்
+   notes that, unlike Nannūl, he does not call them இடைநிலை. இளம்பூரணர் is silent on tense letters.
+   **Still open, ruling (a):** the commentaries give the SHAPE for ல்/ள் roots: ல் → ன் + ற் (கொல்/செல்/
+   வெல், நச்சினார்க்கினியர் p. 467; நில், சேனாவரையர் vol. 2 p. 13) and ள் → ண் (கொள், p. 467). They do NOT
+   cover சொல் (சொன்னான்), கல், கேள், or வில்/விற், so `verb_paradigms.json` is unchanged. Next: look for
+   those roots in the three உரை before applying anything.
 ✓ ~~**The ந் surface-reconciliation fix**~~ **DONE 2026-11-25 (D-025)** — the round-trip engine.
    Natural next steps on it: non-finite forms once ruling (a) allows, and the noun joins the sweep
    does not cover yet (இன் சாரியை, so வீட்டிற்கு moves from "out of scope" to rebuildable).
@@ -250,10 +250,9 @@ by hand.
 
 ⚠️ **133 does NOT settle what a strong verb's doubled consonant (படி + த் + த் + ஆன்) is called.** An
 earlier version of this file implied it did, by noting that 133 names சந்தி among the six. Both earlier
-entries on it (2026-08-02 "சந்தி", 2026-08-08 "not சந்தி") are WITHDRAWN as rulings (D-023); since
-D-026 the slot is labelled சந்தி on TVA C0212 §5.3.5, which says WHERE சந்தி comes (133 does not),
-until a classical சொல்லதிகாரம் உரை is found. Do not confuse it with வந்தான்'s ந்: TVA C0212 §5.3.6 names that one a
-சந்தி த் surfacing as ந், and Saran ruled the same on 2026-08-11.
+entries on it (2026-08-02 "சந்தி", 2026-08-08 "not சந்தி") are WITHDRAWN as rulings (D-023). D-026
+labelled it சந்தி on TVA C0212 §5.3.5; **D-028 relabelled it இடைநிலை on நச்சினார்க்கினியர்'s உரை**, and
+வந்தான்'s ந் with it.
 
 ## Design rules (do not violate)
 - **Tholkappiyam-first:** cite Tholkappiyam before Nannool for grammar claims. This drifted once
@@ -271,8 +270,13 @@ until a classical சொல்லதிகாரம் உரை is found. Do no
 - **Rules come from the texts, not from rulings (D-023).** Where the grammar is ambiguous, find the
   rule in a cited source (நூற்பா, or a classical உரை) and follow it. Do not settle an ambiguity by
   asking for a ruling made without a source; park it until the text is found. A TVA course book that
-  states the analysis verbatim may carry a label **provisionally** (`textbook`, D-026); a நூற்பா or
-  classical உரை found later takes precedence over it.
+  states the analysis verbatim may carry a label **provisionally** (`textbook`, D-026).
+- **A classical commentary ALWAYS outranks a course book (Saran, D-028).** நச்சினார்க்கினியர்,
+  இளம்பூரணர், சேனாவரையர் > TVA. Cite the commentary only from a passage read against its scan page
+  and listed in `data/classical/verified_quotations.json`, and say in `urai_scope` how far it reaches.
+- **Sources: look in archive.org's TamilVirtualAcademy collection FIRST** (Saran, 2026-11-25). Pin
+  what you use once (djvu.xml + page map + PDF), mirrored in the design repo, so nothing depends on a
+  server being up.
 
 ## Gotchas
 - Install package **`foma`**, NOT `foma-bin` (empty transitional deb).
@@ -319,10 +323,12 @@ until a classical சொல்லதிகாரம் உரை is found. Do no
   CONTINUOUS, so it is aligned to our verses BY TEXT (`aligned_to`), never by number. Runtime:
   `classical.tholkappiyam_urai(அதிகாரம், இயல், n)`. Guard: `tests/test_urai.py`. Its worked examples are
   fixtures for the round-trip engine (`tests/test_roundtrip.py`, D-025).
-- **சொல்லதிகாரம் commentaries (D-027):** `data/classical/tholkappiyam_sol_urai_{nacchinarkkiniyar,ilampuranar}.json`,
-  built by `scripts/build_sol_urai.py` from TVA scans on archive.org (CC BY-SA 4.0). **OCR, not proof-read**:
+- **சொல்லதிகாரம் commentaries (D-027, D-028):** `data/classical/tholkappiyam_sol_urai_{nacchinarkkiniyar,ilampuranar,senavaraiyar}.json`,
+  built by `scripts/build_sol_urai.py` from TVA-collection scans on archive.org (CC BY-SA 4.0). சேனாவரையர்
+  is a two-volume 2018 reprint of சி. கணேசையர்'s edition, so its pages carry `volume`; the editor's notes
+  after each இயல் are cut out of the units. **OCR, not proof-read**:
   every unit carries `pages[].leaf`; quote a passage in a rule only after reading it against the scan
-  and adding it to `data/classical/verified_quotations.json`. Runtime:
+  and adding it to `data/classical/verified_quotations.json` (a rule names it by `id`; `classical.cite_urai`). Runtime:
   `classical.tholkappiyam_urai("சொல்லதிகாரம்", இயல், n, commentator=…)` (default நச்சினார்க்கினியர்).
   The scans and raw OCR are mirrored in the design repo `sources/classical/sol-urai/` (not in git; see
   its README). Guard: `tests/test_sol_urai.py`.

@@ -1,12 +1,16 @@
 #!/usr/bin/env python3
 """Build the classical commentaries on தொல்காப்பியம் சொல்லதிகாரம் from their pinned scans (D-027).
 
-Two commentaries, each a Tamil Digital Library scan held in TVA's archive.org collection (CC BY-SA
+Three commentaries, each a Tamil Digital Library scan held in TVA's archive.org collection (CC BY-SA
 4.0 under D-021):
 
   · நச்சினார்க்கினியர் உரை — சரசுவதி மகால் நூலகம், தஞ்சாவூர், 1999 (same commentator as the
     எழுத்ததிகாரம் உரை pinned in D-024, so the three அதிகாரம் read uniformly)
   · இளம்பூரணர் உரை — தமிழ்ப் பல்கலைக்கழகம், தஞ்சாவூர், 1988 (the earliest commentator)
+  · சேனாவரையர் உரை — தொல்காப்பிய உரைத்தொகை 6 and 7, தமிழ்மண் பதிப்பகம், 2018 (reprint of
+    சி. கணேசையர்'s 1938 edition). Two volumes, read as one text; its pages name their volume.
+    கணேசையர்'s notes follow each இயல் ("… முற்றிற்று"), so a unit stops at that line and the notes
+    are not part of any unit (D-028).
 
 The text is archive.org's OCR (`_djvu.xml`), NOT a proof-read etext. So every unit carries the scan
 leaf and printed page it came from, and anything quoted from it must be checked against the page
@@ -87,7 +91,49 @@ SOURCES = {
             "page_numbers.json": "ae3c88f34e056b6d53d43fe6bcb9ba5162e80d596e49c99d06cca3ef3437eb88",
         },
     },
+    "senavaraiyar": {
+        "artifact": "tholkappiyam_sol_urai_senavaraiyar",
+        "commentator": "சேனாவரையர்",
+        "title": "தொல்காப்பிய உரைத்தொகை 6, 7 : சொல்லதிகாரம் சேனாவரையம் 1, 2 "
+                 "(சி. கணேசையர் உரைவிளக்கக் குறிப்புகளுடன்)",
+        "publisher": "தமிழ்மண் பதிப்பகம், சென்னை (சி. கணேசையர் பதிப்பு, 1938; மீள்பதிப்பு)",
+        "year": 2018,
+        # The OCR puts a ZERO WIDTH NON-JOINER after every pulli; it carries nothing.
+        "strip": "\u200c",
+        # 'வினையியல் சி. கணேசையர் * | (13)', '(14 | தொல்.உரைத்தொகை-சொல்.சேனா-2 &'. The OCR
+        # sometimes places them mid-page, so they are matched on any short line of the page.
+        "running_head": r"கணேசையர்[^஀-௿]*(\||$)|உரைத்தொகை\s*-\s*சொல்|சேனா\s*-\s*\d",
+        # Each இயல் ends '… முற்றிற்று', then the editor's notes and the next இயல்'s preface; once
+        # (கிளவியாக்கம் 1) a note block 'கணேசையர் உரைவிளக்கக் குறிப்பு:' follows a verse directly.
+        "section_end": r"முற்றிற்று|கணேச[ைய]+ர்\s*(உரைவிளக்கக்\s*|அடிக்?\s*|க்\s*)?குறிப்பு",
+        "end_of_text": r"எச்சவியல்\s*முற்றிற்று",
+        "volumes": [
+            {"archive_id": "tdl.49552-6-1", "tdl_book_id": "TVA_BOK_0049552",
+             "stem": "TVA_BOK_0049552_தொல்காப்பிய_உரைத்தொகை_6", "mirror_stem": "senavaraiyar1",
+             "covers": "கிளவியாக்கம் … பெயரியல்",
+             "scan_pdf": {"sha256": "aedd5ceb6020e6c7e89899475b72894c2a5705c859b21678da8e3c18f0f30470",
+                          "md5": "16d7139a3664f7c0f6a916aeca0d3c56", "bytes": 10184202},
+             "sha256": {
+                 "djvu.xml": "6475353d5b1bdfa477d0b0a9c909c013a1100db1b1ae276adafa014bb38a6e76",
+                 "page_numbers.json": "1fea04f99697eaf3949c4d66b3d97848cc492586310a2ac4fbeb7a30b182a200",
+             }},
+            {"archive_id": "tdl.49554-7-2", "tdl_book_id": "TVA_BOK_0049554",
+             "stem": "TVA_BOK_0049554_தொல்காப்பிய_உரைத்தொகை_7", "mirror_stem": "senavaraiyar2",
+             "covers": "வினையியல் … எச்சவியல்",
+             "scan_pdf": {"sha256": "2f98b6632fb746cadcf2e37b8b72ef61bc9f8f4f8a10fdf8617d3312e7f71ba4",
+                          "md5": "7e42ee1395bc2f078f05b0ddd248cf0a", "bytes": 10071951},
+             "sha256": {
+                 "djvu.xml": "1b3d3fcdd6ff8ee1abfa0cf8f519eccb7eb5122f737f73ec690efcfb3962108b",
+                 "page_numbers.json": "87daf051431364b55cc67d09a23ac27adcca7abb6a76a6b7a5c180449ee80871",
+             }},
+        ],
+    },
 }
+
+
+def volumes(src: dict) -> list[dict]:
+    """The pinned files of a source: one volume, or several read in order as one text."""
+    return src.get("volumes") or [src]
 
 CONS = re.compile(r"[க-ஹ]")
 TAMIL = re.compile(r"[஀-௿]")
@@ -142,14 +188,19 @@ def ocr_lines(xml: bytes) -> list[tuple[int, str]]:
     return out
 
 
-def clean(lines: list[tuple[int, str]]) -> tuple[list[tuple[int, str]], dict[int, list[str]]]:
-    """Drop running heads and page numbers; lift each page's footnotes out of the text."""
+def clean(lines: list, head: re.Pattern | None = None) -> tuple[list, dict]:
+    """Drop running heads and page numbers; lift each page's footnotes out of the text.
+
+    `head` is an edition's own running-head pattern; a short line matching it anywhere on the page
+    is a head."""
     by_leaf: dict[int, list[str]] = defaultdict(list)
     for leaf, t in lines:
         by_leaf[leaf].append(t)
     body, notes = [], {}
     for leaf in sorted(by_leaf):
         page = by_leaf[leaf]
+        if head is not None:
+            page = [t for t in page if not (len(t) <= 45 and head.search(t))]
         # Running head: page number, book title, அதிகாரம் name, bracketed இயல் tag. All within the
         # first three lines; a long line is text, never a head.
         k = 0
@@ -238,11 +289,25 @@ def align(verses: list[str], sk: str, headed: set[int] | None = None) -> list[tu
 
 def build_one(key: str, mirror: Path | None) -> dict:
     src = SOURCES[key]
-    xml, pin_xml = fetch(src, "djvu.xml", mirror)
-    pn_raw, pin_pn = fetch(src, "page_numbers.json", mirror)
-    printed = {p["leafNum"]: p.get("pageNumber") or None for p in json.loads(pn_raw)["pages"]}
+    vols = volumes(src)
+    multi = len(vols) > 1
+    lines, printed, pins = [], {}, []
+    for vn, vol in enumerate(vols, 1):
+        xml, pin_xml = fetch(vol, "djvu.xml", mirror)
+        pn_raw, pin_pn = fetch(vol, "page_numbers.json", mirror)
+        pins += [pin_xml, pin_pn]
+        # A multi-volume edition restarts its leaves per volume, so a page is (volume, leaf).
+        at = (lambda lf, vn=vn: (vn, lf)) if multi else (lambda lf: lf)
+        for p in json.loads(pn_raw)["pages"]:
+            printed[at(p["leafNum"])] = (p.get("pageNumber") or "").strip("()") or None
+        for lf, t in ocr_lines(xml):
+            for ch in src.get("strip", ""):
+                t = t.replace(ch, "")
+            if t.strip():
+                lines.append((at(lf), t))
 
-    body, notes = clean(ocr_lines(xml))
+    head = re.compile(src["running_head"]) if src.get("running_head") else None
+    body, notes = clean(lines, head)
     sk_chars, owner, headed = [], [], set()
     for li, (_, t) in enumerate(body):
         if _HEADING.match(t):
@@ -267,6 +332,8 @@ def build_one(key: str, mirror: Path | None) -> dict:
         raise SystemExit(f"{key}: end-of-text marker not found; refusing to let the last unit "
                          "swallow the back matter")
     body = body[:end_of_text]
+    section_end = ([i for i, (_, t) in enumerate(body) if re.search(src["section_end"], t)]
+                   if src.get("section_end") else [])
 
     starts = []
     for (iyal, n, text), hit in zip(ours, pos):
@@ -285,6 +352,8 @@ def build_one(key: str, mirror: Path | None) -> dict:
     units = []
     for k, (li, iyal, n, r, head) in enumerate(starts):
         end = starts[k + 1][0] if k + 1 < len(starts) else len(body)
+        # The edition's '… இயல் முற்றிற்று': what follows is the editor's, not the commentator's.
+        end = min([end] + [i for i in section_end if i > li])
         shared = end <= li      # the next verse starts on this same OCR line: printed together
         seg = body[li:max(end, li + 1)]
         texts = [t for _, t in seg]
@@ -304,7 +373,8 @@ def build_one(key: str, mirror: Path | None) -> dict:
             "heading": head,
             "verse": " ".join(verse),
             "urai": "\n".join(texts[j:]),
-            "pages": [{"leaf": lf, "printed": printed.get(lf)} for lf in leaves],
+            "pages": [({"volume": lf[0], "leaf": lf[1]} if multi else {"leaf": lf})
+                      | {"printed": printed.get(lf)} for lf in leaves],
             "footnotes": [x for lf in leaves for x in notes.get(lf, [])],
             **({"shares_line_with_next": True} if shared else {}),
             **({"urai_in_next_unit": True} if not "\n".join(texts[j:]).strip() else {}),
@@ -316,8 +386,12 @@ def build_one(key: str, mirror: Path | None) -> dict:
         "text_ta": src["title"],
         "commentator": src["commentator"],
         "edition": {"publisher": src["publisher"], "year": src["year"],
-                    "archive_org": f"https://archive.org/details/{src['archive_id']}",
-                    "tamil_digital_library_book_id": src["tdl_book_id"]},
+                    **({"volumes": [{"volume": n, "covers": v["covers"],
+                                     "archive_org": f"https://archive.org/details/{v['archive_id']}",
+                                     "tamil_digital_library_book_id": v["tdl_book_id"]}
+                                    for n, v in enumerate(vols, 1)]} if multi else
+                       {"archive_org": f"https://archive.org/details/{src['archive_id']}",
+                        "tamil_digital_library_book_id": src["tdl_book_id"]})},
         "attribution": ATTRIBUTION,
         "licence": "CC BY-SA 4.0 (Tamil Virtual Academy material, D-021); share-alike",
         "ocr": {
@@ -327,10 +401,12 @@ def build_one(key: str, mirror: Path | None) -> dict:
                        "lines can be split or merged. Check any quotation against the scan page "
                        "(`pages[].leaf`) before a rule cites it.",
         },
-        "sources": [pin_xml, pin_pn],
-        "scan": {"file": f"{src['stem']}.pdf", **src["scan_pdf"],
-                 "note": "the page images; not read by the build, pinned so a quotation can be "
-                         "checked against the leaf it came from"},
+        "sources": pins,
+        "scan": ({"volumes": [{"volume": n, "file": f"{v['stem']}.pdf", **v["scan_pdf"]}
+                              for n, v in enumerate(vols, 1)]} if multi else
+                 {"file": f"{src['stem']}.pdf", **src["scan_pdf"]})
+                | {"note": "the page images; not read by the build, pinned so a quotation can be "
+                           "checked against the leaf it came from"},
         "numbering": "Keyed by OUR coordinates (`aligned_to`: இயல் + நூற்பா of tholkappiyam.json). "
                      "`heading` is the edition's own heading as OCR'd, kept for reference only; "
                      "its number is never a key.",
