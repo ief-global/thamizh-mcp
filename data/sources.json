@@ -219,16 +219,16 @@
       "authority": null,
       "tier": "anchor",
       "grade": "B",
-      "licence": "Government of Tamil Nadu / Tamil Virtual Academy — no redistribution grant located.",
+      "licence": "CC BY-SA 4.0 — stated in writing by the Tamil Virtual Academy for the works of the தமிழ்ப்பெருங்களஞ்சியம் (tamilvu.org, கணித்தமிழ்ப் பேரவை page), and extended to all TVA materials (2026-11).",
       "licence_status": "stated",
-      "redistribution": "consult-and-cite",
+      "redistribution": "serve-with-attribution",
       "attribution_required": true,
-      "attribution": "Tamil Virtual Academy கலைச்சொல் glossaries, Government of Tamil Nadu.",
+      "attribution": "Tamil Virtual Academy (தமிழ் இணையக் கல்விக்கழகம்), Government of Tamil Nadu — கலைச்சொல் glossaries. CC BY-SA 4.0.",
       "maintenance": "institutionally published; snapshot not yet taken",
       "pin": "not yet pinned — snapshot is a queued network task",
       "supersession": null,
       "adapter_status": "stub — raises NotImplementedError",
-      "notes": "The intended authenticated replacement for S2PT's job. The TVA course books are already treated this way: the ePUBs stay gitignored in the design repo and only derived, cited rule tables ship — facts are not copyrightable and citing the source is scholarship, but the wording is expression."
+      "notes": "The intended authenticated replacement for S2PT's job. Licence resolved 2026-11-24 (D-021): CC BY-SA 4.0, so TVA-derived data may ship with attribution and stays share-alike, never Apache-2.0. TVA's own servers are unreliable; read from the archive.org mirror (archive.org/details/TamilVirtualAcademy) when tamilvu.org is down."
     }
   }
 }

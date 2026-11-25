@@ -387,3 +387,48 @@ def test_synonyms_are_collected_per_sense_block():
     senses = parse_etymology(wt)["senses"]
     assert senses[0]["synonyms"] == ["கருமை"]
     assert senses[1]["synonyms"] == ["மகிழுந்து", "சீருந்து"]
+
+
+# --- பிராகிருதம் (ruling (e), 2026-11-24, D-022) --------------------------------------------
+
+def test_prakrit_borrowing_is_its_own_class_not_vadasol():
+    """Saran's ruling: பிராகிருதம் is NOT வடசொல். Fixture trimmed from the real மனிதன் page as
+    edited 2026-08-25, which moved the word from Sanskrit to Prakrit."""
+    ety = parse_etymology(
+        "==Tamil==\n===Etymology===\n{{bor+|ta|pra|𑀫𑀼𑀦𑀺𑀲|t=[[human]]}} "
+        "{{suf|ta||அன்<id:masculine suffix>}}. Cognate with {{cog|ml|മനിതൻ}}.\n")
+    assert ety["source_lang"] == "pra" and ety["relation"] == "borrowed"
+    o = classify_origin("மனிதன்", fst_native_parse=True, in_s2pt=False, etymology=ety)
+    assert o.class_ == "பிராகிருதம்" and o.is_native is False
+    assert o.borrowed_from == "Prakrit"
+    assert o.class_ != "வடசொல்"
+    assert "D-022" in o.evidence
+
+
+def test_named_prakrits_share_the_class():
+    for code, name in (("pmh", "Maharastri Prakrit"), ("psu", "Sauraseni Prakrit"),
+                       ("pka", "Ardhamagadhi Prakrit")):
+        o = classify_origin("x", fst_native_parse=None, in_s2pt=False,
+                            etymology=_ety(source_lang=code, source_lang_name=name))
+        assert o.class_ == "பிராகிருதம்", code
+
+
+def test_pali_is_not_swept_into_prakrit_without_a_ruling():
+    """The ruling named Prakrit. Pali is a related language, and extending the class to it would be
+    our inference, not the ruling — so it stays `loanword` until ruled."""
+    o = classify_origin("x", fst_native_parse=None, in_s2pt=False,
+                        etymology=_ety(source_lang="pi", source_lang_name="Pali"))
+    assert o.class_ == "loanword"
+
+
+def test_prakrit_sense_gets_its_own_class_in_a_homograph():
+    o = classify_origin("x", fst_native_parse=True, in_s2pt=False, etymology={
+        "relation": "ambiguous", "is_native": None, "citation": "u",
+        "senses": [
+            {"relation": "inherited", "source_lang": "dra-pro", "sense": "a",
+             "source_lang_name": "Proto-Dravidian", "source_word": "*x"},
+            {"relation": "borrowed", "source_lang": "pra", "sense": "b",
+             "source_lang_name": "Prakrit", "source_word": "y"},
+        ]})
+    assert o.class_ == "இயற்சொல்"                       # the Tamil sense still leads
+    assert [s.class_ for s in o.senses] == ["இயற்சொல்", "பிராகிருதம்"]
