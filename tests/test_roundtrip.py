@@ -405,3 +405,14 @@ def test_a_step_cites_the_verses_for_its_own_letter_only():
     assert {pulli + "71", pulli + "72"} <= sol and not {pulli + "37", pulli + "101"} & sol
     kel = verses("கேட்டான்", "கேள்", "past=ட்")
     assert {pulli + "101", pulli + "7"} <= kel and not {pulli + "71", pulli + "102"} & kel
+
+
+def test_muzhku_and_moozhku_each_decode_from_their_own_root():
+    """விசாகப் பெருமாளையர் gives முழுகு → முழுகினான், மூழ்கினான் as one root changing. Saran
+    (2026-11-25): மூழ் is the written root and முழுகு its colloquial form, so each word decodes from
+    its own root by the ordinary joins, with no பகுதி விகாரம் between them."""
+    vikaram = {r["id"] for r in punarchi.vikaram_rules()}
+    for word, lemma in (("மூழ்கினான்", "மூழ்கு"), ("முழுகினான்", "முழுகு")):
+        f = _verb(word, lemma, "past=இன்")
+        assert f.round_trip.holds, word
+        assert not [s for s in f.round_trip.steps if s.rule in vikaram], word

@@ -25,7 +25,7 @@ integration. Loop: work on `develop` here → push → open PR `develop → main
 milestones. After any history rewrite, other clones must `git reset --hard origin/main`
 (not merge/rebase).
 
-## Current state (2026-11-25) — 439 tests pass (the FST tests skip without live foma)
+## Current state (2026-11-25) — 440 tests pass (the FST tests skip without live foma)
 
 **Everything below is live and merged to `main`.** Nine MCP tools + web/REST + CLI over ONE engine
 (blueprint §8 — the web head needed zero engine changes, which validated that design).
@@ -117,7 +117,9 @@ analysis that rebuilds (செய்தான்'s FST lists a noun reading firs
     `ayal_kurukki_ra_virithal` (கொணா → கொணர்) · `eetrumei_varumei_thirithal` (ல்/ள் → ற்/ட் before a hard
     consonant, ன்/ண் before a nasal: கற்றான், கேட்டான், நிற்பான், **சொன்னான்**; Tholkappiyam
     புள்ளிமயங்கியல் 71/37/72, 101/7/102) · `eetrumei_inam_thirithal` (ல் → ன் before ற், ள் → ண் before ட்:
-    நின்றான், கொண்டான்). Two catalogued kinds are NOT applied and say why (`catalogued_not_applied`).
+    நின்றான், கொண்டான்). `catalogued_not_applied` says why the rest are not: முதல் நீளல் (சேறல்) needs a
+    rule not yet stated; உறழ்தல் is not needed, because மூழ் is the written root and முழுகு its colloquial
+    form (Saran, 2026-11-25), so each word decodes from its own root.
   - **Fallback (Saran, D-030): where no Tholkappiyam commentator states a change, a Nannūl commentator
     is cited.** சொன்னான்'s ன் is a tense letter outside 142's four, admitted by 144's "இவை சில இல"
     (சங்கர நமச்சிவாயர்) and named by கூழங்கைத் தம்பிரான் with போனான் (`idainilai.json`).
