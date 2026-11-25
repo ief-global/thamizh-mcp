@@ -2,6 +2,7 @@
   "comment": "Curated verb paradigm table (ANCHOR tier). Fills ThamizhiMorph FST lexicon gaps for common verbs whose stems are irregular/suppletive and therefore absent from the primary FSTs. This is a hand-verified encoded rule table — the same grounding model as core/decoder.py's rule tables (design D-011: grounding = human-encoded rule table at design time + per-claim citation at runtime). It is NOT a guesser: only listed lemmas match, and every claim cites this table. Guesser FSTs remain excluded because they return WRONG lemmas (கொடுத் for கொடு, வந் for வா).",
   "authority": "Standard Tamil verb paradigms (Nannūl வினையியல் classes); markers follow the ThamizhiMorph tag convention (past=/pres=/fut= with the surface marker), cross-checked against FST output for sibling verbs it does cover.",
   "verified_date": "2026-07-20",
+  "stem_changes": "The notes name each stem change for the reader. The engine does NOT read them: every change is found and cited by the பகுதி விகாரம் catalogue in data/grammar/punarchi.json (D-030), the same way for these verbs as for any verb the FST returns. This table only supplies the analyses the FST lacks.",
   "png_suffixes": {
     "1sg": "ஏன்",
     "2sg": "ஆய்",
@@ -18,16 +19,16 @@
   "png_exclusion_note": "Tamil future neuter is -உம் (வரும், படிக்கும்), which ThamizhiMorph itself tags as NONFINITE futANDadjpart, not a finite 3sgn form. Excluded rather than invented.",
   "paradigms": {
     "past": [
-      {"lemma": "போ",     "stem": "போன்",     "marker": "ன்",   "note": "இறந்தகால ஒற்று ன் (போ → போன்)"},
-      {"lemma": "சொல்",   "stem": "சொன்ன்",   "marker": "ன்",   "note": "சொல் → சொன்ன். PARKED (ruling (a)): no text splits சொன்னான்; மயிலைநாதர் says only that it does not take the இன் இடைநிலை (D-029)"},
-      {"lemma": "கல்",    "stem": "கற்ற்",     "marker": "ற்",   "note": "கல் → கற் (ல் → ற் திரிதல்) + ற் இடைநிலை (D-029)"},
+      {"lemma": "போ",     "stem": "போன்",     "marker": "ன்",   "note": "இறந்தகால இடைநிலை ன் (போ → போன்), under நன்னூல் 144 'இவை சில இல' (D-030)"},
+      {"lemma": "சொல்",   "stem": "சொன்ன்",   "marker": "ன்",   "note": "சொல் → சொன் (ல் before the nasal ன் becomes ன்) + ன் இடைநிலை (நன்னூல் 144; D-030)"},
+      {"lemma": "கல்",    "stem": "கற்ற்",     "marker": "ற்",   "note": "கல் → கற் (ல் → ற் திரிதல்) + ற் இடைநிலை (D-030)"},
       {"lemma": "கொடு",   "stem": "கொடுத்த்",  "marker": "த்",   "note": "வலிமிகு இறந்தகாலம் (கொடு → கொடுத்த்)"},
-      {"lemma": "வில்",   "stem": "விற்ற்",    "marker": "ற்",   "note": "வில் → விற் (ல் → ற் திரிதல்) + ற் இடைநிலை (Saran 2026-08-11; D-029)"},
+      {"lemma": "வில்",   "stem": "விற்ற்",    "marker": "ற்",   "note": "வில் → விற் (ல் → ற் திரிதல்) + ற் இடைநிலை (Saran 2026-08-11; D-030)"},
       {"lemma": "தூங்கு", "stem": "தூங்கின்",  "marker": "இன்",  "note": "இன் இடைநிலை இறந்தகாலம்"},
-      {"lemma": "நில்",   "stem": "நின்ற்",    "marker": "ற்",   "note": "நில் → நின் (ல் → ன் திரிதல்) + ற் இடைநிலை (நச்சினார்க்கினியர், சேனாவரையர்; D-029)"},
-      {"lemma": "கேள்",   "stem": "கேட்ட்",    "marker": "ட்",   "note": "கேள் → கேட் (ள் → ட் திரிதல்) + ட் இடைநிலை (D-029)"},
+      {"lemma": "நில்",   "stem": "நின்ற்",    "marker": "ற்",   "note": "நில் → நின் (ல் → ன், the nasal of ற்) + ற் இடைநிலை (D-030)"},
+      {"lemma": "கேள்",   "stem": "கேட்ட்",    "marker": "ட்",   "note": "கேள் → கேட் (ள் → ட் திரிதல்) + ட் இடைநிலை (D-030)"},
       {"lemma": "உண்",    "stem": "உண்ட்",     "marker": "ட்",   "note": "ண் + ட் இறந்தகாலம்"},
-      {"lemma": "கொள்",   "stem": "கொண்ட்",    "marker": "ட்",   "note": "கொள் → கொண் (ள் → ண் திரிதல்) + ட் இடைநிலை (நச்சினார்க்கினியர், மயிலைநாதர்; D-029)"}
+      {"lemma": "கொள்",   "stem": "கொண்ட்",    "marker": "ட்",   "note": "கொள் → கொண் (ள் → ண், the nasal of ட்) + ட் இடைநிலை (D-030)"}
     ],
     "pres": [
       {"lemma": "வா",     "stem": "வருகிற்",     "marker": "கிற்",    "note": "suppletive present stem வரு (வா → வருகிறான்)"},

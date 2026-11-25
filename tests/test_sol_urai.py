@@ -131,10 +131,11 @@ def test_quotation_ids_are_unique_and_every_rule_citation_resolves():
     ids = [q["id"] for q in vq["quotations"]]
     assert len(ids) == len(set(ids))
     g = json.loads((config.GRAMMAR_PUNARCHI_FILE).read_text("utf-8"))
-    cited = [i for r in g["join_rules"] for i in r.get("urai", [])]
-    for e in g["stem_alternants"]["entries"]:
-        u = e.get("urai") or []
-        cited += [u] if isinstance(u, str) else u
+    pv = g["pakuthi_vikaram"]
+    rules = g["join_rules"] + pv["rules"] + pv["catalogued_not_applied"] + [pv["framework"]]
+    idn = json.loads(config.GRAMMAR_IDAINILAI_FILE.read_text("utf-8"))["idainilai"]
+    rules += [e for t in idn.values() for e in t.get("from_fst", {}).values()]
+    cited = [i for r in rules for i in r.get("urai", [])]
     assert cited and set(cited) <= set(ids)
 
 

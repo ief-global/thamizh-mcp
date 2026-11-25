@@ -126,7 +126,7 @@ def verified_quotations() -> dict[str, dict]:
 
 
 def cite_urai(quotation_id: str, ref: str) -> SourceRef:
-    """A SourceRef quoting a verified commentary passage, as printed, with its page (D-028, D-029).
+    """A SourceRef quoting a verified commentary passage, as printed, with its page (D-028, D-029, D-030).
 
     A Tholkappiyam commentary is filed under the நூற்பா it comments on, by OUR coordinates; a Nannūl
     commentary under OUR Nannūl number. The page is the edition's printed page (and volume, for a

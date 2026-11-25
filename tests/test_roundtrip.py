@@ -56,6 +56,17 @@ SWEEP = {
     "கேட்டான்": ("கேள்", "verb", V + ["strong", "past=ட்", "3sgm=ஆன்"]),
     "உண்டான்": ("உண்", "verb", V + ["strong", "past=ட்", "3sgm=ஆன்"]),
     "கண்டான்": ("காண்", "verb", V + ["past=ட்", "3sgm=ஆன்"]),
+    # D-030: verbs whose பகுதி changes, decoded by the catalogue, not by a list of verbs
+    "கொன்றான்": ("கொல்", "verb", V + ["past=ற்", "3sgm=ஆன்"]),
+    "சென்றான்": ("செல்", "verb", V + ["past=ற்", "3sgm=ஆன்"]),
+    "நீண்டது": ("நீள்", "verb", V + ["past=ட்", "3sgn=அது"]),
+    "நின்றான்": ("நில்", "verb", V + ["past=ற்", "3sgm=ஆன்"]),
+    "கற்றான்": ("கல்", "verb", V + ["past=ற்", "3sgm=ஆன்"]),
+    "தந்தான்": ("தா", "verb", V + ["past=த்", "3sgm=ஆன்"]),
+    "செத்தான்": ("சா", "verb", V + ["past=த்", "3sgm=ஆன்"]),
+    "சேர்ந்தான்": ("சேர்", "verb", V + ["past=த்", "3sgm=ஆன்"]),
+    "வாழ்ந்தான்": ("வாழ்", "verb", V + ["past=த்", "3sgm=ஆன்"]),
+    "தேய்ந்தான்": ("தேய்", "verb", V + ["past=த்", "3sgm=ஆன்"]),
 }
 
 
@@ -151,14 +162,22 @@ def test_engine_declares_a_gap_when_no_analysis_rebuilds():
 
 # --- the rule table and the code agree, and every citation is real -----------------------------
 
+def _all_rules():
+    """The joins and the பகுதி விகாரம் catalogue (D-030): one standard of citation for both."""
+    return punarchi.table()["join_rules"] + punarchi.vikaram_rules()
+
+
 def test_every_rule_in_the_table_is_implemented_and_vice_versa():
     table_ids = {r["id"] for r in punarchi.table()["join_rules"]} - {"uyirmei"}
-    assert table_ids == set(punarchi._ORDER)
+    boundary = {r["id"] for r in punarchi.vikaram_rules() if r["applies"] == "boundary"}
+    stem = {r["id"] for r in punarchi.vikaram_rules() if r["applies"] == "stem"}
+    assert table_ids | boundary == set(punarchi._ORDER)
+    assert stem == set(punarchi.STEM_RULES)
 
 
 def test_every_rule_declares_a_known_status_and_classical_rules_cite_a_verse():
     statuses = set(punarchi.table()["status_values"])
-    for r in punarchi.table()["join_rules"]:
+    for r in _all_rules():
         assert r["status"] in statuses, r["id"]
         if r["status"] == "classical":
             assert r["cites"], f"{r['id']} is classical but cites nothing"
@@ -174,7 +193,7 @@ def test_every_rule_declares_a_known_status_and_classical_rules_cite_a_verse():
 
 
 def test_every_cited_verse_resolves_and_is_quoted_from_the_pinned_edition():
-    for r in punarchi.table()["join_rules"]:
+    for r in _all_rules():
         for c in r["cites"]:
             if c["authority"] == "Tholkappiyam":
                 text = classical.tholkappiyam_verse(c["athikaram"], c["iyal"], c["verse"])
@@ -186,7 +205,7 @@ def test_every_cited_verse_resolves_and_is_quoted_from_the_pinned_edition():
 
 
 def test_tholkappiyam_is_cited_first_wherever_it_is_cited():
-    for r in punarchi.table()["join_rules"]:
+    for r in _all_rules():
         auths = [c["authority"] for c in r["cites"]]
         if "Tholkappiyam" in auths:
             assert auths[0] == "Tholkappiyam", r["id"]
@@ -196,7 +215,7 @@ def test_tholkappiyam_is_cited_first_wherever_it_is_cited():
 
 
 def test_a_parked_rule_never_carries_a_label():
-    for r in punarchi.table()["join_rules"]:
+    for r in _all_rules():
         if r["status"] == "parked":
             assert not r.get("part"), f"{r['id']} is parked, so it must not name an உறுப்பு"
 
@@ -255,52 +274,134 @@ def test_the_commentarys_worked_examples_rebuild(iyal, verse, word, parts, kinds
     assert word in punarchi.joins_all(*parts, kinds=kinds)
 
 
-# --- ruling (a): roots whose last consonant changes (D-029) -------------------------------------
+# --- the பகுதி விகாரம் catalogue (D-029, D-030): rules, not a list of verbs ----------------------
 
-_RULING_A = {
-    # word: (lemma, tense tag, stem as it surfaces, the tense letter after it)
-    "நின்றான்": ("நில்", "past=ற்", "நின்", "ற்"),
-    "கொண்டான்": ("கொள்", "past=ட்", "கொண்", "ட்"),
-    "கற்றான்": ("கல்", "past=ற்", "கற்", "ற்"),
-    "கேட்டான்": ("கேள்", "past=ட்", "கேட்", "ட்"),
-    "விற்றான்": ("வில்", "past=ற்", "விற்", "ற்"),
-    "நிற்பான்": ("நில்", "fut=ப்", "நிற்", "ப்"),
-    "கற்பான்": ("கல்", "fut=ப்", "கற்", "ப்"),
+def _verb(word, lemma, tense, png="3sgm=ஆன்"):
+    return decoder.decode_formation(word, MorphAnalysis(lemma=lemma, pos="verb",
+                                                        tags=["fin", tense, png]))
+
+
+_VIKARAM = {
+    # word: (lemma, tense tag, the பகுதி as it surfaces, the rule that changes it)
+    "நின்றான்": ("நில்", "past=ற்", "நின்", "eetrumei_inam_thirithal"),
+    "கொண்டான்": ("கொள்", "past=ட்", "கொண்", "eetrumei_inam_thirithal"),
+    "கொன்றான்": ("கொல்", "past=ற்", "கொன்", "eetrumei_inam_thirithal"),
+    "சென்றான்": ("செல்", "past=ற்", "சென்", "eetrumei_inam_thirithal"),
+    "வென்றான்": ("வெல்", "past=ற்", "வென்", "eetrumei_inam_thirithal"),
+    "போன்றான்": ("போல்", "past=ற்", "போன்", "eetrumei_inam_thirithal"),
+    "கற்றான்": ("கல்", "past=ற்", "கற்", "eetrumei_varumei_thirithal"),
+    "கேட்டான்": ("கேள்", "past=ட்", "கேட்", "eetrumei_varumei_thirithal"),
+    "விற்றான்": ("வில்", "past=ற்", "விற்", "eetrumei_varumei_thirithal"),
+    "நிற்பான்": ("நில்", "fut=ப்", "நிற்", "eetrumei_varumei_thirithal"),
+    "கற்பான்": ("கல்", "fut=ப்", "கற்", "eetrumei_varumei_thirithal"),
+    "சொன்னான்": ("சொல்", "past=ன்", "சொன்", "eetrumei_varumei_thirithal"),
+    "கண்டான்": ("காண்", "past=ட்", "கண்", "muthanilai_kurukkal"),
+    "வந்தான்": ("வா", "past=த்", "வ", "muthanilai_kurukkal"),
+    "தந்தான்": ("தா", "past=த்", "த", "muthanilai_kurukkal"),
+    "செத்தான்": ("சா", "past=த்", "செ", "muthal_aa_ekaram"),
+    "வருவான்": ("வா", "fut=வ்", "வரு", "kurukki_uyirmei_virithal"),
+    "விராவினான்": ("விரவு", "past=இன்", "விராவ்", "naduk_kuril_neettal"),
+    "கொணர்ந்தான்": ("கொணா", "past=த்", "கொணர்", "ayal_kurukki_ra_virithal"),
 }
 
 
-@pytest.mark.parametrize("word", _RULING_A)
-def test_ruling_a_the_stem_change_is_named_and_cited(word):
-    """நில் → நின் and கொள் → கொண் are stated for those verbs by நச்சினார்க்கினியர், சேனாவரையர் and
-    மயிலைநாதர். கல் → கற், கேள் → கேட், வில் → விற் are Tholkappiyam's ல்/ள் join (புள்ளிமயங்கியல் 71,
-    101) carried into the பகுபதம், as சங்கர நமச்சிவாயர் and சிவஞான முனிவர் say such changes are,
-    with விசாகப் பெருமாளையர் naming கல் → கற்றான். Each split is root + tense letter + ஆன்."""
-    lemma, tag, stem, letter = _RULING_A[word]
-    f = decoder.decode_formation(word, MorphAnalysis(lemma=lemma, pos="verb",
-                                                    tags=["fin", tag, "3sgm=ஆன்"]))
+@pytest.mark.parametrize("word", _VIKARAM)
+def test_the_change_in_the_pakuthi_comes_from_one_cited_rule(word):
+    """Every verb here is decoded by the same catalogue; none is listed by name. Each change is one
+    cited rule: the Tholkappiyam commentator first where one states it, else the Nannūl
+    commentator (Saran, D-030), each quoted from the page it was read on."""
+    lemma, tag, stem, rule = _VIKARAM[word]
+    f = _verb(word, lemma, tag)
     assert f.round_trip.holds, word
-    assert [(c.part, c.form, c.surface) for c in f.components] == [
-        ("பகுதி", lemma, stem), ("இடைநிலை", letter, None), ("விகுதி", "ஆன்", None)]
-    [step] = [s for s in f.round_trip.steps if s.rule == "stem_alternant"]
-    assert step.status == "urai" and "திரிதல்" in step.effect, word
-    assert step.sources[0].authority == "Tholkappiyam", f"{word}: the நூற்பா leads"
+    assert f.components[0].form == lemma and f.components[0].surface == stem, word
+    changes = [s for s in f.round_trip.steps if s.rule in {r["id"] for r in punarchi.vikaram_rules()}]
+    assert [s.rule for s in changes] == [rule], word
+    [step] = changes
+    assert step.status == "urai"
+    assert step.sources[0].authority == "Tholkappiyam", f"{word}: Tholkappiyam leads"
     assert any("உரை" in (r.verse or "") and r.verse_text and "p. " in (r.ref or "")
                for r in step.sources), f"{word}: a commentary quoted from its page"
 
 
-def test_ruling_a_sol_stays_parked_because_no_text_splits_it():
-    """சொன்னான்: மயிலைநாதர் says only that it does not take the இன் இடைநிலை; விசாகப்
-    பெருமாளையர் lists it among roots that change in many ways. Nothing names the change, so it stays
-    parked (D-023)."""
-    f = decoder.decode_formation("சொன்னான்", MorphAnalysis(lemma="சொல்", pos="verb",
-                                                          tags=["fin", "past=ன்", "3sgm=ஆன்"]))
-    [step] = [s for s in f.round_trip.steps if s.rule == "stem_alternant"]
-    assert step.status == "parked" and "not named" in step.effect
+def test_the_table_lists_kinds_of_change_never_verbs():
+    """D-030 replaced D-029's per-verb list. A rule names a change, not a root: no entry may carry
+    a lemma, and the old list is gone."""
+    t = punarchi.table()
+    assert "stem_alternants" not in t
+    for r in punarchi.vikaram_rules():
+        assert "lemma" not in r and r["applies"] in ("stem", "boundary"), r["id"]
+        assert r["kind"] and r["examples"], r["id"]
 
 
-def test_ruling_a_never_generates_a_stem_change_from_the_join_alone():
-    """The ல் → ற் join would turn கொல் into *கொற்றான், but the verb is கொன்றான். So stem changes
-    are LISTED per verb in punarchi.json, each with its own citation; none is produced by rule."""
-    lemmas = {e["lemma"] for e in punarchi.table()["stem_alternants"]["entries"]}
-    assert {"நில்", "கொள்", "கல்", "கேள்", "வில்"} <= lemmas
-    assert "கொல்" not in lemmas and "சொல்" not in lemmas
+@pytest.mark.parametrize("rule", [r["id"] for r in json.loads(
+    config.GRAMMAR_PUNARCHI_FILE.read_text("utf-8"))["pakuthi_vikaram"]["rules"]])
+def test_every_example_a_rule_gives_is_rebuilt_by_that_rule(rule):
+    """The commentators' own examples are the fixtures: each one decodes with its rule."""
+    r = punarchi.rules()[rule]
+    for word in r["examples"]:
+        if word in _VIKARAM:
+            assert _VIKARAM[word][3] == rule, word
+
+
+def test_roots_of_one_shape_change_differently_and_the_word_decides():
+    """விசாகப் பெருமாளையர் (நன்னூல் 137, p. 114): 'ஒரு நிகராகிய பகுதிகள் பலவிதமாக விகாரப்படுதலால்'
+    — கல், நில், சொல் are alike but give கற்றான், நின்றான், சொன்னான். So the root's shape cannot pick
+    the change. Joining கல் + ற் + ஆன் may give either; analysing a word picks the one that rebuilds
+    IT, and only that one."""
+    built = punarchi.joins_all("நில்", "ற்", "ஆன்", kinds=["stem", "idainilai", "vikuthi"], verb=True)
+    assert {"நின்றான்", "நிற்றான்"} <= built
+    assert _verb("நின்றான்", "நில்", "past=ற்").components[0].surface == "நின்"
+    assert _verb("கற்றான்", "கல்", "past=ற்").components[0].surface == "கற்"
+
+
+def test_sol_follows_nil_and_its_tense_letter_is_cited():
+    """Saran, 2026-11-25 (D-030): சொல் → சொன் follows the same pattern as நில் → நின். The change is
+    Tholkappiyam's ல் before a nasal (புள்ளிமயங்கியல் 71, 72); the ன் after it is a tense letter
+    outside நன்னூல் 142's four, which 144's 'இவை சில இல' admits — கூழங்கைத் தம்பிரான் names
+    சொன்னான் and போனான் for it. Nothing about சொன்னான் is parked any more."""
+    f = _verb("சொன்னான்", "சொல்", "past=ன்")
+    assert [(c.part, c.form, c.surface) for c in f.components] == [
+        ("பகுதி", "சொல்", "சொன்"), ("இடைநிலை", "ன்", None), ("விகுதி", "ஆன்", None)]
+    assert not any(s.status == "parked" for s in f.round_trip.steps)
+    na = json.loads(config.GRAMMAR_IDAINILAI_FILE.read_text("utf-8"))["idainilai"]["past"]["from_fst"]["ன்"]
+    assert "tampiran-144-sonnan" in na["urai"] and "144" in f.components[1].role
+
+
+def test_na_comes_after_ya_ra_zha_as_the_commentators_examples_show():
+    """Before D-030 the ந் rule fired after a vowel only, and சேர்ந்தான், வாழ்ந்தான், தேய்ந்தான்
+    failed to rebuild. The Nannūl commentators' lists of past forms give the ந் there too."""
+    for word, lemma in (("சேர்ந்தான்", "சேர்"), ("வாழ்ந்தான்", "வாழ்"), ("தேய்ந்தான்", "தேய்")):
+        f = _verb(word, lemma, "past=த்")
+        assert f.round_trip.holds, word
+        assert [c.form for c in f.components] == [lemma, "ந்", "த்", "ஆன்"], word
+
+
+def test_a_catalogued_change_the_engine_does_not_apply_says_why():
+    t = punarchi.table()["pakuthi_vikaram"]
+    applied = {r["id"] for r in t["rules"]}
+    for r in t["catalogued_not_applied"]:
+        assert r["why_not_applied"] and r["id"] not in applied
+        assert set(r["urai"]) <= set(classical.verified_quotations()), r["id"]
+
+
+def test_a_letter_is_counted_as_written():
+    """An உயிர்மெய் is ONE letter. Before 2026-11-25 the count was by code point, so வா was two
+    letters and the one-letter-root rule could never fire."""
+    assert punarchi._letters(punarchi.phonemes("வா")) == 1
+    assert punarchi._letters(punarchi.phonemes("வீடு")) == 2
+    assert punarchi._letters(punarchi.phonemes("காத்திரு")) == 4
+
+
+def test_a_step_cites_the_verses_for_its_own_letter_only():
+    """eetrumei_varumei_thirithal covers ல் and ள், before a hard consonant and before a nasal. A step
+    cites only the நூற்பா for the join it made: சொன்னான் (ல் before ன்) cites புள்ளிமயங்கியல் 71 and 72,
+    கேட்டான் (ள் before ட்) cites 101 and 7."""
+    def verses(word, lemma, tag):
+        [s] = [s for s in _verb(word, lemma, tag).round_trip.steps
+               if s.rule == "eetrumei_varumei_thirithal"]
+        return {r.verse for r in s.sources if r.verse and "உரை" not in r.verse}
+    pulli = "எழுத்ததிகாரம் › புள்ளிமயங்கியல் › நூற்பா "
+    sol = verses("சொன்னான்", "சொல்", "past=ன்")
+    assert {pulli + "71", pulli + "72"} <= sol and not {pulli + "37", pulli + "101"} & sol
+    kel = verses("கேட்டான்", "கேள்", "past=ட்")
+    assert {pulli + "101", pulli + "7"} <= kel and not {pulli + "71", pulli + "102"} & kel

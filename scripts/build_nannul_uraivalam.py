@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Pin the pages of the Nannūl commentaries that our rules cite (D-029).
+"""Pin the pages of the Nannūl commentaries that our rules cite (D-029, D-030).
 
 நன்னூல் உரைவளம், தொகுதி 5 (பதவியல்), ed. முனைவர் இரா. கண்ணன், உலகத் தமிழாராய்ச்சி நிறுவனம், 2010,
 prints every commentator on each பதவியல் நூற்பா side by side: மயிலைநாதர், சங்கர நமச்சிவாயர் with
@@ -42,10 +42,13 @@ SOURCE = {
 # The leaves a quotation in data/classical/verified_quotations.json cites. Add a leaf here before
 # citing a passage on it, then rebuild.
 LEAVES = {
-    114: "விசாகப் பெருமாளையர் on நூற்பா 137 (கல் → கற்றான், செல் → சென்றான்)",
+    114: "விசாகப் பெருமாளையர் on நூற்பா 137: the kinds of change a verb's பகுதி undergoes (D-030)",
+    117: "முகவை இராமானுச கவிராயர் on நூற்பா 137 (the verbs of the 23 roots: தேய்ந்தான், வாழ்ந்தான்)",
     125: "சே. கிருஷ்ணமாசாரியார் on நூற்பா 137 (கல் → கற்றான், கேள் → கேட்டான்)",
     144: "மயிலைநாதர் on நூற்பா 139 (வா, கொள், கொல்/செல்/வெல்)",
     145: "மயிலைநாதர் (cont.) and சங்கர நமச்சிவாயர் – சிவஞான முனிவர் on நூற்பா 139",
+    150: "மோசசு பொன்னையா on நூற்பா 139 (காண் / கண் and the other root variants)",
+    228: "சங்கர நமச்சிவாயர், கூழங்கைத் தம்பிரான் on நூற்பா 144 (இவை சில இல: other tense letters, சொன்னான்)",
 }
 
 

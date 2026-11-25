@@ -4,12 +4,12 @@
     "primary": "Tholkappiyam",
     "primary_ref": "எழுத்ததிகாரம் (புணரியல், உருபியல், குற்றியலுகரப்புணரியல்)",
     "fallback": "Nannūl",
-    "why": "புணர்ச்சி is Tholkappiyam's ground (tamil-grammar.md; DESIGN.md §4a), so each rule cites Tholkappiyam first. Nannūl is cited where it states the same rule more specifically (162 names WHICH உடம்படுமெய்), and is the sole citation only where a search of the pinned எழுத்ததிகாரம் found no Tholkappiyam verse for the rule; each such rule says so in `tholkappiyam_searched`. Two rules rest on the TVA course books (CC BY-SA 4.0, D-021), which state the analysis verbatim; they are marked `textbook`, not `classical`, and a classical source found later takes precedence over them (`supersede_when`).",
+    "why": "புணர்ச்சி is Tholkappiyam's ground (tamil-grammar.md; DESIGN.md §4a), so each rule cites Tholkappiyam first. Nannūl is cited where it states the same rule more specifically (162 names WHICH உடம்படுமெய்), and is the sole citation only where a search of the pinned எழுத்ததிகாரம் found no Tholkappiyam verse for the rule; each such rule says so in `tholkappiyam_searched`. A rule resting on a TVA course book (CC BY-SA 4.0, D-021) that states the analysis verbatim is marked `textbook`, not `classical`, and a classical source found later takes precedence over it; since D-028 and D-030 no rule does.",
     "citation_format": "தொல்காப்பியம் numbers restart per இயல், so a citation is {authority, athikaram, iyal, verse}. நன்னூல் is continuous: {authority, verse}."
   },
   "status_values": {
     "classical": "the rule is stated by a cited நூற்பா, quoted at runtime from the pinned edition",
-    "urai": "the analysis is stated by a classical commentary on Tholkappiyam (நச்சினார்க்கினியர், இளம்பூரணர், சேனாவரையர்), in a passage read against its scan page (`urai` lists ids in data/classical/verified_quotations.json; `urai_scope` says exactly what the passage covers). It ALWAYS outranks a course book (Saran, D-028); a நூற்பா still outranks it",
+    "urai": "the analysis is stated by a classical commentary on Tholkappiyam (நச்சினார்க்கினியர், இளம்பூரணர், சேனாவரையர்) or, where none states it, by a commentary on Nannūl (D-030), in a passage read against its scan page (`urai` lists ids in data/classical/verified_quotations.json; `urai_scope` says exactly what the passage covers). It ALWAYS outranks a course book (Saran, D-028); a நூற்பா still outranks it",
     "textbook": "the analysis is stated verbatim by a TVA course book (CC BY-SA 4.0); no நூற்பா or classical உரை located yet",
     "parked": "the material is real and is NAMED so nothing is dropped, but no cited rule labels it; the label is parked under D-023 and must not be guessed"
   },
@@ -114,13 +114,13 @@
     {
       "id": "idainilai_na",
       "name": "இடைநிலை எழுத்து ந் (கால எழுத்திற்கு ஏற்ற)",
-      "effect": "between a verb's பகுதி and the past tense letter த், an இடைநிலை எழுத்து ந் that suits the tense letter appears (வா → வ + ந் + த் + ஆன் → வந்தான்)",
+      "effect": "between a verb's பகுதி and the past tense letter த், an இடைநிலை எழுத்து ந் that suits the tense letter appears, after a vowel or after ய், ர், ழ் (வா → வ + ந் + த் + ஆன் → வந்தான்; வாழ் + ந் + த் + ஆன் → வாழ்ந்தான்)",
       "status": "urai",
-      "context": "verb, before the past tense letter த்",
+      "context": "verb, before the past tense letter த், after a vowel or after ய், ர், ழ்",
       "part": "இடைநிலை",
       "form": "ந்",
-      "urai": ["nacc-eccha-67-vaa", "nacc-eccha-67-aa-idainilai"],
-      "urai_scope": "நச்சினார்க்கினியர் states it for வந்தான் (p. 467). He has no சந்தி among a verb's parts: every letter between the முதனிலை and the ஈறு that is not the root is an இடைநிலை எழுத்து (the ஆ of உண்ணாநின்றான், p. 469). The rule applies the same reading to the other vowel-final verbs the FST gives (காத்திருந்தாள்). சேனாவரையர் and இளம்பூரணர் do not split this letter out; neither calls it சந்தி.",
+      "urai": ["nacc-eccha-67-vaa", "nacc-eccha-67-aa-idainilai", "visakap-137-examples", "visakap-137-sernthan", "ramanuja-137-theynthan"],
+      "urai_scope": "நச்சினார்க்கினியர் states it for வந்தான் (p. 467). He has no சந்தி among a verb's parts: every letter between the முதனிலை and the ஈறு that is not the root is an இடைநிலை எழுத்து (the ஆ of உண்ணாநின்றான், p. 469). WHERE the ந் comes is read from the Nannūl commentators' lists of past forms (D-030): after a vowel (நடந்தான், மடிந்தான், வெந்தான்), after ழ் (வாழ்ந்தான்), after ர் (சேர்ந்தான், கொணர்ந்தான்) and after ய் (தேய்ந்தான், முகவை இராமானுச கவிராயர் p. 117). Before 2026-11-25 the rule fired after a vowel only, so சேர்ந்தான், வாழ்ந்தான், தேய்ந்தான் failed to rebuild. சேனாவரையர் and இளம்பூரணர் do not split this letter out; neither calls it சந்தி.",
       "ruling": "Saran, 2026-11-25 (D-028): a classical commentary (நச்சினார்க்கினியர், இளம்பூரணர், சேனாவரையர்) ALWAYS takes precedence over a TVA course book.",
       "superseded": {
         "label": "சந்தி (த் surfacing as ந்)",
@@ -157,23 +157,162 @@
       ]
     }
   ],
-  "stem_alternants": {
-    "comment": "How a பகுதி may surface inside a word. Tried only when the பகுதி itself does not rebuild the word. Each entry carries its source; an entry that names the change as விகாரம் says so, one that does not makes no claim about it. An entry with `urai`/`cites` is cited like a join rule: its நூற்பா first, then the commentary passages read on the page (D-029, ruling (a)). Curated paradigm stems (data/verb_paradigms.json) are added at runtime only where no entry here gives that surface; they stay parked (சொல் → சொன் is the one left).",
-    "entries": [
-      {"lemma": "வா", "surface": "வ", "change": "குறுகல் (விகாரம்)", "urai": "nacc-eccha-67-vaa",
-       "source": "நச்சினார்க்கினியர் உரை, சொல். எச்சவியல் 67, p. 467", "quote": "'வா' வென்பது 'வந்தான், வருகின்றான்' என முதனிலை குறுகி",
-       "superseded": "TVA C0212 §5.3.6 ('வா என்னும் பகுதி வ எனக் குறுகியும்') said the same; the commentary outranks it (D-028)"},
-      {"lemma": "காண்", "surface": "கண்", "change": "குறுகல் (விகாரம்)",
-       "source": "TVA C0212, பகுபத உறுப்பு வினா 8", "quote": "கண்டான் – காண்+ட்+ஆன் காண் எனும்பகுதி ‘கண்‘ எனக் குறுகியது"},
-      {"lemma": "வா", "surface": "வரு", "change": "குறுகல் (விகாரம்)", "urai": "nacc-eccha-67-vaa",
-       "source": "நச்சினார்க்கினியர் உரை, சொல். எச்சவியல் 67, p. 467", "quote": "'வா' வென்பது 'வந்தான், வருகின்றான்' என முதனிலை குறுகி",
-       "note": "நச்சினார்க்கினியர் names the change for வருகின்றான் too: the long ஆ of the முதனிலை is shortened (குறுகி). TVA A0212 §2.2.1 gave the split (வா + கிறு + ஏன்) without naming it; the commentary now does (D-028)."},
-      {"lemma": "நில்", "surface": "நின்", "change": "திரிதல் (விகாரம்): ல் → ன், before the ற் that suits it", "urai": ["nacc-vinai-5-nil", "sena-vinai-5-nil", "mayil-139-la-na"], "cites": [{"authority": "Tholkappiyam", "athikaram": "சொல்லதிகாரம்", "iyal": "வினையியல்", "verse": 5, "role": "நச்சினார்க்கினியர் and சேனாவரையர் on this நூற்பா: 'நில்லென்பது லகரம் னகரமாய் … றகரம் பெற்று நிற்கும்'"}, {"authority": "Nannūl", "verse": 139, "role": "விளம்பிய பகுதி வேறு ஆதலும் விதியே — a stated பகுதி may change; the commentators on it give these changes"}], "source": "நச்சினார்க்கினியர், சேனாவரையர் (சொல். வினையியல் 5); மயிலைநாதர் (நன்னூல் 139)", "quote": "நில்லென்பது லகரம் னகரமாய்த் தனக்கேற்ற றகரம் பெற்று நிற்கும்", "urai_scope": "Stated for நில் itself by both Tholkappiyam commentators (the present நின்று; the past நின்றான் has the same stem and ற்). மயிலைநாதர் gives the same change for கொல், செல், வெல். The ற் that follows is the tense letter, listed in நன்னூல் 142."},
-      {"lemma": "கொள்", "surface": "கொண்", "change": "திரிதல் (விகாரம்): ள் → ண்", "urai": ["nacc-eccha-67-kol-l", "mayil-139-kol"], "cites": [{"authority": "Tholkappiyam", "athikaram": "சொல்லதிகாரம்", "iyal": "எச்சவியல்", "verse": 67, "role": "நச்சினார்க்கினியர் on this நூற்பா: 'கொள் ளென்பது, கொண்டான் … ளகாரம் ணகாரமாயும்'"}, {"authority": "Nannūl", "verse": 139, "role": "விளம்பிய பகுதி வேறு ஆதலும் விதியே — a stated பகுதி may change; the commentators on it give these changes"}], "source": "நச்சினார்க்கினியர் (சொல். எச்சவியல் 67, p. 467); மயிலைநாதர் (நன்னூல் 139)", "quote": "கொள்ளென்பகுதி, கொண்டான், கோடு, கோடும் என்புழி ளகாரம் ணகாரமாகியும்", "urai_scope": "Stated for கொள் itself by நச்சினார்க்கினியர் and மயிலைநாதர். The ட் that follows is the tense letter (நன்னூல் 142)."},
-      {"lemma": "கல்", "surface": "கற்", "change": "திரிதல் (விகாரம்): ல் → ற், before a hard consonant", "urai": ["eluthu-pulli-71-la-ra", "sivagnana-139-matteru", "visakap-137-kal"], "cites": [{"authority": "Tholkappiyam", "athikaram": "எழுத்ததிகாரம்", "iyal": "புள்ளிமயங்கியல்", "verse": 71, "role": "லகார இறுதி னகார இயற்றே — a ல்-final word is joined as a ன்-final one"}, {"authority": "Tholkappiyam", "athikaram": "எழுத்ததிகாரம்", "iyal": "புள்ளிமயங்கியல்", "verse": 37, "role": "னகார இறுதி வல்லெழுத்து இயையின் றகாரம் ஆகும் — which before a hard consonant becomes ற்"}, {"authority": "Nannūl", "verse": 227, "role": "ல ள … வலிவரின் ற ட — ல், ள் before a hard consonant become ற், ட்"}, {"authority": "Nannūl", "verse": 139, "role": "விளம்பிய பகுதி வேறு ஆதலும் விதியே — a stated பகுதி may change; the commentators on it give these changes"}], "source": "தொல். எழுத்து. புள்ளிமயங்கியல் 71, 37 (நச்சினார்க்கினியர்); சங்கர நமச்சிவாயர் – சிவஞான முனிவர் and விசாகப் பெருமாளையர் (நன்னூல் 139, 137)", "quote": "கல் – கற்றான் என வீற்றுமெய் வருமெய்யாகத் திரிந்தும்", "urai_scope": "The join is Tholkappiyam's (புள்ளிமயங்கியல் 71 with 37; நச்சினார்க்கினியர்: 'லகரம் றகரமாய்த் திரிந்துமுடியும்', கற்குறை), stated for a பெயர் in a வேற்றுமை join. சங்கர நமச்சிவாயர் and சிவஞான முனிவர் (நன்னூல் 139) place a verb's stem changes in exactly these புணர்ச்சி சந்தி and விகாரம், carried over to the பகுபதம். விசாகப் பெருமாளையர் (நன்னூல் 137) names the verb: 'கல் – கற்றான் என வீற்றுமெய் வருமெய்யாகத் திரிந்தும்'. No Tholkappiyam commentator names கல் itself. The join does NOT decide which ல்-final verbs take it: கொல்/செல்/வெல்/நில் take ன் instead (their own entries), so an entry is listed per verb, never generated."},
-      {"lemma": "வில்", "surface": "விற்", "change": "திரிதல் (விகாரம்): ல் → ற், before a hard consonant", "urai": ["eluthu-pulli-71-la-ra", "sivagnana-139-matteru", "visakap-137-kal"], "cites": [{"authority": "Tholkappiyam", "athikaram": "எழுத்ததிகாரம்", "iyal": "புள்ளிமயங்கியல்", "verse": 71, "role": "லகார இறுதி னகார இயற்றே — a ல்-final word is joined as a ன்-final one"}, {"authority": "Tholkappiyam", "athikaram": "எழுத்ததிகாரம்", "iyal": "புள்ளிமயங்கியல்", "verse": 37, "role": "னகார இறுதி வல்லெழுத்து இயையின் றகாரம் ஆகும் — which before a hard consonant becomes ற்"}, {"authority": "Nannūl", "verse": 227, "role": "ல ள … வலிவரின் ற ட — ல், ள் before a hard consonant become ற், ட்"}, {"authority": "Nannūl", "verse": 139, "role": "விளம்பிய பகுதி வேறு ஆதலும் விதியே — a stated பகுதி may change; the commentators on it give these changes"}], "source": "as கல்; Saran's ruling 2026-08-11 (the root is வில், not விற்)", "quote": "கல் – கற்றான் என வீற்றுமெய் வருமெய்யாகத் திரிந்தும்", "ruling": "Saran, 2026-08-11: விற்றான் = வில் + ற் + ஆன்; வில் becomes விற் by விகாரம் (ல் → ற்) and the ற் that follows is the நூற்பா-142 இடைநிலை. Applied with ruling (a), D-029.", "urai_scope": "The join is Tholkappiyam's (புள்ளிமயங்கியல் 71 with 37; நச்சினார்க்கினியர்: 'லகரம் றகரமாய்த் திரிந்துமுடியும்', கற்குறை), stated for a பெயர் in a வேற்றுமை join. சங்கர நமச்சிவாயர் and சிவஞான முனிவர் (நன்னூல் 139) place a verb's stem changes in exactly these புணர்ச்சி சந்தி and விகாரம், carried over to the பகுபதம். விசாகப் பெருமாளையர் (நன்னூல் 137) names the verb: 'கல் – கற்றான் என வீற்றுமெய் வருமெய்யாகத் திரிந்தும்'. No Tholkappiyam commentator names கல் itself. The join does NOT decide which ல்-final verbs take it: கொல்/செல்/வெல்/நில் take ன் instead (their own entries), so an entry is listed per verb, never generated. No commentator found names வில் → விற்றான்; it is கல்'s case exactly, and Saran's ruling."},
-      {"lemma": "நில்", "surface": "நிற்", "change": "திரிதல் (விகாரம்): ல் → ற், before a hard consonant", "urai": ["eluthu-pulli-71-la-ra", "sivagnana-139-matteru"], "cites": [{"authority": "Tholkappiyam", "athikaram": "எழுத்ததிகாரம்", "iyal": "புள்ளிமயங்கியல்", "verse": 71, "role": "லகார இறுதி னகார இயற்றே — a ல்-final word is joined as a ன்-final one"}, {"authority": "Tholkappiyam", "athikaram": "எழுத்ததிகாரம்", "iyal": "புள்ளிமயங்கியல்", "verse": 37, "role": "னகார இறுதி வல்லெழுத்து இயையின் றகாரம் ஆகும் — which before a hard consonant becomes ற்"}, {"authority": "Nannūl", "verse": 227, "role": "ல ள … வலிவரின் ற ட — ல், ள் before a hard consonant become ற், ட்"}, {"authority": "Nannūl", "verse": 139, "role": "விளம்பிய பகுதி வேறு ஆதலும் விதியே — a stated பகுதி may change; the commentators on it give these changes"}], "source": "தொல். எழுத்து. புள்ளிமயங்கியல் 71, 37 (நச்சினார்க்கினியர்); சங்கர நமச்சிவாயர் – சிவஞான முனிவர் (நன்னூல் 139)", "quote": "லகார ஈற்றுப் பெயர் வன்கணம் வந்துழி … லகரம் றகரமாய்த் திரிந்துமுடியும்", "urai_scope": "நிற்கிறான், நிற்பான்: before க and ப the regular join gives ற், as in கற்கிறான். Before the ற் of the past, the commentators give ன் instead (the நின் entry). The join is Tholkappiyam's (புள்ளிமயங்கியல் 71 with 37; நச்சினார்க்கினியர்: 'லகரம் றகரமாய்த் திரிந்துமுடியும்', கற்குறை), stated for a பெயர் in a வேற்றுமை join. சங்கர நமச்சிவாயர் and சிவஞான முனிவர் (நன்னூல் 139) place a verb's stem changes in exactly these புணர்ச்சி சந்தி and விகாரம், carried over to the பகுபதம். விசாகப் பெருமாளையர் (நன்னூல் 137) names the verb: 'கல் – கற்றான் என வீற்றுமெய் வருமெய்யாகத் திரிந்தும்'. No Tholkappiyam commentator names கல் itself. The join does NOT decide which ல்-final verbs take it: கொல்/செல்/வெல்/நில் take ன் instead (their own entries), so an entry is listed per verb, never generated."},
-      {"lemma": "கேள்", "surface": "கேட்", "change": "திரிதல் (விகாரம்): ள் → ட், before a hard consonant", "urai": ["eluthu-pulli-101-la-ta", "sivagnana-139-matteru", "krishnam-137-kel"], "cites": [{"authority": "Tholkappiyam", "athikaram": "எழுத்ததிகாரம்", "iyal": "புள்ளிமயங்கியல்", "verse": 101, "role": "ளகார இறுதி ணகார இயற்றே — a ள்-final word is joined as a ண்-final one"}, {"authority": "Tholkappiyam", "athikaram": "எழுத்ததிகாரம்", "iyal": "புள்ளிமயங்கியல்", "verse": 7, "role": "ணகார இறுதி வல்லெழுத்து இயையின் டகாரம் ஆகும் — which before a hard consonant becomes ட்"}, {"authority": "Nannūl", "verse": 227, "role": "ல ள … வலிவரின் ற ட — ல், ள் before a hard consonant become ற், ட்"}, {"authority": "Nannūl", "verse": 139, "role": "விளம்பிய பகுதி வேறு ஆதலும் விதியே — a stated பகுதி may change; the commentators on it give these changes"}], "source": "தொல். எழுத்து. புள்ளிமயங்கியல் 101, 7 (நச்சினார்க்கினியர்); சங்கர நமச்சிவாயர் – சிவஞான முனிவர் (நன்னூல் 139); சே. கிருஷ்ணமாசாரியார் (நன்னூல் 137)", "quote": "கல் – கற்றான், கேள் – கேட்டான் என ஈற்றுமெய் வருமெய்யாக திரிந்தும்", "urai_scope": "The join is Tholkappiyam's (புள்ளிமயங்கியல் 101 with 7; நச்சினார்க்கினியர்: 'டகாரமாய்த் திரிந்துமுடியும்', மட்குறை), carried into the பகுபதம் as for கல் (சங்கர நமச்சிவாயர் – சிவஞான முனிவர், நன்னூல் 139). விசாகப் பெருமாளையர் states the pattern ('ஈற்றுமெய் வருமெய்யாகத் திரிதல்', on கல்); சே. கிருஷ்ணமாசாரியார் names கேள் → கேட்டான் with it. No Tholkappiyam commentator names கேள் itself."}
-    ]
+  "pakuthi_vikaram": {
+    "comment": "How a verb's பகுதி changes when it joins the rest of the word (D-030). ONE catalogue of cited changes, not a list of verbs: the engine tries every change on every verb and keeps the split whose join rebuilds the word, so a verb it has never seen (கொன்றான், வென்றான், நீண்டது) is decoded the same way as one it has. The catalogue is விசாகப் பெருமாளையர்'s list of the kinds of change, in his உரை on நன்னூல் 137 (p. 114), each cited first to the Tholkappiyam commentator who states it where one does. Why not a rule per root shape: he says roots of the same shape (கல், நில், சொல்) change in different ways, so they cannot be listed one by one and the change is found from usage (visakap-137-vazhakku). The word in front of the engine IS the usage. `applies`: 'stem' changes the பகுதி before it joins; 'boundary' changes its last letter at the join with the next part (implemented beside the join rules in core/punarchi.py).",
+    "framework": {
+      "statement": "A பகுதி's changes lie within the three changes at a join and the nine விகாரம் (சங்கர நமச்சிவாயர் – சிவஞான முனிவர் on நன்னூல் 139, and four later commentators the same). Tholkappiyam names the three (புணரியல் 7) and the six விகாரம் (சொல். எச்சவியல் 7); Nannūl names them in 154, 155 and 156. Each rule's `kind` is its name among these.",
+      "urai": ["sivagnana-139-matteru", "visakap-137-vazhakku"],
+      "cites": [
+        {"authority": "Tholkappiyam", "athikaram": "எழுத்ததிகாரம்", "iyal": "புணரியல்", "verse": 7, "role": "மெய் பிறிது ஆதல் மிகுதல் குன்றல் — the three changes at a join"},
+        {"authority": "Tholkappiyam", "athikaram": "சொல்லதிகாரம்", "iyal": "எச்சவியல்", "verse": 7, "role": "வலித்தல் மெலித்தல் விரித்தல் தொகுத்தல் நீட்டல் குறுக்கல் — the six விகாரம் of joined words"},
+        {"authority": "Nannūl", "verse": 154, "role": "தோன்றல் திரிதல் கெடுதல் — the three changes at a join"},
+        {"authority": "Nannūl", "verse": 155, "role": "வலித்தல் மெலித்தல் நீட்டல் குறுக்கல் விரித்தல் தொகுத்தல் — the six விகாரம் (stated for verse; the commentators on 139 carry them into the பகுபதம்)"},
+        {"authority": "Nannūl", "verse": 156, "role": "ஒருமொழி மூவழிக் குறைதலும் அனைத்தே — with 155, the nine விகாரம்"}
+      ]
+    },
+    "rules": [
+      {
+        "id": "muthanilai_kurukkal",
+        "name": "முதனிலை குறுகல்",
+        "kind": "குறுக்கல்",
+        "applies": "stem",
+        "effect": "the பகுதி's long first vowel becomes short (வா → வ: வந்தான்; தா → த: தந்தான்; காண் → கண்: கண்டான்)",
+        "examples": {"வந்தான்": "வா → வ", "தந்தான்": "தா → த", "வெந்தான்": "வே → வெ", "நொந்தான்": "நோ → நொ", "கண்டான்": "காண் → கண்"},
+        "status": "urai",
+        "urai": ["nacc-eccha-67-vaa", "visakap-137-tha-saa", "ponnaiya-139-kaan"],
+        "urai_scope": "நச்சினார்க்கினியர் states it for வா ('முதனிலை குறுகி', p. 467), and notes the root does NOT shorten in the negative (வாரான், தாரான்); the engine applies a change only when the word needs it, so வாரான் keeps வா. விசாகப் பெருமாளையர் states it for a one-letter long root (தனிநெடில்: தா → தந்தான்). For a longer root only மோசசு பொன்னையா (20th century) names an instance, காண் / கண் (கண்டான்); he calls it a root variant and does not name the change, so the label here is the earlier commentators' குறுகல்.",
+        "cites": [
+          {"authority": "Tholkappiyam", "athikaram": "சொல்லதிகாரம்", "iyal": "எச்சவியல்", "verse": 67, "role": "the அதிகாரப் புறனடை; நச்சினார்க்கினியர்'s உரை on it names the change for வா (முதனிலை குறுகி) and கொள் (ளகாரம் ணகாரமாயும்)", "final": "ள்"},
+          {"authority": "Tholkappiyam", "athikaram": "சொல்லதிகாரம்", "iyal": "எச்சவியல்", "verse": 7, "role": "வலித்தல் மெலித்தல் விரித்தல் தொகுத்தல் நீட்டல் குறுக்கல் — the six விகாரம் of joined words"},
+          {"authority": "Nannūl", "verse": 155, "role": "வலித்தல் மெலித்தல் நீட்டல் குறுக்கல் விரித்தல் தொகுத்தல் — the six விகாரம் (stated for verse; the commentators on 139 carry them into the பகுபதம்)"},
+          {"authority": "Nannūl", "verse": 137, "role": "the நூற்பா that lists the verb roots; விசாகப் பெருமாளையர்'s உரை on it lists the kinds of change a பகுதி undergoes"}
+        ]
+      },
+      {
+        "id": "muthal_aa_ekaram",
+        "name": "முதல் ஆகாரம் எகரமாதல்",
+        "kind": "திரிதல்",
+        "applies": "stem",
+        "effect": "the பகுதி's first ஆ becomes எ (சா → செ: செத்தான்)",
+        "examples": {"செத்தான்": "சா → செ"},
+        "status": "urai",
+        "urai": ["visakap-137-tha-saa"],
+        "urai_scope": "விசாகப் பெருமாளையர் names the one example, சா → செத்தான். His page prints ஏகாரம் (long) where the example shows எ; the rule follows the example.",
+        "cites": [
+          {"authority": "Tholkappiyam", "athikaram": "எழுத்ததிகாரம்", "iyal": "புணரியல்", "verse": 7, "role": "மெய் பிறிது ஆதல் மிகுதல் குன்றல் — the three changes at a join"},
+          {"authority": "Nannūl", "verse": 154, "role": "தோன்றல் திரிதல் கெடுதல் — the three changes at a join"},
+          {"authority": "Nannūl", "verse": 137, "role": "the நூற்பா that lists the verb roots; விசாகப் பெருமாளையர்'s உரை on it lists the kinds of change a பகுதி undergoes"}
+        ]
+      },
+      {
+        "id": "kurukki_uyirmei_virithal",
+        "name": "தனிநெடில் குறுகி ஓருயிர்மெய் விரிதல்",
+        "kind": "குறுக்கல், விரித்தல்",
+        "applies": "stem",
+        "effect": "a one-letter long பகுதி shortens and one உயிர்மெய் is added after it (வா → வரு: வருகிறான், வருவான்)",
+        "examples": {"வருகிறான்": "வா → வரு", "வருவான்": "வா → வரு", "தருவான்": "தா → தரு"},
+        "status": "urai",
+        "urai": ["visakap-137-vaa-varu", "nacc-eccha-67-vaa", "ponnaiya-139-kaan"],
+        "urai_scope": "விசாகப் பெருமாளையர் states it for வா → வருகிறான்; நச்சினார்க்கினியர் names வருகின்றான் under the same 'முதனிலை குறுகி'; மோசசு பொன்னையா lists தருவான். The text says 'one உயிர்மெய்' without naming it, so the engine takes the letter the word itself shows there (ரு in every example) and adds exactly one.",
+        "cites": [
+          {"authority": "Tholkappiyam", "athikaram": "சொல்லதிகாரம்", "iyal": "எச்சவியல்", "verse": 67, "role": "the அதிகாரப் புறனடை; நச்சினார்க்கினியர்'s உரை on it names the change for வா (முதனிலை குறுகி) and கொள் (ளகாரம் ணகாரமாயும்)", "final": "ள்"},
+          {"authority": "Tholkappiyam", "athikaram": "சொல்லதிகாரம்", "iyal": "எச்சவியல்", "verse": 7, "role": "வலித்தல் மெலித்தல் விரித்தல் தொகுத்தல் நீட்டல் குறுக்கல் — the six விகாரம் of joined words"},
+          {"authority": "Nannūl", "verse": 155, "role": "வலித்தல் மெலித்தல் நீட்டல் குறுக்கல் விரித்தல் தொகுத்தல் — the six விகாரம் (stated for verse; the commentators on 139 carry them into the பகுபதம்)"},
+          {"authority": "Nannūl", "verse": 137, "role": "the நூற்பா that lists the verb roots; விசாகப் பெருமாளையர்'s உரை on it lists the kinds of change a பகுதி undergoes"}
+        ]
+      },
+      {
+        "id": "naduk_kuril_neettal",
+        "name": "நடுக்குறில் நீளல்",
+        "kind": "நீட்டல்",
+        "applies": "stem",
+        "effect": "a short vowel inside the பகுதி, neither its first nor its last, becomes long (விரவு → விராவு: விராவினான்)",
+        "examples": {"விராவினான்": "விரவு → விராவு"},
+        "status": "urai",
+        "urai": ["visakap-137-kona-virava"],
+        "urai_scope": "விசாகப் பெருமாளையர் names the one example, விரவு → விராவினான்.",
+        "cites": [
+          {"authority": "Tholkappiyam", "athikaram": "சொல்லதிகாரம்", "iyal": "எச்சவியல்", "verse": 7, "role": "வலித்தல் மெலித்தல் விரித்தல் தொகுத்தல் நீட்டல் குறுக்கல் — the six விகாரம் of joined words"},
+          {"authority": "Nannūl", "verse": 155, "role": "வலித்தல் மெலித்தல் நீட்டல் குறுக்கல் விரித்தல் தொகுத்தல் — the six விகாரம் (stated for verse; the commentators on 139 carry them into the பகுபதம்)"},
+          {"authority": "Nannūl", "verse": 137, "role": "the நூற்பா that lists the verb roots; விசாகப் பெருமாளையர்'s உரை on it lists the kinds of change a பகுதி undergoes"}
+        ]
+      },
+      {
+        "id": "ayal_kurukki_ra_virithal",
+        "name": "முதலயல் எழுத்துக் குறுகி ரகரமெய் விரிதல்",
+        "kind": "குறுக்கல், விரித்தல்",
+        "applies": "stem",
+        "effect": "in a two-letter பகுதி ending in a long vowel, that vowel shortens and ர் is added (கொணா → கொணர்: கொணர்ந்தான்)",
+        "examples": {"கொணர்ந்தான்": "கொணா → கொணர்"},
+        "status": "urai",
+        "urai": ["visakap-137-kona-virava"],
+        "urai_scope": "விசாகப் பெருமாளையர் names the one example, கொணா → கொணர்ந்தான்.",
+        "cites": [
+          {"authority": "Tholkappiyam", "athikaram": "சொல்லதிகாரம்", "iyal": "எச்சவியல்", "verse": 7, "role": "வலித்தல் மெலித்தல் விரித்தல் தொகுத்தல் நீட்டல் குறுக்கல் — the six விகாரம் of joined words"},
+          {"authority": "Nannūl", "verse": 155, "role": "வலித்தல் மெலித்தல் நீட்டல் குறுக்கல் விரித்தல் தொகுத்தல் — the six விகாரம் (stated for verse; the commentators on 139 carry them into the பகுபதம்)"},
+          {"authority": "Nannūl", "verse": 137, "role": "the நூற்பா that lists the verb roots; விசாகப் பெருமாளையர்'s உரை on it lists the kinds of change a பகுதி undergoes"}
+        ]
+      },
+      {
+        "id": "eetrumei_varumei_thirithal",
+        "name": "ஈற்றுமெய் வருமெய்யாகத் திரிதல்",
+        "kind": "திரிதல்",
+        "applies": "boundary",
+        "effect": "a verb's final ல் or ள் changes as the எழுத்ததிகாரம் join changes it: before a hard consonant ல் → ற், ள் → ட் (கல் + ற் → கற்றான், கேள் + ட் → கேட்டான், நில் + ப் → நிற்பான்); before a nasal ல் → ன், ள் → ண் (சொல் + ன் → சொன்னான்)",
+        "examples": {"கற்றான்": "கல் → கற்", "கேட்டான்": "கேள் → கேட்", "விற்றான்": "வில் → விற்", "கற்கிறான்": "கல் → கற்", "நிற்பான்": "நில் → நிற்", "சொன்னான்": "சொல் → சொன்"},
+        "status": "urai",
+        "urai": ["eluthu-pulli-71-la-ra", "eluthu-pulli-101-la-ta", "sivagnana-139-matteru", "visakap-137-kal", "visakap-137-vazhakku", "krishnam-137-kel"],
+        "urai_final": {"eluthu-pulli-71-la-ra": "ல்", "eluthu-pulli-101-la-ta": "ள்", "visakap-137-kal": "ல்", "visakap-137-vazhakku": "ல்"},
+        "urai_scope": "The join is Tholkappiyam's: a ல்-final word joins as a ன்-final one (புள்ளிமயங்கியல் 71), which becomes ற் before a hard consonant (37) and ன் before a nasal (72); ள் likewise through ண் (101, 7, 102). Tholkappiyam states it for a பெயர் in a join; சங்கர நமச்சிவாயர் – சிவஞான முனிவர் say a பகுதி's changes lie in these சந்தி and விகாரம், carried into the பகுபதம் (மாட்டெறிந்து). விசாகப் பெருமாளையர் names the verb change (கல் → கற்றான்) and lists சொல் → சொன்னான் with it; சே. கிருஷ்ணமாசாரியார் names கேள் → கேட்டான்.",
+        "ruling": "Saran, 2026-08-11: விற்றான் = வில் + ற் + ஆன்; the root is வில், not விற். Saran, 2026-11-25 (D-030): சொல் → சொன் follows the same pattern as நில் → நின், and a Nannūl commentator is the fallback where no Tholkappiyam commentator states a change.",
+        "cites": [
+          {"authority": "Tholkappiyam", "athikaram": "எழுத்ததிகாரம்", "iyal": "புள்ளிமயங்கியல்", "verse": 71, "role": "லகார இறுதி னகார இயற்றே — a ல்-final word is joined as a ன்-final one", "final": "ல்"},
+          {"authority": "Tholkappiyam", "athikaram": "எழுத்ததிகாரம்", "iyal": "புள்ளிமயங்கியல்", "verse": 37, "role": "னகார இறுதி வல்லெழுத்து இயையின் றகாரம் ஆகும் — before a hard consonant: ற்", "final": "ல்", "before": "vallinam"},
+          {"authority": "Tholkappiyam", "athikaram": "எழுத்ததிகாரம்", "iyal": "புள்ளிமயங்கியல்", "verse": 72, "role": "மெல்லெழுத்து இயையின் னகாரம் ஆகும் — before a nasal: ன்", "final": "ல்", "before": "mellinam"},
+          {"authority": "Tholkappiyam", "athikaram": "எழுத்ததிகாரம்", "iyal": "புள்ளிமயங்கியல்", "verse": 101, "role": "ளகார இறுதி ணகார இயற்றே — a ள்-final word is joined as a ண்-final one", "final": "ள்"},
+          {"authority": "Tholkappiyam", "athikaram": "எழுத்ததிகாரம்", "iyal": "புள்ளிமயங்கியல்", "verse": 7, "role": "ணகார இறுதி வல்லெழுத்து இயையின் டகாரம் ஆகும் — before a hard consonant: ட்", "final": "ள்", "before": "vallinam"},
+          {"authority": "Tholkappiyam", "athikaram": "எழுத்ததிகாரம்", "iyal": "புள்ளிமயங்கியல்", "verse": 102, "role": "மெல்லெழுத்து இயையின் ணகாரம் ஆகும் — before a nasal: ண்", "final": "ள்", "before": "mellinam"},
+          {"authority": "Nannūl", "verse": 227, "role": "ல ள … வலிவரின் ற ட … மெலி மேவின் ன ண — ல், ள் become ற், ட் before a hard consonant and ன், ண் before a nasal"},
+          {"authority": "Nannūl", "verse": 139, "role": "விளம்பிய பகுதி வேறு ஆதலும் விதியே — a stated பகுதி may change; its commentators place such changes within the three சந்தி and nine விகாரம் of 154–156 (sivagnana-139-matteru)"}
+        ]
+      },
+      {
+        "id": "eetrumei_inam_thirithal",
+        "name": "ஈற்றுமெய் வருமெழுத்திற்கு இனமாகத் திரிதல்",
+        "kind": "திரிதல்",
+        "applies": "boundary",
+        "effect": "a verb's final ல் or ள் becomes the nasal of the hard consonant that follows: ல் → ன் before ற், ள் → ண் before ட் (நில் → நின்றான், செல் → சென்றான், கொள் → கொண்டான்)",
+        "examples": {"நின்றான்": "நில் → நின்", "சென்றான்": "செல் → சென்", "கொன்றான்": "கொல் → கொன்", "வென்றான்": "வெல் → வென்", "போன்றான்": "போல் → போன்", "சான்றான்": "சால் → சான்", "கொண்டான்": "கொள் → கொண்", "நீண்டது": "நீள் → நீண்"},
+        "status": "urai",
+        "urai": ["nacc-vinai-5-nil", "sena-vinai-5-nil", "nacc-eccha-67-kol-l", "mayil-139-la-na", "mayil-139-kol", "visakap-137-kal", "krishnam-137-kel"],
+        "urai_final": {"nacc-vinai-5-nil": "ல்", "sena-vinai-5-nil": "ல்", "mayil-139-la-na": "ல்", "visakap-137-kal": "ல்", "nacc-eccha-67-kol-l": "ள்", "mayil-139-kol": "ள்"},
+        "urai_scope": "நச்சினார்க்கினியர் and சேனாவரையர் state it for நில் (சொல். வினையியல் 5), நச்சினார்க்கினியர் for கொள் (எச்சவியல் 67); மயிலைநாதர் for கொல், செல், வெல், கொள் (நன்னூல் 139). விசாகப் பெருமாளையர் names the kind of change (செல் → சென்றான்: 'ஈற்றுமெய் வருமெழுத்திற்கு இனமாகத் திரிதல்') and gives போல் → போன்றான், சால் → சான்றான்; சே. கிருஷ்ணமாசாரியார் adds கொள் → கொண்டான். Every example pairs ல் with ற் and ள் with ட், so the rule is held to those two pairs.",
+        "cites": [
+          {"authority": "Tholkappiyam", "athikaram": "சொல்லதிகாரம்", "iyal": "வினையியல்", "verse": 5, "role": "நச்சினார்க்கினியர் and சேனாவரையர் on this நூற்பா: 'நில்லென்பது லகரம் னகரமாய் … றகரம் பெற்று நிற்கும்'", "final": "ல்"},
+          {"authority": "Tholkappiyam", "athikaram": "சொல்லதிகாரம்", "iyal": "எச்சவியல்", "verse": 67, "role": "the அதிகாரப் புறனடை; நச்சினார்க்கினியர்'s உரை on it names the change for வா (முதனிலை குறுகி) and கொள் (ளகாரம் ணகாரமாயும்)", "final": "ள்"},
+          {"authority": "Nannūl", "verse": 139, "role": "விளம்பிய பகுதி வேறு ஆதலும் விதியே — a stated பகுதி may change; its commentators place such changes within the three சந்தி and nine விகாரம் of 154–156 (sivagnana-139-matteru)"},
+          {"authority": "Nannūl", "verse": 137, "role": "the நூற்பா that lists the verb roots; விசாகப் பெருமாளையர்'s உரை on it lists the kinds of change a பகுதி undergoes"}
+        ]
+      }
+    ],
+    "catalogued_not_applied": [
+      {
+        "id": "muthal_neettal",
+        "name": "முதல் நீளல்",
+        "kind": "நீட்டல்",
+        "effect": "the பகுதி's first vowel lengthens (செல் → சேறல், கொள் → கோடல், கொல் → கோறு)",
+        "urai": ["visakap-137-neettal", "mayil-139-la-na"],
+        "why_not_applied": "every example also drops or changes the final ல்/ள் before a vowel (சே-றல், கோ-டல்), which no rule here states yet; applying the lengthening alone would rebuild none of them."
+      },
+      {
+        "id": "iyalbum_vikaramum_urazhthal",
+        "name": "இயல்பும் விகாரமும் உறழ்தல்",
+        "kind": "நீட்டல், தொகுத்தல்",
+        "effect": "the பகுதி appears both unchanged and changed (முழுகு → முழுகினான், மூழ்கினான்)",
+        "urai": ["visakap-137-kona-virava"],
+        "why_not_applied": "the changed form lengthens the first vowel AND drops the second (மூழ்கு); the text names the alternation, not the two steps."
+      }
+    ],
+    "fallback": "Where no Tholkappiyam commentator (நச்சினார்க்கினியர், இளம்பூரணர், சேனாவரையர்) states a change, a Nannūl commentator is cited (Saran, 2026-11-25, D-030), from நன்னூல் உரைவளம் 5, read on the scan page. Each rule's `urai_scope` says which commentator states which example."
   }
 }

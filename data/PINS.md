@@ -140,9 +140,9 @@ edition prints சி. கணேசையர்'s notes after each இயல்,
 note headings; the notes and his running heads are not in any unit. Its PDF is the publisher's typeset
 file, so its OCR is cleaner than the other two, and pages are read by rendering, not image extraction.
 
-**Nannūl commentaries, cited pages (D-029).** Built by `scripts/build_nannul_uraivalam.py` into
+**Nannūl commentaries, cited pages (D-029, D-030).** Built by `scripts/build_nannul_uraivalam.py` into
 `data/classical/nannul_uraivalam_padaviyal.json`: archive.org's OCR of ONLY the leaves a verified
-quotation cites (114, 125, 144, 145), from நன்னூல் உரைவளம் தொகுதி 5 (பதவியல்), ed. இரா. கண்ணன்,
+quotation cites (114, 117, 125, 144, 145, 150, 228), from நன்னூல் உரைவளம் தொகுதி 5 (பதவியல்), ed. இரா. கண்ணன்,
 உலகத் தமிழாராய்ச்சி நிறுவனம், 2010, archive.org `tdl.6041-5` (TVA collection, CC BY-SA 4.0 under D-021).
 Mirror: design repo `sources/classical/nannul-urai/`. archive.org's MD5s matched on download.
 
