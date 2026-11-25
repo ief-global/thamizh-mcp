@@ -140,6 +140,18 @@ edition prints சி. கணேசையர்'s notes after each இயல்,
 note headings; the notes and his running heads are not in any unit. Its PDF is the publisher's typeset
 file, so its OCR is cleaner than the other two, and pages are read by rendering, not image extraction.
 
+**Nannūl commentaries, cited pages (D-029).** Built by `scripts/build_nannul_uraivalam.py` into
+`data/classical/nannul_uraivalam_padaviyal.json`: archive.org's OCR of ONLY the leaves a verified
+quotation cites (114, 125, 144, 145), from நன்னூல் உரைவளம் தொகுதி 5 (பதவியல்), ed. இரா. கண்ணன்,
+உலகத் தமிழாராய்ச்சி நிறுவனம், 2010, archive.org `tdl.6041-5` (TVA collection, CC BY-SA 4.0 under D-021).
+Mirror: design repo `sources/classical/nannul-urai/`. archive.org's MD5s matched on download.
+
+| File | sha256 | Retrieved |
+|---|---|---|
+| `_djvu.xml` (OCR, read by the build) | `3fbda381be96…` | 2026-11-25 |
+| `_page_numbers.json` (leaf = printed page in this volume) | `53a82da4cd8b…` | 2026-11-25 |
+| `.pdf` (scan, 152,227,490 bytes; for checking quotations) | `299da0ea203d…` | 2026-11-25 |
+
 ⚠️ **Nannūl upstream was REVISED after we pinned it** (primary sha256 `bfc865ddc2e4…` → `b970b4ee13b4…`,
 seen 2026-11-24). The parser reads the new page into a different text for all but 14 verses, so the
 builder now REFUSES to overwrite `nannul.json` and keeps the verified pin. Adopting the revision is

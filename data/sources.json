@@ -248,6 +248,23 @@
       "pin": "archive.org _djvu.xml + _page_numbers.json + scan PDF per edition; sha256 in data/PINS.md and scripts/build_sol_urai.py; mirror in the design repo sources/classical/sol-urai/",
       "supersession": null,
       "notes": "Graded B, not A, for the PIN, not the commentators: the text is unproof-read OCR. A passage may back a rule only after it is read against the scan page and listed in data/classical/verified_quotations.json. A proof-read etext of the same commentary would grade A."
+    },
+    "nannul_uraivalam": {
+      "name": "Nannūl பதவியல் — commentaries (நன்னூல் உரைவளம் 5, cited pages)",
+      "adapter": null,
+      "used_by": ["core/classical.py", "data/grammar/punarchi.json"],
+      "authority": "Nannūl",
+      "tier": "anchor",
+      "grade": "B",
+      "licence": "CC BY-SA 4.0 — Tamil Virtual Academy collection (D-021); scan from the Tamil Digital Library via archive.org/details/TamilVirtualAcademy (tdl.6041-5). The commentaries are classical and 19th-century works; the 2010 edition (உலகத் தமிழாராய்ச்சி நிறுவனம்) is not reproduced, only the cited commentary passages.",
+      "licence_status": "stated",
+      "redistribution": "serve-with-attribution",
+      "attribution_required": true,
+      "attribution": "Scan: Tamil Digital Library, Tamil Virtual Academy, Government of Tamil Nadu (CC BY-SA 4.0). Edition: நன்னூல் உரைவளம் 5, ed. இரா. கண்ணன், உலகத் தமிழாராய்ச்சி நிறுவனம், 2010.",
+      "maintenance": "stable — pinned scan and OCR of a fixed edition; drift detectable via scripts/build_nannul_uraivalam.py --verify",
+      "pin": "archive.org _djvu.xml + _page_numbers.json + scan PDF; sha256 in data/PINS.md and scripts/build_nannul_uraivalam.py; mirror in the design repo sources/classical/nannul-urai/",
+      "supersession": null,
+      "notes": "Graded B for the pin: unproof-read OCR, and only the cited pages are excerpted. The commentators differ in age and weight: மயிலைநாதர் (oldest), சங்கர நமச்சிவாயர் with சிவஞான முனிவர், then விசாகப் பெருமாளையர், ஆறுமுக நாவலர் and later. Each quotation names its commentator (data/classical/verified_quotations.json). Tholkappiyam and its commentators come first where they speak (D-029)."
     }
   }
 }

@@ -491,21 +491,23 @@ def _round_trip(word: str, comps: list[FormationComponent], sandhi: list[SandhiE
 
 
 def _stem_step(lemma: str, alt: dict) -> JoinStep:
-    """A பகுதி that surfaces in another shape (வா → வ). Cited when a source states it; when the
-    source does not name the change, no விகாரம் label is asserted."""
+    """A பகுதி that surfaces in another shape (வா → வ, கல் → கற்). Cited when a source states it:
+    the நூற்பா first, then the commentary passages read on the page (D-028, D-029). When no source
+    names the change, no விகாரம் label is asserted and the step is parked."""
     textbook = alt.get("source", "").startswith("TVA")
-    if alt.get("urai"):
-        # A classical commentary names the change (D-028); it is quoted as read on the scan page.
-        src = classical.cite_urai(alt["urai"], f"பகுதி {lemma} → {alt['surface']}")
+    label = f"பகுதி {lemma} → {alt['surface']}"
+    if alt.get("urai") or alt.get("cites"):
+        sources = punarchi.cite_record(alt, label)
     else:
-        src = SourceRef(name="thamizh-mcp cited rule tables" if textbook
-                        else "thamizh-mcp curated verb paradigms",
-                        tier="anchor",
-                        ref=alt.get("source", "") + (" (Tamil Virtual Academy, CC BY-SA 4.0)" if textbook else ""),
-                        verse_text=alt.get("quote"))
+        sources = [SourceRef(name="thamizh-mcp cited rule tables" if textbook
+                             else "thamizh-mcp curated verb paradigms",
+                             tier="anchor",
+                             ref=alt.get("source", "") + (" (Tamil Virtual Academy, CC BY-SA 4.0)"
+                                                          if textbook else ""),
+                             verse_text=alt.get("quote"))]
     change = alt.get("change")
     effect = f"பகுதி {lemma} appears as {alt['surface']}" + (f" — {change}" if change else
                                                               " — the change is not named")
+    status = "urai" if alt.get("urai") else "textbook" if textbook else "parked"
     return JoinStep(rule="stem_alternant", name="பகுதி வடிவம்", at=lemma, effect=effect,
-                    status="urai" if alt.get("urai") else "textbook" if textbook else "parked",
-                    sources=[src])
+                    status=status, sources=sources)

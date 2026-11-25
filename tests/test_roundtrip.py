@@ -253,3 +253,54 @@ def _urai_examples(iyal, verse):
 def test_the_commentarys_worked_examples_rebuild(iyal, verse, word, parts, kinds):
     assert word in _urai_examples(iyal, verse), f"{word} is not in the உரை on {iyal} {verse}"
     assert word in punarchi.joins_all(*parts, kinds=kinds)
+
+
+# --- ruling (a): roots whose last consonant changes (D-029) -------------------------------------
+
+_RULING_A = {
+    # word: (lemma, tense tag, stem as it surfaces, the tense letter after it)
+    "நின்றான்": ("நில்", "past=ற்", "நின்", "ற்"),
+    "கொண்டான்": ("கொள்", "past=ட்", "கொண்", "ட்"),
+    "கற்றான்": ("கல்", "past=ற்", "கற்", "ற்"),
+    "கேட்டான்": ("கேள்", "past=ட்", "கேட்", "ட்"),
+    "விற்றான்": ("வில்", "past=ற்", "விற்", "ற்"),
+    "நிற்பான்": ("நில்", "fut=ப்", "நிற்", "ப்"),
+    "கற்பான்": ("கல்", "fut=ப்", "கற்", "ப்"),
+}
+
+
+@pytest.mark.parametrize("word", _RULING_A)
+def test_ruling_a_the_stem_change_is_named_and_cited(word):
+    """நில் → நின் and கொள் → கொண் are stated for those verbs by நச்சினார்க்கினியர், சேனாவரையர் and
+    மயிலைநாதர். கல் → கற், கேள் → கேட், வில் → விற் are Tholkappiyam's ல்/ள் join (புள்ளிமயங்கியல் 71,
+    101) carried into the பகுபதம், as சங்கர நமச்சிவாயர் and சிவஞான முனிவர் say such changes are,
+    with விசாகப் பெருமாளையர் naming கல் → கற்றான். Each split is root + tense letter + ஆன்."""
+    lemma, tag, stem, letter = _RULING_A[word]
+    f = decoder.decode_formation(word, MorphAnalysis(lemma=lemma, pos="verb",
+                                                    tags=["fin", tag, "3sgm=ஆன்"]))
+    assert f.round_trip.holds, word
+    assert [(c.part, c.form, c.surface) for c in f.components] == [
+        ("பகுதி", lemma, stem), ("இடைநிலை", letter, None), ("விகுதி", "ஆன்", None)]
+    [step] = [s for s in f.round_trip.steps if s.rule == "stem_alternant"]
+    assert step.status == "urai" and "திரிதல்" in step.effect, word
+    assert step.sources[0].authority == "Tholkappiyam", f"{word}: the நூற்பா leads"
+    assert any("உரை" in (r.verse or "") and r.verse_text and "p. " in (r.ref or "")
+               for r in step.sources), f"{word}: a commentary quoted from its page"
+
+
+def test_ruling_a_sol_stays_parked_because_no_text_splits_it():
+    """சொன்னான்: மயிலைநாதர் says only that it does not take the இன் இடைநிலை; விசாகப்
+    பெருமாளையர் lists it among roots that change in many ways. Nothing names the change, so it stays
+    parked (D-023)."""
+    f = decoder.decode_formation("சொன்னான்", MorphAnalysis(lemma="சொல்", pos="verb",
+                                                          tags=["fin", "past=ன்", "3sgm=ஆன்"]))
+    [step] = [s for s in f.round_trip.steps if s.rule == "stem_alternant"]
+    assert step.status == "parked" and "not named" in step.effect
+
+
+def test_ruling_a_never_generates_a_stem_change_from_the_join_alone():
+    """The ல் → ற் join would turn கொல் into *கொற்றான், but the verb is கொன்றான். So stem changes
+    are LISTED per verb in punarchi.json, each with its own citation; none is produced by rule."""
+    lemmas = {e["lemma"] for e in punarchi.table()["stem_alternants"]["entries"]}
+    assert {"நில்", "கொள்", "கல்", "கேள்", "வில்"} <= lemmas
+    assert "கொல்" not in lemmas and "சொல்" not in lemmas

@@ -107,24 +107,31 @@ def rules() -> dict[str, dict]:
     return {r["id"]: r for r in table().get("join_rules", [])}
 
 
-def cite(rule_id: str) -> list[SourceRef]:
-    """The rule's citations as SourceRefs, each quoting its நூற்பா from the pinned edition."""
-    r = rules().get(rule_id, {})
+def cite_record(r: dict, label: str) -> list[SourceRef]:
+    """A rule's or a stem alternant's citations as SourceRefs: its நூற்பா first, each quoted from
+    the pinned edition, then the verified commentary passages, then a course book if any."""
     refs: list[SourceRef] = []
     for c in r.get("cites", []):
         if c.get("authority") == "Tholkappiyam":
             refs.append(classical.cite_tholkappiyam(
-                c["athikaram"], c["iyal"], c["verse"], f"{r.get('name')} — {c.get('role', '')}"))
+                c["athikaram"], c["iyal"], c["verse"], f"{label} — {c.get('role', '')}"))
         elif c.get("authority") == "Nannūl":
-            refs.append(classical.cite_nannul(c["verse"], f"{r.get('name')} — {c.get('role', '')}"))
-    for qid in r.get("urai", []):
-        refs.append(classical.cite_urai(qid, r.get("name", rule_id)))
+            refs.append(classical.cite_nannul(c["verse"], f"{label} — {c.get('role', '')}"))
+    urai = r.get("urai", [])
+    for qid in [urai] if isinstance(urai, str) else urai:
+        refs.append(classical.cite_urai(qid, label))
     tb = r.get("textbook")
     if tb:
         refs.append(SourceRef(name="thamizh-mcp cited rule tables", tier="anchor",
                               ref=tb["source"] + " (Tamil Virtual Academy, CC BY-SA 4.0)",
                               verse_text=tb["quote"]))
     return refs
+
+
+def cite(rule_id: str) -> list[SourceRef]:
+    """The rule's citations as SourceRefs, each quoting its நூற்பா from the pinned edition."""
+    r = rules().get(rule_id, {})
+    return cite_record(r, r.get("name", rule_id))
 
 
 @lru_cache(maxsize=1)

@@ -25,7 +25,7 @@ integration. Loop: work on `develop` here → push → open PR `develop → main
 milestones. After any history rewrite, other clones must `git reset --hard origin/main`
 (not merge/rebase).
 
-## Current state (2026-11-25) — 385 tests pass (the FST tests skip without live foma)
+## Current state (2026-11-25) — 395 tests pass (the FST tests skip without live foma)
 
 **Everything below is live and merged to `main`.** Nine MCP tools + web/REST + CLI over ONE engine
 (blueprint §8 — the web head needed zero engine changes, which validated that design).
@@ -100,8 +100,14 @@ analysis that rebuilds (செய்தான்'s FST lists a noun reading firs
 - Statuses: `classical` (a நூற்பா states it) · `urai` (a classical commentary states it, in a passage
   listed in `verified_quotations.json`) · `textbook` (a TVA course book states it verbatim) · `parked`
   (named, never labelled). **Precedence (Saran, D-028): நூற்பா > உரை > course book, always**; `_cost`
-  prefers the higher one when two splits rebuild. Only காண் → கண் is still `textbook`. A stem alternant from `verb_paradigms.json` is `parked` too: its
-  விகாரம் is ruling (a). நில் → நி + ன்ற் looks odd because the curated marker is `ன்ற்`; that is ruling (a).
+  prefers the higher one when two splits rebuild. Only காண் → கண் is still `textbook`.
+- **Ruling (a) is settled on the texts (D-029), except சொல்.** A root whose last consonant changes is
+  ONE விகாரம் in the பகுதி plus a listed tense letter: நில் → நின் + ற், கொள் → கொண் + ட் (stated for those
+  verbs by நச்சினார்க்கினியர், சேனாவரையர், மயிலைநாதர்); கல் → கற் + ற், கேள் → கேட் + ட், வில் → விற் + ற்
+  (Tholkappiyam's ல்/ள் join, புள்ளிமயங்கியல் 71/37 and 101/7, which சங்கர நமச்சிவாயர் – சிவஞான முனிவர
+  say carries into the பகுபதம்; விசாகப் பெருமாளையர் names கல் → கற்றான்). They are LISTED per verb in
+  `punarchi.json → stem_alternants`, never generated: the same join would give *கொற்றான் for கொல்.
+  A curated stem with no entry stays `parked`; சொல் → சொன் is the last one.
 
 ### How origin works now (the hard-won part)
 
@@ -150,12 +156,9 @@ Orthography proves a word is **not native**; it can NEVER say which language it 
 
 0. ⛔ **BLOCKED ON SARAN — open rulings. Do NOT guess these**; they are recorded as `inferred`/open
    precisely so they stay marked until he rules.
-   - **(a) The four verb-paradigm entries** — `data/grammar/concept_map.json` →
-     `concepts.விகாரம்.inferred`. **விற் is RULED (2026-08-11): the root is வில், ல்→ற் is the
-     விகாரம், and the following ற் is a நூற்பா-142-listed இடைநிலை** — so it joins கல்/கேள்/நில்/கொள்
-     rather than standing alone. **சொல், கல், கேள் remain open.** `verb_paradigms.json` is
-     deliberately NOT restructured yet: the lemma is the lookup key, so விற்→வில் lands with the
-     other three as one change.
+   - ~~**(a) The verb-paradigm stem changes.**~~ **SETTLED ON THE TEXTS 2026-11-25 (D-029)** for நில்,
+     கொள், கல், கேள், வில் (விற் → வில், Saran's 2026-08-11 ruling, now applied). **சொல் → சொன்னான்
+     stays open**: மயிலைநாதர் says only that it does not take the இன் இடைநிலை, and no text splits it.
    - **(b) The 15 running-head candidates** in `data/PINS.md` — our reading is a PROPOSAL. Note it
      contradicts itself in two places: 139/242 share a structure but get opposite verdicts, as do
      181/182.
@@ -174,19 +177,16 @@ Orthography proves a word is **not native**; it can NEVER say which language it 
    verb சந்தி; the slots were relabelled (Defects 1 and 2 above). சேனாவரையர் names the tense letters
    "ஈற்றுமிசை நிற்கும் எழுத்து" (vol. 2 p. 11) and does not split them further; his editor சி. கணேசையர்
    notes that, unlike Nannūl, he does not call them இடைநிலை. இளம்பூரணர் is silent on tense letters.
-   **Still open, ruling (a):** the commentaries give the SHAPE for ல்/ள் roots: ல் → ன் + ற் (கொல்/செல்/
-   வெல், நச்சினார்க்கினியர் p. 467; நில், சேனாவரையர் vol. 2 p. 13) and ள் → ண் (கொள், p. 467). They do NOT
-   cover சொல் (சொன்னான்), கல், கேள், or வில்/விற், so `verb_paradigms.json` is unchanged. Next: look for
-   those roots in the three உரை before applying anything.
+   Ruling (a) was then settled from these and the Nannūl commentaries (D-029; see Statuses above).
 ✓ ~~**The ந் surface-reconciliation fix**~~ **DONE 2026-11-25 (D-025)** — the round-trip engine.
-   Natural next steps on it: non-finite forms once ruling (a) allows, and the noun joins the sweep
+   Natural next steps on it: non-finite forms (no longer blocked on ruling (a)), and the noun joins the sweep
    does not cover yet (இன் சாரியை, so வீட்டிற்கு moves from "out of scope" to rebuildable).
 2. **Loanword lexicon** — the last unprincipled branch is native-by-default (no Grantha + legal
    phonotactics + no attestation ⇒ assumed native). It is one of the 3 wrong (பட்டன், English
    button, no en.wiktionary page) and part of the 11 unknowns. Needs a lexicon, not a rule.
    **Madras Tamil Lexicon** (dsal.uchicago.edu) is the intended ANCHOR upgrade over Wiktionary.
 3. **FST coverage:** non-finite forms (infinitive கொடுக்க, verbal participle கொடுத்து, adjectival
-   கொடுக்கும்) + more lemmas beyond the 11 curated. ⛔ Non-finite is BLOCKED on ruling (a) below.
+   கொடுக்கும்) + more lemmas beyond the 11 curated. Ruling (a) no longer blocks it (D-029).
    வீட்டிற்கு is NOT on this list — Saran ruled it புணர்ச்சி-engine work, not பகுபத உறுப்பிலக்கணம்.
 4. **Storage backend abstraction (D-013)** — `store/knowledge.py` is SQLite-coupled (`import sqlite3`,
    `INSERT OR REPLACE`, `AUTOINCREMENT`). `thamizh-ai.org` runs Postgres; **the MCP product keeps
@@ -332,6 +332,11 @@ labelled it சந்தி on TVA C0212 §5.3.5; **D-028 relabelled it இட�
   `classical.tholkappiyam_urai("சொல்லதிகாரம்", இயல், n, commentator=…)` (default நச்சினார்க்கினியர்).
   The scans and raw OCR are mirrored in the design repo `sources/classical/sol-urai/` (not in git; see
   its README). Guard: `tests/test_sol_urai.py`.
+- **Nannūl commentaries (D-029):** `data/classical/nannul_uraivalam_padaviyal.json` holds ONLY the pages a
+  rule cites, from நன்னூல் உரைவளம் 5 (பதவியல்; மயிலைநாதர், சங்கர நமச்சிவாயர் – சிவஞான முனிவர், விசாகப்
+  பெருமாளையர் and later, side by side), archive.org `tdl.6041-5`. Built by `scripts/build_nannul_uraivalam.py`
+  (add a leaf to `LEAVES` before citing it); mirror in the design repo `sources/classical/nannul-urai/`.
+  This edition numbers one lower in places (its 138 is our 139): quotations use OUR number.
 - **Grammar rule tables:** `data/grammar/*.json` — each with `source_priority` + நூற்பா citations.
   `punarchi.json` holds the JOIN rules the round-trip uses (`core/punarchi.py`, guard `tests/test_roundtrip.py`).
 - **TVA material is CC BY-SA 4.0 (D-021, 2026-11-24)** — derived data may ship with attribution and

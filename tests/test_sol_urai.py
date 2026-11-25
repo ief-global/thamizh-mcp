@@ -106,10 +106,21 @@ def test_verified_quotations_are_still_in_their_units():
     assert vq["quotations"]
     for q in vq["quotations"]:
         d = _load(q["artifact"])
-        u = next(x for x in d["units"] if x["aligned_to"] == q["unit"])
-        assert (q.get("volume"), q["leaf"]) in [(p.get("volume"), p["leaf"]) for p in u["pages"]], \
-            q["as_printed"][:30]
-        a, b = _skel(q["as_printed"]), _skel(u["verse"] + u["urai"])
+        if "excerpts" in d:
+            # A page-excerpt artifact (the Nannūl commentaries, D-029): the passage is on its leaf.
+            assert q["commentator"] and q["nannul_verse"], q["id"]
+            [ex] = [e for e in d["excerpts"] if e["leaf"] == q["leaf"]]
+            body = ex["text"]
+        else:
+            u = next(x for x in d["units"] if x["aligned_to"] == q["unit"])
+            if "leaf" in q:
+                assert (q.get("volume"), q["leaf"]) in [(p.get("volume"), p["leaf"])
+                                                        for p in u.get("pages", [])], q["id"]
+            else:
+                # Only a proof-read etext may be quoted without a scan page (D-024).
+                assert "proof-read" in q["verified_against"], q["id"]
+            body = u["verse"] + u["urai"]
+        a, b = _skel(q["as_printed"]), _skel(body)
         found = sum(m.size for m in difflib.SequenceMatcher(None, a, b, autojunk=False)
                     .get_matching_blocks())
         assert found / len(a) >= 0.9, q["as_printed"][:30]
@@ -121,7 +132,9 @@ def test_quotation_ids_are_unique_and_every_rule_citation_resolves():
     assert len(ids) == len(set(ids))
     g = json.loads((config.GRAMMAR_PUNARCHI_FILE).read_text("utf-8"))
     cited = [i for r in g["join_rules"] for i in r.get("urai", [])]
-    cited += [e["urai"] for e in g["stem_alternants"]["entries"] if e.get("urai")]
+    for e in g["stem_alternants"]["entries"]:
+        u = e.get("urai") or []
+        cited += [u] if isinstance(u, str) else u
     assert cited and set(cited) <= set(ids)
 
 
