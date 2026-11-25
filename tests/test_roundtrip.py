@@ -188,12 +188,24 @@ def test_tholkappiyam_is_cited_first_wherever_it_is_cited():
                 f"{r['id']} cites only Nannūl, so it must record that Tholkappiyam was searched")
 
 
-def test_parked_material_is_never_given_a_label():
+def test_a_parked_rule_never_carries_a_label():
+    for r in punarchi.table()["join_rules"]:
+        if r["status"] == "parked":
+            assert not r.get("part"), f"{r['id']} is parked, so it must not name an உறுப்பு"
+
+
+def test_strong_verb_doubling_is_a_santhi_and_marked_provisional():
+    """Ruling (d), closed 2026-11-25 (D-026): TVA C0212 §5.3.5 labels the slot சந்தி. The rule says
+    in the table that a classical சொல்லதிகாரம் உரை would take precedence."""
+    rule = punarchi.rules()["irattitha_otru"]
+    assert rule["status"] == "textbook" and rule["part"] == "சந்தி"
+    assert "§5.3.5" in rule["textbook"]["source"]
+    assert "சொல்லதிகாரம்" in rule["supersede_when"] and "PRECEDENCE" in rule["supersede_when"]
     for word in ("படித்தான்", "படிக்கிறான்", "படிப்பான்", "பார்த்தான்", "கொடுத்தான்", "செய்வித்தான்"):
         f = _decode(word)
-        unlabelled = [c for c in f.components if c.part is None]
-        assert len(unlabelled) == 1 and unlabelled[0].authority is None, word
-        assert all(c.part != "சந்தி" for c in f.components), word
+        assert all(c.part is not None for c in f.components), word
+        assert [c.part for c in f.components].count("சந்தி") == 1, word
+        assert not any(s.status == "parked" for s in f.round_trip.steps), word
 
 
 # --- fixtures from நச்சினார்க்கினியர்'s உரை: the commentary's own worked examples -------------

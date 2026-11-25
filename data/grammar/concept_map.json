@@ -138,24 +138,24 @@
           "authority": "Nannūl",
           "verse": 133,
           "text": "பகுதி விகுதி இடைநிலை சாரியை சந்தி விகாரம் ஆறினும் ஏற்பவை முன்னி புணர்ப்ப முடியும் எப்பதங்களும்",
-          "states": "சந்தி is named as one of the six உறுப்பு. ⚠️ NOTE: no verse located so far gives சந்தி a positional definition the way 141 does for இடைநிலை and 243 does for சாரியை. Its identification currently rests on Saran's ruling plus the elimination argument below. A TEXTBOOK does (found 2026-11-25): TVA C0212 §5.3.5 ‘சந்தி பெரும்பாலும் முதனிலை (பகுதி)க்கும் இடைநிலைக்கும் இடையில் வரும். பகுதிக்கும் விகுதிக்கும் இடையிலும் சிறுபான்மை வரக்கூடும்’ (example நட + த் + தல்). A course book is not a நூற்பா or a classical உரை, so under D-023 it is recorded, not applied."
+          "states": "சந்தி is named as one of the six உறுப்பு. ⚠️ NOTE: no verse located so far gives சந்தி a positional definition the way 141 does for இடைநிலை and 243 does for சாரியை. Its identification currently rests on Saran's ruling plus the elimination argument below. A TEXTBOOK does (found 2026-11-25): TVA C0212 §5.3.5 ‘சந்தி பெரும்பாலும் முதனிலை (பகுதி)க்கும் இடைநிலைக்கும் இடையில் வரும். பகுதிக்கும் விகுதிக்கும் இடையிலும் சிறுபான்மை வரக்கூடும்’ (example நட + த் + தல்). APPLIED since 2026-11-25 (D-026): Saran ruled the course book a sufficient text for now; a classical உரை on சொல்லதிகாரம், when found, takes precedence."
         }
       ],
       "inferred": [
         {
           "claim": "In a strong-verb form such as கொடு + த் + த் + ஆன், the FIRST doubled consonant is the சந்தி and the SECOND is the இடைநிலை.",
           "derivation": "By elimination among the six of நூற்பா 133: (a) only ONE of the two த் can be the இடைநிலை, because 142 lists the past இடைநிலை as single த்/ட்/ற்/இன்; (b) it is not a சாரியை — த் is absent from 244's inventory and this is not the பதம்–விகுதி junction 243 describes; (c) it is not a விகாரம், because 154 makes விகாரம் the three EVENTS தோன்றல்/திரிதல்/கெடுதல், not a segment; (d) it is not the பகுதி or விகுதி. சந்தி is what remains.",
-          "status": "OPEN — PARKED under D-023 (2026-11-24). Saran's 2026-08-08 entry ('The first த் is சந்தி and second த் is (இறந்த) இடைநிலை. சந்தி mostly comes in between பகுதி & இடைநிலை') is WITHDRAWN as a ruling: the label must come from a rule found in the texts. Its positional heuristic matches TVA C0212 §5.3.5 almost word for word (see `stated`), the strongest text found so far, but a course book. The round-trip engine names the doubled consonant with NO part label meanwhile (data/grammar/punarchi.json → irattitha_otru, status parked)."
+          "status": "SETTLED 2026-11-25 (D-026) on TEXT, provisionally. The label சந்தி now rests on TVA C0212 §5.3.5 (see `stated`), which Saran ruled a sufficient source until an authentic classical உரை on சொல்லதிகாரம் is found; that உரை takes PRECEDENCE if it says otherwise (open item). Saran's 2026-08-08 entry ('The first த் is சந்தி and second த் is (இறந்த) இடைநிலை. சந்தி mostly comes in between பகுதி & இடைநிலை') stays withdrawn as a ruling (D-023); it agrees with the text, which is now the authority. The round-trip engine labels the doubled consonant சந்தி (data/grammar/punarchi.json → irattitha_otru, status textbook)."
         },
         {
           "claim": "A சந்தி is never itself doubled, and neither is a சாரியை.",
           "derivation": "Not derivable from any verse located so far.",
-          "status": "OPEN — PARKED under D-023 (2026-11-24). Recorded 2026-08-08 as Saran's ruling ('சந்தி won't double. Normally doubling won't come for சந்தி or சாரியை.'); withdrawn as a ruling together with the claim above, since it supports the same label. Not used by the engine."
+          "status": "WITHDRAWN under D-023 (2026-11-24); not needed by D-026. Recorded 2026-08-08 as Saran's ruling ('சந்தி won't double. Normally doubling won't come for சந்தி or சாரியை.'); withdrawn as a ruling together with the claim above, since it supports the same label. Not used by the engine."
         }
       ],
       "used_by": [
         "core/punarchi.py santhi_tha_na (the ந் of வந்தான், TVA C0212 §5.3.6)",
-        "core/punarchi.py irattitha_otru (the doubled consonant, parked, NOT labelled சந்தி)"
+        "core/punarchi.py irattitha_otru (the doubled consonant, labelled சந்தி on TVA C0212 §5.3.5, D-026, provisional)"
       ]
     },
     "விகாரம்": {

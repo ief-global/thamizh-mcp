@@ -172,9 +172,12 @@ async def main():
             no_rebuild.append((word, rt.rebuilt if rt else "?", rt.unaccounted if rt else ""))
         else:
             parked = sum(s.status == "parked" for s in rt.steps)
+            textbook = sum(s.status == "textbook" for s in rt.steps)
+            tags = ", ".join(t for t in (f"{textbook} textbook" if textbook else "",
+                                         f"{parked} parked" if parked else "") if t)
             decoded.append((word, " + ".join(
                 f"{c.form}{'→' + c.surface if c.surface else ''}({c.part or 'unlabelled'})"
-                for c in comps) + (f"   [{parked} parked]" if parked else "")))
+                for c in comps) + (f"   [{tags}]" if tags else "")))
 
     # Saran's ruling 2026-08-08: forms whose split turns on a சாரியை/உருபு புணர்ச்சி (வீட்டிற்கு)
     # belong to the **புணர்ச்சி engine**, not to பகுபத உறுப்பிலக்கணம். They are not decoder gaps, so
