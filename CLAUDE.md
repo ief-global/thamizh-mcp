@@ -15,8 +15,9 @@ of a hand-maintained dictionary. Public repo: github.com/ief-global/thamizh-mcp
 
 ## Git identity — use everywhere, no exceptions
 Commit as **Saran Saravanan <saravanan3@duck.com>**, GitHub **ssaravanan3**.
-`git config --global` is already set to this on this box. NEVER commit under the
-legacy `asaravanan75@gmail.com` / `asaravanan75-eng`. Verify: `git log --format='%an <%ae>' -1`.
+`git config --global` is already set to this on this box. Any other author address is wrong: stop
+and fix it before pushing. Never write a personal email address into this public repo.
+Verify: `git log --format='%an <%ae>' -1`.
 
 ## Branch workflow
 `main` = stable, **protected** (PR-only, no force-push, no delete). `develop` =
@@ -40,12 +41,18 @@ milestones. After any history rewrite, other clones must `git reset --hard origi
 `enrich_word` `explain_formation` `explain_grammar` `refresh_sources`. Only optional
 `validate_pure_tamil`/`generate_forms`/`transliterate` remain from blueprint §6.
 
-### Measured quality (108-word everyday sweep, re-measured 2026-08-11 — unchanged)
+### Measured quality (108-word everyday sweep, re-measured 2026-11-24)
 
 | | result |
 |---|---|
-| **Origin** | 94 correct · 11 honest `unknown` · **1 wrong** (பட்டன்; was 59/30/17 → 82/23/1 → 87/18/1 → now) |
+| **Origin** | 91 correct · 12 honest `unknown` · **3 wrong** (பட்டன், மனிதன், காலம்; was 59/30/17 → 82/23/1 → 87/18/1 → 94/11/1 on 2026-08-11 → now) |
 | **Formation** | 26/29 **in-scope** decoded · 3 gaps (`கொடுக்க` `கொடுத்து` `கொடுக்கும்` non-finite) · `வீட்டிற்கு` is **out of scope**, not a gap — புணர்ச்சி engine owns it (Saran's ruling 2026-08-08) |
+
+⚠️ **The 2026-11-24 origin drop is UPSTREAM DRIFT, not a code change** — en.wiktionary was edited under
+three sweep words. மனிதன் is now marked borrowed from **Prakrit** (we say `loanword`; ruling (e) below).
+காலம்'s Sanskrit origin moved to the new `{{af|ta|sa:…}}` / `{{ety|…}}` template style, which
+`adapters/etymology.py` does not read, so it falls through to native-by-default — **a parser gap, ours
+to fix.** கொடு now states cognates only → honest `unknown`. Per-word table: design repo `CODE-STATUS.md`.
 
 ⚠️ **The formation figure overstates quality — see KNOWN DECODER DEFECTS below.** The sweep counts a word as decoded if it yields MORE THAN ONE component; it never checks the split is right.
 
@@ -155,13 +162,18 @@ Orthography proves a word is **not native**; it can NEVER say which language it 
    - **(c) எச்சவினை விகுதி** — FOUND: தொல். சொல். வினையியல் 31 and நன்னூல் 343 both enumerate the
      class, so this is a Tholkappiyam-FIRST citation. Open part: they name the FORMS, not the விகுதி
      letters, and **நன்னூல் 140 lists `து` where `vikuthi.json` (following TVA) has `உ`**.
-   - **(d) What the doubled `த்` slot is called** — see KNOWN DECODER DEFECTS above.
+   - **(d) What the doubled `த்` slot is called** — see KNOWN DECODER DEFECTS above. ⚠️ Our own records
+     disagree here: `idainilai.json`'s `sandhi_rule` (2026-08-02) says சந்தி, its `known_gap` (08-08)
+     says not சந்தி, and the memory note (08-11) says first த் = சந்தி, second = இடைநிலை. Ask once, then
+     make all three say the same thing.
+   - **(e) Does வடசொல் cover Prakrit borrowings?** en.wiktionary now gives மனிதன் as Prakrit-borrowed
+     (2026-08-25); the classifier maps any non-Sanskrit source to `loanword`.
 
 1. **▶ NEXT — the ந் surface-reconciliation fix** (defect 1 above). Unblocked by Saran's 2026-08-11
    ruling, and it should ship with a guard test asserting a decoded formation rebuilds its own
    surface or declares a gap. Landing it will expose defect 2, which is blocked on ruling (d).
 2. **Loanword lexicon** — the last unprincipled branch is native-by-default (no Grantha + legal
-   phonotactics + no attestation ⇒ assumed native). It is the 1 remaining wrong (பட்டன், English
+   phonotactics + no attestation ⇒ assumed native). It is one of the 3 wrong (பட்டன், English
    button, no en.wiktionary page) and part of the 11 unknowns. Needs a lexicon, not a rule.
    **Madras Tamil Lexicon** (dsal.uchicago.edu) is the intended ANCHOR upgrade over Wiktionary.
 3. **FST coverage:** non-finite forms (infinitive கொடுக்க, verbal participle கொடுத்து, adjectival
