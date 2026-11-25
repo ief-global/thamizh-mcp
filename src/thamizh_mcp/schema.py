@@ -153,10 +153,15 @@ class Meaning(BaseModel):
 
 
 class FormationComponent(BaseModel):
-    part: ComponentPart
+    # None = material the word really has, NAMED so nothing is dropped, but which no cited rule
+    # labels yet (D-023: the strong-verb doubled ஒற்று). A label is never guessed to fill the slot.
+    part: Optional[ComponentPart]
     form: str
     role: Optional[str] = None
     authority: Optional[Authority] = None   # six-part labels: Nannūl; underlying elements: Tholkappiyam
+    # How this உறுப்பு appears in THIS word, when that differs from its form (வா → வ in வந்தான்;
+    # கிறு → கிற் before a vowel). Set by the round-trip engine; None when the form appears as is.
+    surface: Optional[str] = None
 
 
 class SandhiEvent(BaseModel):
@@ -165,11 +170,36 @@ class SandhiEvent(BaseModel):
     authority: Optional[Authority] = None   # புணர்ச்சி/விகாரம்: Tholkappiyam (எழுத்ததிகாரம், புணரியல்)
 
 
+JoinStatus = Literal["classical", "textbook", "parked"]
+
+
+class JoinStep(BaseModel):
+    """One join the round-trip engine applied to rebuild the word (data/grammar/punarchi.json)."""
+    rule: str                     # the rule id in punarchi.json
+    name: str
+    at: str                       # the boundary, e.g. "தூங்கு | இன்"
+    effect: str                   # what the join did there, in words
+    # classical = a நூற்பா states it · textbook = a TVA course book states it verbatim ·
+    # parked = the material is named but no cited rule labels it (D-023)
+    status: JoinStatus
+    sources: list[SourceRef] = Field(default_factory=list)   # each quotes its நூற்பா; [] if parked
+
+
+class RoundTrip(BaseModel):
+    """D-023: a split is valid only if joining its parts under the same rules rebuilds the word."""
+    holds: bool
+    rebuilt: str                  # what joining the parts gives; equals the word when `holds`
+    steps: list[JoinStep] = Field(default_factory=list)
+    unaccounted: Optional[str] = None   # letters of the word no part or rule accounts for
+    note: Optional[str] = None
+
+
 class Formation(BaseModel):
     word_type: WordType = "unknown"
     components: list[FormationComponent] = Field(default_factory=list)
     sandhi: list[SandhiEvent] = Field(default_factory=list)
     sources: list[SourceRef] = Field(default_factory=list)
+    round_trip: Optional[RoundTrip] = None
 
 
 class GrammarCase(BaseModel):

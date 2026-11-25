@@ -25,7 +25,7 @@ integration. Loop: work on `develop` here → push → open PR `develop → main
 milestones. After any history rewrite, other clones must `git reset --hard origin/main`
 (not merge/rebase).
 
-## Current state (2026-11-24) — 279 tests pass (5 skip without live foma)
+## Current state (2026-11-25) — 360 tests pass (the FST tests skip without live foma)
 
 **Everything below is live and merged to `main`.** Nine MCP tools + web/REST + CLI over ONE engine
 (blueprint §8 — the web head needed zero engine changes, which validated that design).
@@ -33,6 +33,7 @@ milestones. After any history rewrite, other clones must `git reset --hard origi
 | Layer | What |
 |---|---|
 | Anchors | ThamizhiMorph FST via `flookup` · curated verb paradigms (`data/verb_paradigms.json`) · pinned Tholkappiyam + Nannūl (`data/classical/`), **read at RUNTIME so claims QUOTE their நூற்பா** (`core/classical.py`, D-018) · cited grammar tables (`data/grammar/`) |
+| Round-trip | **`core/punarchi.py` + `data/grammar/punarchi.json` (D-023, D-025)** — every formation must rebuild its word under cited join rules, or it declares a gap |
 | Evolving | ta.wiktionary (meanings) · **en.wiktionary (etymology → source language)** · S2PT (native equivalents, PROVISIONAL — licence unstated) |
 | Store | zero-config SQLite, per-claim provenance + `transactions` gold log (on by default) |
 | Registry | **`data/sources.json` (D-017)** — every source's evidential GRADE (A–D) and legal REDISTRIBUTION MODE, as independent axes. `core/sources.py` stamps the grade onto every `SourceRef`; the web app shows it. |
@@ -41,12 +42,12 @@ milestones. After any history rewrite, other clones must `git reset --hard origi
 `enrich_word` `explain_formation` `explain_grammar` `refresh_sources`. Only optional
 `validate_pure_tamil`/`generate_forms`/`transliterate` remain from blueprint §6.
 
-### Measured quality (108-word everyday sweep, re-measured 2026-11-24)
+### Measured quality (108-word everyday sweep, re-measured 2026-11-25)
 
 | | result |
 |---|---|
 | **Origin** | 92 correct · 12 honest `unknown` · **2 wrong** (காலம், பட்டன்; was 59/30/17 → 82/23/1 → 87/18/1 → 94/11/1 on 2026-08-11 → 91/12/3 on 2026-11-24 before ruling (e) → now) |
-| **Formation** | 26/29 **in-scope** decoded · 3 gaps (`கொடுக்க` `கொடுத்து` `கொடுக்கும்` non-finite) · `வீட்டிற்கு` is **out of scope**, not a gap — புணர்ச்சி engine owns it (Saran's ruling 2026-08-08) |
+| **Formation** | 26/29 **in-scope** decoded AND rebuild their word (17 on cited joins alone, 9 with one parked element) · 3 gaps (`கொடுக்க` `கொடுத்து` `கொடுக்கும்` non-finite) · `வீட்டிற்கு` is **out of scope**, not a gap — புணர்ச்சி engine owns it (Saran's ruling 2026-08-08) |
 
 ⚠️ **The 2026-11-24 origin drop is UPSTREAM DRIFT, not a code change** — en.wiktionary was edited under
 three sweep words. மனிதன் is now marked borrowed from **Prakrit** — resolved by ruling (e): it is now classed **பிராகிருதம்**.
@@ -54,58 +55,47 @@ three sweep words. மனிதன் is now marked borrowed from **Prakrit** �
 `adapters/etymology.py` does not read, so it falls through to native-by-default — **a parser gap, ours
 to fix.** கொடு now states cognates only → honest `unknown`. Per-word table: design repo `CODE-STATUS.md`.
 
-⚠️ **The formation figure overstates quality — see KNOWN DECODER DEFECTS below.** The sweep counts a word as decoded if it yields MORE THAN ONE component; it never checks the split is right.
+The formation figure now means something it did not before 2026-11-25: a word counts only if its
+split **rebuilds the word** (D-023). The same 26 pass, but five of them (வந்தான், வந்தனன், வந்தார்கள்,
+வந்தீர்கள், நடந்தன) used to pass with a letter missing. "Parked" = a doubled consonant named without a
+part label (8 words) or a curated stem whose change is unnamed under ruling (a) (சொன்னான்).
 
 Re-run: `uv run python scripts/quality_sweep.py` (network on; ~3 min). It is the only honest
 read on quality — expected labels inside are ASSESSMENTS, not authority, and need Saran's eye.
 ⚠️ It MUST use `default_engine()`: a hand-built `Engine` omits `morph_fallback=VerbParadigmAdapter()`
 and the 11 covered irregular verbs then look like FST gaps.
 
-### ⚠️ KNOWN DECODER DEFECTS — found 2026-08-11, both still OPEN
+### The round-trip engine (D-023, built 2026-11-25 as D-025)
 
-Neither of these is among the 3 "no analysis" gaps. **They affect words the sweep counts as
-DECODED**, which is why the formation figure reads better than the decoder actually is.
+**A split is valid only if joining its parts back, under the SAME rules, rebuilds the word.**
+`core/punarchi.py` finds the split by SYNTHESIS: it tries the joins in `data/grammar/punarchi.json` at
+each boundary between the FST's parts and keeps a split only when the join reproduces the word
+exactly. `Formation.round_trip` carries `holds`, `rebuilt`, every `JoinStep` (rule, boundary, effect,
+status, quoted verse) and, on failure, the `unaccounted` letters. The engine decodes the first FST
+analysis that rebuilds (செய்தான்'s FST lists a noun reading first) and raises a formation Gap if none does.
 
-**1 · The formation decode never checks its answer against the word.** `decode_formation()` builds
-components from FST TAGS ONLY and never reconstructs the surface to compare. Anything present in the
-word but absent from the tags is dropped in silence. Found by Saran via **காத்திருந்தாள்**, which
-decodes as `காத்திரு + த் + ஆள்` — **the ந் is missing entirely.**
-
-Root cause: the FST's `past=த்` is a tense CATEGORY, not the surface letters. It returns the *same
-tag* for `ந்த` (காத்திருந்தாள், இருந்தான், அமர்ந்தான், நடந்தது), for `த்த` (படித்தான், பார்த்தான்)
-and for plain `த` (செய்தான்). The decoder treats that tag as if it were the surface.
-
-- **Saran's ruling 2026-08-11:** `காத்திருந்தாள் = காத்திரு(பகுதி) + ந்(சந்தி) + த்(இடைநிலை) + ஆள்(விகுதி)`.
-  This agrees with **நன்னூல் 142**, which lists the past இடைநிலை as த்/ட்/ற்/இன் only — ந் is not
-  among them, so it cannot BE the இடைநிலை.
-- Affected inside the sweep's own list, all counted as decoded today: வந்தான், வந்தனன், வந்தார்கள்,
-  வந்தீர்கள், நடந்தன.
-- **FIX SITES.** `core/decoder.py` → `decode_formation()`: reconstruct and compare; unaccounted
-  material must be NAMED or declared a gap, never dropped — the module docstring already promises
-  *"a join we cannot classify is left unnamed, never invented"*, which the code cannot honour today
-  because it never sees the join. Then `data/grammar/idainilai.json` → `idainilai.past.from_fst`:
-  the machinery already exists (it maps `த்த்` → சந்தி + இடைநிலை); the nasal clusters `ந்த்`,
-  `ன்ற்`, `ண்ட்` simply have no entries.
-- **`scripts/quality_sweep.py` is blind to this by construction** — it counts a word as decoded if
-  it produces MORE THAN ONE component and never checks the split. Any fix should add a guard that a
-  decoded formation must rebuild its own surface or declare a gap. Expect the headline number to
-  FALL; the current one is measuring the wrong thing.
-
-**2 · `map_idainilai` labels strong-verb doubling as சந்தி — an UNRULED label (PARKED, D-023).**
-`map_idainilai` splits the doubling off AS சந்தி and emits a வல்லினம் மிகுதல் SandhiEvent. No cited rule
-supports that label (`idainilai.json` → `sandhi_rule` now says so). Today படிக்கிறான் still returns
-`படி + க்(சந்தி) + கிறு + ஆன்`.
-
-⛔ **PARKED 2026-11-24 (D-023) — do NOT guess the label, and treat neither earlier entry as a
-ruling.** Saran's direction: the label must come from a rule found in the grammar texts, stated with a
-citation. What the sources say so far: TVA A0212 §2.2.1 shows the four-slot split வா + த் + த் + ஏன்
-without naming slot 3; the listed இடைநிலை (நன்னூல் 142–144) are all single; TVA C0212 §6.3.1's
-பகுதி-இரட்டித்தல் is defined only where there is NO இடைநிலை. Candidate source for the rule: a classical
-உரை (the எழுத்ததிகாரம் உரை of நச்சினார்க்கினியர் is now pinned, D-024; the verb question may need a
-சொல்லதிகாரம் உரை). Fixing defect 1 will EXPOSE this on படித்தான், கொடுத்தான், பார்த்தான், செய்வித்தான்,
-and the label touches every strong-verb form already decoded (கொடுக்கிறான், படிக்கிறான், படிப்பான்,
-கொடுப்பான் …): until a rule is found, the round-trip work should keep the doubled consonant as named
-material WITHOUT asserting a part label it has no source for.
+- **Split and join are one rule set by construction.** Letters ↔ phonemes is தொல். எழுத்து. புணரியல் 36
+  (join: a vowel after a pulli fuses with it) and 37 (split: the consonant takes back its own form).
+  The guard re-renders all 1,602 pinned verses through that bijection.
+- **Each rule cites its நூற்பா by ADDRESS; the text is quoted at runtime.** Tholkappiyam first:
+  புணரியல் 12, 23, 31, 36–38 · உருபியல் 13 · குற்றியலுகரப்புணரியல் 6. Nannūl 164 (உகரம் கெடுதல்) and 219
+  (ம் → nasal) are sole citations only where a search of எழுத்ததிகாரம் found no Tholkappiyam verse,
+  and the table records that search. `tests/test_roundtrip.py` fails a classical rule without a cite.
+- **Fixtures are the commentary's own examples**: மரத்தை, மரத்தொடு, நுகத்தை (உருபியல் 13, where
+  நச்சினார்க்கினியர் himself says they are finished by புணரியல் 31 + 23), மணிக்கு, கிளியழகிது … rebuild.
+- **Defect 1 is FIXED.** காத்திருந்தாள் = காத்திரு + த்(ந்) சந்தி + த் + ஆள். The ந் is a `textbook` rule:
+  TVA C0212 §5.3.6 says it verbatim ("த் என்னும் சந்தி ந் என்று மாற்றம் அடைந்தும்"), and it agrees with
+  Saran's 2026-08-11 ruling and நன்னூல் 142. The same section gives வா → வ (குறுகல்); A0212 §2.2.1
+  pairs வா with வரு (change not named, so no label asserted).
+- **Defect 2 stays PARKED (D-023, ruling (d)).** The strong-verb doubled consonant is now a component
+  with `part: null` ("unlabelled"), so படிக்கிறான் = படி + க்(—) + கிறு + ஆன் rebuilds without any
+  label being claimed; the old சந்தி label and its மிகுதல் event are gone. The strongest text found
+  so far is TVA C0212 §5.3.5, which defines சந்தி by POSITION (between பகுதி and இடைநிலை, e.g.
+  நட + த் + தல்). A course book is not a நூற்பா or a classical உரை, so it is NOT applied; whether it
+  suffices is Saran's call. The verb question likely needs a சொல்லதிகாரம் உரை (not pinned yet).
+- Statuses: `classical` (a நூற்பா states it) · `textbook` (a TVA course book states it verbatim) ·
+  `parked` (named, never labelled). A stem alternant from `verb_paradigms.json` is `parked` too: its
+  விகாரம் is ruling (a). நில் → நி + ன்ற் looks odd because the curated marker is `ன்ற்`; that is ruling (a).
 
 ### How origin works now (the hard-won part)
 
@@ -168,14 +158,14 @@ Orthography proves a word is **not native**; it can NEVER say which language it 
      letters, and **நன்னூல் 140 lists `து` where `vikuthi.json` (following TVA) has `உ`**.
    - **(d) What the doubled `த்` slot is called — PARKED (D-023).** Not to be ruled; to be found as a
      cited rule in the grammar texts. The 2026-08-02 ("சந்தி") and 2026-08-08 ("not சந்தி") entries are
-     WITHDRAWN as rulings. See KNOWN DECODER DEFECTS 2.
+     WITHDRAWN as rulings. The engine names it unlabelled meanwhile; see "The round-trip engine".
    - ~~**(e) Does வடசொல் cover Prakrit borrowings?**~~ **RULED 2026-11-24 (D-022): no.** பிராகிருதம் is
      its own origin class, assigned only when a source names Prakrit (`classifier.PRAKRIT_CODES`).
      Pali is NOT included; it stays `loanword` until ruled.
 
-1. **▶ NEXT — the ந் surface-reconciliation fix** (defect 1 above). Unblocked by Saran's 2026-08-11
-   ruling, and it should ship with a guard test asserting a decoded formation rebuilds its own
-   surface or declares a gap. Landing it will expose defect 2, which is blocked on ruling (d).
+1. ~~**The ந் surface-reconciliation fix**~~ **DONE 2026-11-25 (D-025)** — the round-trip engine.
+   Natural next steps on it: non-finite forms once ruling (a) allows, and the noun joins the sweep
+   does not cover yet (இன் சாரியை, so வீட்டிற்கு moves from "out of scope" to rebuildable).
 2. **Loanword lexicon** — the last unprincipled branch is native-by-default (no Grantha + legal
    phonotactics + no attestation ⇒ assumed native). It is one of the 3 wrong (பட்டன், English
    button, no en.wiktionary page) and part of the 11 unknowns. Needs a lexicon, not a rule.
@@ -243,10 +233,11 @@ The cost of not having had this: settling what the six உறுப்பு eve
 **நன்னூல் 133** — which names all six — was sitting in the repo the whole time. It had to be grepped
 by hand.
 
-⚠️ **133 does NOT settle what the second `த்` in வா + த் + த் + ஏன் is called.** An earlier version of
-this file implied it did, by noting that 133 names சந்தி among the six. `idainilai.json`'s
-`known_gap` records Saran's ruling that a doubled consonant is **not** சந்தி — so that reading is
-ruled OUT, not merely unconfirmed. The slot is still unnamed; see KNOWN DECODER DEFECTS.
+⚠️ **133 does NOT settle what a strong verb's doubled consonant (படி + த் + த் + ஆன்) is called.** An
+earlier version of this file implied it did, by noting that 133 names சந்தி among the six. Both earlier
+entries on it (2026-08-02 "சந்தி", 2026-08-08 "not சந்தி") are WITHDRAWN as rulings (D-023); the slot is
+parked and named unlabelled. Do not confuse it with வந்தான்'s ந்: TVA C0212 §5.3.6 names that one a
+சந்தி த் surfacing as ந், and Saran ruled the same on 2026-08-11.
 
 ## Design rules (do not violate)
 - **Tholkappiyam-first:** cite Tholkappiyam before Nannool for grammar claims. This drifted once
@@ -309,8 +300,9 @@ ruled OUT, not merely unconfirmed. The slot is still unnamed; see KNOWN DECODER 
   on எழுத்ததிகாரம், 480 units with `urai`, `examples` (எ-டு … என வரும்) and footnotes. Its numbers are
   CONTINUOUS, so it is aligned to our verses BY TEXT (`aligned_to`), never by number. Runtime:
   `classical.tholkappiyam_urai(அதிகாரம், இயல், n)`. Guard: `tests/test_urai.py`. Its worked examples are
-  the intended fixtures for the round-trip engine (D-023).
+  fixtures for the round-trip engine (`tests/test_roundtrip.py`, D-025).
 - **Grammar rule tables:** `data/grammar/*.json` — each with `source_priority` + நூற்பா citations.
+  `punarchi.json` holds the JOIN rules the round-trip uses (`core/punarchi.py`, guard `tests/test_roundtrip.py`).
 - **TVA material is CC BY-SA 4.0 (D-021, 2026-11-24)** — derived data may ship with attribution and
   stays share-alike. tamilvu.org is unreliable: read from `archive.org/details/TamilVirtualAcademy`
   when it is down. TVA's annotated corpus of 56 classical texts (word-level lemma + grammar tags) is at

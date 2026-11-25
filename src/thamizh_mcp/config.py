@@ -80,6 +80,9 @@ GRAMMAR_VERRUMAI_FILE = Path(os.environ.get(
     "THAMIZH_VERRUMAI", REPO_ROOT / "data" / "grammar" / "verrumai_urubu.json"))
 GRAMMAR_VIKARAM_FILE = Path(os.environ.get(
     "THAMIZH_VIKARAM", REPO_ROOT / "data" / "grammar" / "vikaram.json"))
+# புணர்ச்சி join rules for the round-trip engine (D-023) — core/punarchi.py.
+GRAMMAR_PUNARCHI_FILE = Path(os.environ.get(
+    "THAMIZH_PUNARCHI", REPO_ROOT / "data" / "grammar" / "punarchi.json"))
 
 
 def flookup_available() -> bool:

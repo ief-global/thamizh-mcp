@@ -154,8 +154,12 @@ function render(word, d, ok){
     F.components.forEach((c,i)=>{
       if(i) parts.appendChild(el("div","plus","+"));
       const p = el("div","part");
-      p.appendChild(el("div","k", c.part + (c.authority? " · "+c.authority : "")));
+      // part null = material the word really has, named so nothing is dropped, that no cited rule
+      // labels yet (D-023). Show that plainly rather than inventing a label.
+      p.appendChild(el("div","k", (c.part || "பெயரிடப்படவில்லை · unlabelled")
+                                  + (c.authority? " · "+c.authority : "")));
       p.appendChild(el("div","v", c.form));
+      if(c.surface) p.appendChild(el("div","k", "இச்சொல்லில் · appears as " + c.surface));
       if(c.role) p.appendChild(el("div","k", c.role));
       parts.appendChild(p);
     });
@@ -167,6 +171,33 @@ function render(word, d, ok){
       r.appendChild(el("div","ev", s.detail||""));
       kids.push(r);
     });
+    // D-023 round-trip: the split is valid only if joining the parts back rebuilds the word.
+    // Each join is shown with the verse that licenses it, quoted, or marked parked when none does.
+    const RT = F.round_trip;
+    if(RT){
+      const r = el("div","row");
+      r.appendChild(el("span",null, RT.holds ? "✓ மீண்டும் புணர்த்தால் அதே சொல் · rebuilds the word"
+                                            : "✗ does not rebuild the word"));
+      r.appendChild(el("span","badge", RT.rebuilt));
+      if(RT.note) r.appendChild(el("div","ev", RT.note));
+      if(RT.unaccounted) r.appendChild(el("div","ev", "unaccounted: " + RT.unaccounted));
+      kids.push(r);
+      (RT.steps||[]).forEach(st=>{
+        const j = el("div","row");
+        j.appendChild(el("span",null, st.name + " — " + st.at));
+        j.appendChild(el("span","badge", st.status));
+        j.appendChild(el("div","ev", st.effect));
+        (st.sources||[]).forEach(src=>{
+          if(!src.verse_text) return;
+          const q = el("div","nurpa");
+          q.appendChild(el("div","addr", (src.authority||src.name) + (src.verse? " · "+src.verse : "")));
+          q.appendChild(el("div","txt", src.verse_text));
+          if(src.ref) q.appendChild(el("div","src", src.ref));
+          j.appendChild(q);
+        });
+        kids.push(j);
+      });
+    }
     out.appendChild(card(null,kids));
   }
 

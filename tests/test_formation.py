@@ -66,8 +66,11 @@ def test_verb_tense_and_ending():
     an = MorphAnalysis(lemma="வா", pos="verb", tags=["fin", "sim", "strong", "past=த்", "3sgm=ஆன்"])
     f = decoder.decode_formation("வந்தான்", an)
     assert f.word_type == "பகுபதம்"
-    parts = {c.part: c.form for c in f.components}
-    assert parts == {"பகுதி": "வா", "இடைநிலை": "த்", "விகுதி": "ஆன்"}
+    # வந்தான் = வா + த்(ந்) சந்தி + த் இடைநிலை + ஆன் (TVA C0212 §5.3.6). Before the round-trip
+    # (D-023) this decoded as வா + த் + ஆன் and the ந் was lost: KNOWN DECODER DEFECT 1.
+    assert [(c.part, c.form, c.surface) for c in f.components] == [
+        ("பகுதி", "வா", "வ"), ("சந்தி", "த்", "ந்"), ("இடைநிலை", "த்", None), ("விகுதி", "ஆன்", None)]
+    assert f.round_trip.holds and f.round_trip.rebuilt == "வந்தான்"
     tense, png = decoder.decode_verb_grammar(an)
     assert tense == "இறந்தகாலம்" and png == "படர்க்கை ஆண்பால் ஒருமை"
 
@@ -152,19 +155,24 @@ def test_present_idainilai_is_the_grammatical_form_not_the_fst_surface():
     assert forms2["இடைநிலை"] == "கின்று"        # not "கின்ற்"
 
 
-def test_strong_verb_doubling_is_sandhi_not_part_of_the_idainilai():
-    """வல்லினம் மிகுதல் is புணர்ச்சி, so க் is its own சந்தி உறுப்பு — Saran's ruling 2026-08-02."""
+def test_strong_verb_doubling_is_named_but_not_labelled():
+    """The doubled க் is real material and is NAMED, so the split rebuilds its word, but it carries
+    NO part label: which உறுப்பு it is stays parked until a cited rule names it (D-023, ruling (d)).
+    The 2026-08-02 entry that called it சந்தி is withdrawn as a ruling, and so is its மிகுதல் event."""
     an = MorphAnalysis(lemma="படி", pos="verb", tags=["fin", "strong", "pres=க்கிற்", "3sgm=ஆன்"])
     f = decoder.decode_formation("படிக்கிறான்", an)
     assert [(c.part, c.form) for c in f.components] == [
-        ("பகுதி", "படி"), ("சந்தி", "க்"), ("இடைநிலை", "கிறு"), ("விகுதி", "ஆன்")]
-    assert any(s.type == "மிகுதல்" and "வல்லினம்" in s.detail for s in f.sandhi)
+        ("பகுதி", "படி"), (None, "க்"), ("இடைநிலை", "கிறு"), ("விகுதி", "ஆன்")]
+    assert "D-023" in f.components[1].role
+    assert not f.sandhi
+    assert f.round_trip.holds
+    assert [s.status for s in f.round_trip.steps if s.rule == "irattitha_otru"] == ["parked"]
 
 
-def test_future_doubling_also_splits():
+def test_future_doubling_is_named_the_same_way():
     an = MorphAnalysis(lemma="படி", pos="verb", tags=["fin", "strong", "fut=ப்ப்", "3sgm=ஆன்"])
     forms = [(c.part, c.form) for c in decoder.decode_formation("படிப்பான்", an).components]
-    assert forms == [("பகுதி", "படி"), ("சந்தி", "ப்"), ("இடைநிலை", "ப்"), ("விகுதி", "ஆன்")]
+    assert forms == [("பகுதி", "படி"), (None, "ப்"), ("இடைநிலை", "ப்"), ("விகுதி", "ஆன்")]
 
 
 def test_past_and_future_markers_are_already_canonical():
@@ -196,11 +204,13 @@ def _parts(word, **kw):
 
 
 def test_a1_euphonic_increment_is_a_sariyai_not_dropped():
-    """வந்தனன் = வா + த் + அன்(சாரியை) + அன்(விகுதி). The FST tags the சாரியை `euph`; we used to
-    have no handler, so the word silently lost an உறுப்பு. TVA C0212 §5.3.4 / C0214 §4.2.1."""
+    """வந்தனன் = வா + த்(ந்) சந்தி + த் + அன்(சாரியை) + அன்(விகுதி), TVA C0212 §5.3.4 verbatim.
+    The FST tags the சாரியை `euph`; we used to have no handler, so the word silently lost an
+    உறுப்பு. The சந்தி ந் was lost too until the round-trip (D-023)."""
     got = _parts("வந்தனன்", lemma="வா", pos="verb",
                  tags=["fin", "past=த்", "euph=அன்", "3sgm=அன்"])
-    assert got == [("பகுதி", "வா"), ("இடைநிலை", "த்"), ("சாரியை", "அன்"), ("விகுதி", "அன்")]
+    assert got == [("பகுதி", "வா"), ("சந்தி", "த்"), ("இடைநிலை", "த்"), ("சாரியை", "அன்"),
+                   ("விகுதி", "அன்")]
 
 
 def test_a2_kal_is_split_off_the_vikuthi_as_modern_accretion():
@@ -209,17 +219,19 @@ def test_a2_kal_is_split_off_the_vikuthi_as_modern_accretion():
     f = decoder.decode_formation(
         "வந்தீர்கள்", MorphAnalysis(lemma="வா", pos="verb", tags=["fin", "past=த்", "2pl=ஈர்கள்"]))
     assert [(c.part, c.form) for c in f.components] == [
-        ("பகுதி", "வா"), ("இடைநிலை", "த்"), ("விகுதி", "ஈர்"), ("விகுதி", "கள்")]
+        ("பகுதி", "வா"), ("சந்தி", "த்"), ("இடைநிலை", "த்"), ("விகுதி", "ஈர்"), ("விகுதி", "கள்")]
     kal = f.components[-1]
     assert kal.authority is None, "no classical authority sanctions கள்"
     assert "modern" in (kal.role or "")
 
 
 def test_a3_3pln_surface_is_two_urupukal():
-    """நடந்தன = நட + த் + அன்(சாரியை) + அ(விகுதி) — one FST suffix, TWO உறுப்புகள்.
-    `3pln` was not mapped at all, so the word previously got no விகுதி. TVA C0214 §4.2.1."""
+    """நடந்தன = நட + த்(ந்) சந்தி + த் + அன்(சாரியை) + அ(விகுதி), TVA C0214 §4.2.1 verbatim —
+    one FST suffix, TWO உறுப்புகள். `3pln` was not mapped at all, so the word previously got no
+    விகுதி."""
     got = _parts("நடந்தன", lemma="நட", pos="verb", tags=["fin", "past=த்", "3pln=அன"])
-    assert got == [("பகுதி", "நட"), ("இடைநிலை", "த்"), ("சாரியை", "அன்"), ("விகுதி", "அ")]
+    assert got == [("பகுதி", "நட"), ("சந்தி", "த்"), ("இடைநிலை", "த்"), ("சாரியை", "அன்"),
+                   ("விகுதி", "அ")]
 
 
 def test_a4_optative_vikuthi_is_emitted():
@@ -261,7 +273,7 @@ def test_a8_sandhi_type_is_a_classical_vikaram_name():
     one of them. Saran's ruling: emit Tholkappiyam's name."""
     classical = {"மிகுதல்", "குன்றல்", "பிறிது ஆதல்"}
     for word, kw in (
-        ("படிக்கிறான்", dict(lemma="படி", pos="verb", tags=["fin", "strong", "pres=க்கிற்", "3sgm=ஆன்"])),
+        ("வந்தான்", dict(lemma="வா", pos="verb", tags=["fin", "strong", "past=த்", "3sgm=ஆன்"])),
         ("மரத்துக்கு", dict(lemma="மரம்", pos="noun", tags=["infInc", "dat"])),
         ("மரங்கள்", dict(lemma="மரம்", pos="noun", tags=["pl", "nom"])),
     ):
@@ -275,7 +287,7 @@ def test_b1_causative_vi_stays_an_idainilai():
     NOT a பிறவினை விகுதி despite TVA C0212 §6.1.7 listing it among them. Settled — do not re-open."""
     assert _parts("செய்வித்தான்", lemma="செய்", pos="verb",
                   tags=["fin", "caus=வி", "past=த்", "3sgm=ஆன்"]) == [
-        ("பகுதி", "செய்"), ("இடைநிலை", "வி"), ("இடைநிலை", "த்"), ("விகுதி", "ஆன்")]
+        ("பகுதி", "செய்"), ("இடைநிலை", "வி"), (None, "த்"), ("இடைநிலை", "த்"), ("விகுதி", "ஆன்")]
 
 
 def test_unmapped_surfaces_still_pass_through_unchanged():
