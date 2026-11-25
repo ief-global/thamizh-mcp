@@ -25,7 +25,7 @@ integration. Loop: work on `develop` here → push → open PR `develop → main
 milestones. After any history rewrite, other clones must `git reset --hard origin/main`
 (not merge/rebase).
 
-## Current state (2026-11-25) — 360 tests pass (the FST tests skip without live foma)
+## Current state (2026-11-25) — 361 tests pass (the FST tests skip without live foma)
 
 **Everything below is live and merged to `main`.** Nine MCP tools + web/REST + CLI over ONE engine
 (blueprint §8 — the web head needed zero engine changes, which validated that design).
@@ -47,7 +47,7 @@ milestones. After any history rewrite, other clones must `git reset --hard origi
 | | result |
 |---|---|
 | **Origin** | 92 correct · 12 honest `unknown` · **2 wrong** (காலம், பட்டன்; was 59/30/17 → 82/23/1 → 87/18/1 → 94/11/1 on 2026-08-11 → 91/12/3 on 2026-11-24 before ruling (e) → now) |
-| **Formation** | 26/29 **in-scope** decoded AND rebuild their word (17 on cited joins alone, 9 with one parked element) · 3 gaps (`கொடுக்க` `கொடுத்து` `கொடுக்கும்` non-finite) · `வீட்டிற்கு` is **out of scope**, not a gap — புணர்ச்சி engine owns it (Saran's ruling 2026-08-08) |
+| **Formation** | 26/29 **in-scope** decoded AND rebuild their word (25 with every step cited, 1 with a parked stem: சொன்னான்) · 3 gaps (`கொடுக்க` `கொடுத்து` `கொடுக்கும்` non-finite) · `வீட்டிற்கு` is **out of scope**, not a gap — புணர்ச்சி engine owns it (Saran's ruling 2026-08-08) |
 
 ⚠️ **The 2026-11-24 origin drop is UPSTREAM DRIFT, not a code change** — en.wiktionary was edited under
 three sweep words. மனிதன் is now marked borrowed from **Prakrit** — resolved by ruling (e): it is now classed **பிராகிருதம்**.
@@ -57,8 +57,9 @@ to fix.** கொடு now states cognates only → honest `unknown`. Per-word t
 
 The formation figure now means something it did not before 2026-11-25: a word counts only if its
 split **rebuilds the word** (D-023). The same 26 pass, but five of them (வந்தான், வந்தனன், வந்தார்கள்,
-வந்தீர்கள், நடந்தன) used to pass with a letter missing. "Parked" = a doubled consonant named without a
-part label (8 words) or a curated stem whose change is unnamed under ruling (a) (சொன்னான்).
+வந்தீர்கள், நடந்தன) used to pass with a letter missing. "Cited" includes `textbook` steps (a TVA
+course book quoted verbatim): since D-026 that covers the strong-verb doubled consonant (8 words).
+"Parked" = a curated stem whose change is unnamed under ruling (a) (சொன்னான்).
 
 Re-run: `uv run python scripts/quality_sweep.py` (network on; ~3 min). It is the only honest
 read on quality — expected labels inside are ASSESSMENTS, not authority, and need Saran's eye.
@@ -87,13 +88,15 @@ analysis that rebuilds (செய்தான்'s FST lists a noun reading firs
   TVA C0212 §5.3.6 says it verbatim ("த் என்னும் சந்தி ந் என்று மாற்றம் அடைந்தும்"), and it agrees with
   Saran's 2026-08-11 ruling and நன்னூல் 142. The same section gives வா → வ (குறுகல்); A0212 §2.2.1
   pairs வா with வரு (change not named, so no label asserted).
-- **Defect 2 stays PARKED (D-023, ruling (d)).** The strong-verb doubled consonant is now a component
-  with `part: null` ("unlabelled"), so படிக்கிறான் = படி + க்(—) + கிறு + ஆன் rebuilds without any
-  label being claimed; the old சந்தி label and its மிகுதல் event are gone. The strongest text found
-  so far is TVA C0212 §5.3.5, which defines சந்தி by POSITION (between பகுதி and இடைநிலை, e.g.
-  நட + த் + தல்). A course book is not a நூற்பா or a classical உரை, so it is NOT applied; whether it
-  suffices is Saran's call. The verb question likely needs a சொல்லதிகாரம் உரை (not pinned yet).
-- Statuses: `classical` (a நூற்பா states it) · `textbook` (a TVA course book states it verbatim) ·
+- **Defect 2 is SETTLED PROVISIONALLY (D-026, closing ruling (d), 2026-11-25).** The strong-verb
+  doubled consonant is a **சந்தி** on TVA C0212 §5.3.5 ("சந்தி பெரும்பாலும் முதனிலை (பகுதி)க்கும்
+  இடைநிலைக்கும் இடையில் வரும்", e.g. நட + த் + தல்), so படிக்கிறான் = படி + க்(சந்தி) + கிறு + ஆன். Rule
+  `irattitha_otru`, status `textbook`, with Nannūl 133 (names சந்தி among the six உறுப்பு) alongside.
+  Saran ruled the course book sufficient **until an authentic classical உரை on சொல்லதிகாரம் is found;
+  that உரை takes PRECEDENCE** (the rule's `supersede_when`; open item in Next tasks). No மிகுதல் event:
+  the text names an உறுப்பு, not a change. The withdrawn 2026-08-02/08-08 entries stay withdrawn.
+- Statuses: `classical` (a நூற்பா states it) · `textbook` (a TVA course book states it verbatim; a
+  classical source found later outranks it, and the search prefers a நூற்பா when both rebuild) ·
   `parked` (named, never labelled). A stem alternant from `verb_paradigms.json` is `parked` too: its
   விகாரம் is ruling (a). நில் → நி + ன்ற் looks odd because the curated marker is `ன்ற்`; that is ruling (a).
 
@@ -156,14 +159,21 @@ Orthography proves a word is **not native**; it can NEVER say which language it 
    - **(c) எச்சவினை விகுதி** — FOUND: தொல். சொல். வினையியல் 31 and நன்னூல் 343 both enumerate the
      class, so this is a Tholkappiyam-FIRST citation. Open part: they name the FORMS, not the விகுதி
      letters, and **நன்னூல் 140 lists `து` where `vikuthi.json` (following TVA) has `உ`**.
-   - **(d) What the doubled `த்` slot is called — PARKED (D-023).** Not to be ruled; to be found as a
-     cited rule in the grammar texts. The 2026-08-02 ("சந்தி") and 2026-08-08 ("not சந்தி") entries are
-     WITHDRAWN as rulings. The engine names it unlabelled meanwhile; see "The round-trip engine".
+   - ~~**(d) What the doubled `த்` slot is called.**~~ **RULED 2026-11-25 (D-026): சந்தி, on TVA C0212
+     §5.3.5, provisionally** — a classical சொல்லதிகாரம் உரை takes precedence once found (task 1 below).
    - ~~**(e) Does வடசொல் cover Prakrit borrowings?**~~ **RULED 2026-11-24 (D-022): no.** பிராகிருதம் is
      its own origin class, assigned only when a source names Prakrit (`classifier.PRAKRIT_CODES`).
      Pali is NOT included; it stays `loanword` until ruled.
 
-1. ~~**The ந் surface-reconciliation fix**~~ **DONE 2026-11-25 (D-025)** — the round-trip engine.
+1. 🔶 **Find and pin an authentic classical உரை on தொல்காப்பியம் சொல்லதிகாரம் — RESOLVE SOON (Saran,
+   2026-11-25).** Ruling (d)'s சந்தி label rests on a TVA course book only; a classical commentary
+   that names the doubled consonant's slot **takes precedence over it, whatever it says**. Several
+   commentators wrote on சொல்லதிகாரம், among them சேனாவரையர் and நச்சினார்க்கினியர். Pin it the
+   way D-024 pinned the எழுத்ததிகாரம் உரை: from its publisher (Project Madurai first), checksummed in
+   `data/PINS.md`, aligned to our verses BY TEXT, registered in `data/sources.json`. Then read what it
+   says under வினையியல் and either cite it on `irattitha_otru` (status `classical`) or change the label.
+   It also serves rulings (a) and (c), which are verb questions too.
+✓ ~~**The ந் surface-reconciliation fix**~~ **DONE 2026-11-25 (D-025)** — the round-trip engine.
    Natural next steps on it: non-finite forms once ruling (a) allows, and the noun joins the sweep
    does not cover yet (இன் சாரியை, so வீட்டிற்கு moves from "out of scope" to rebuildable).
 2. **Loanword lexicon** — the last unprincipled branch is native-by-default (no Grantha + legal
@@ -235,8 +245,9 @@ by hand.
 
 ⚠️ **133 does NOT settle what a strong verb's doubled consonant (படி + த் + த் + ஆன்) is called.** An
 earlier version of this file implied it did, by noting that 133 names சந்தி among the six. Both earlier
-entries on it (2026-08-02 "சந்தி", 2026-08-08 "not சந்தி") are WITHDRAWN as rulings (D-023); the slot is
-parked and named unlabelled. Do not confuse it with வந்தான்'s ந்: TVA C0212 §5.3.6 names that one a
+entries on it (2026-08-02 "சந்தி", 2026-08-08 "not சந்தி") are WITHDRAWN as rulings (D-023); since
+D-026 the slot is labelled சந்தி on TVA C0212 §5.3.5, which says WHERE சந்தி comes (133 does not),
+until a classical சொல்லதிகாரம் உரை is found. Do not confuse it with வந்தான்'s ந்: TVA C0212 §5.3.6 names that one a
 சந்தி த் surfacing as ந், and Saran ruled the same on 2026-08-11.
 
 ## Design rules (do not violate)
@@ -254,7 +265,9 @@ parked and named unlabelled. Do not confuse it with வந்தான்'s ந�
   rule set. A split that does not rebuild its word declares a gap; it never drops material in silence.
 - **Rules come from the texts, not from rulings (D-023).** Where the grammar is ambiguous, find the
   rule in a cited source (நூற்பா, or a classical உரை) and follow it. Do not settle an ambiguity by
-  asking for a ruling made without a source; park it until the text is found.
+  asking for a ruling made without a source; park it until the text is found. A TVA course book that
+  states the analysis verbatim may carry a label **provisionally** (`textbook`, D-026); a நூற்பா or
+  classical உரை found later takes precedence over it.
 
 ## Gotchas
 - Install package **`foma`**, NOT `foma-bin` (empty transitional deb).

@@ -118,7 +118,7 @@ def map_case(tags: list[str]) -> Optional[GrammarCase]:
 
 # Verb tense marker (இடைநிலை): FST hands over a SURFACE form (pres=கிற்); the grammatical உறுப்பு is
 # a different thing (கிறு). data/grammar/idainilai.json maps one to the other. A doubled consonant
-# in the surface (க்கிற்) is left to the round-trip, which names it without a label (D-023).
+# in the surface (க்கிற்) is left to the round-trip, which labels it சந்தி (TVA C0212 §5.3.5, D-026).
 _TENSE_ROLE: dict[str, str] = {
     "past": "இறந்தகாலம்", "pres": "நிகழ்காலம்", "fut": "எதிர்காலம்",
 }
@@ -151,9 +151,9 @@ def map_idainilai(tense_code: str, fst_surface: str) -> tuple[str, Optional[str]
     """FST surface tense marker → (canonical இடைநிலை, doubled consonant or None, class name).
 
     Nannūl names the உறுப்பு, not the surface morph: the FST's `pres=கிற்` is the grammatical
-    இடைநிலை **கிறு**, and a strong verb's `pres=க்கிற்` is a doubled க் + இடைநிலை கிறு. Which உறுப்பு
-    that க் is stays parked (D-023), so the decoder does not emit it from here; the round-trip finds
-    it in the word. Unknown surfaces pass through unchanged, never guessed at.
+    இடைநிலை **கிறு**, and a strong verb's `pres=க்கிற்` is a சந்தி க் + இடைநிலை கிறு (TVA C0212
+    §5.3.5, D-026). The decoder does not emit that க் from here; the round-trip finds it in the word
+    under a cited join. Unknown surfaces pass through unchanged, never guessed at.
     """
     entry = _IDAINILAI.get(tense_code, {})
     hit = entry.get("from_fst", {}).get(fst_surface)
@@ -379,9 +379,8 @@ def decode_formation(word: str, analysis: MorphAnalysis) -> Formation:
             if feats.get(tcode) not in (None, "", "∅"):
                 inflected = True
                 # FST surface → canonical Nannūl உறுப்பு. A doubled consonant in the surface
-                # (க்கிற், ப்ப்) is NOT split off here any more: the round-trip finds it in the word
-                # and names it without a label, because no cited rule says which உறுப்பு it is
-                # (D-023, ruling (d) parked). Calling it சந்தி was the withdrawn 2026-08-02 entry.
+                # (க்கிற், ப்ப்) is NOT split off here: the round-trip finds it in the word and
+                # labels it சந்தி under TVA C0212 §5.3.5 (D-026, closing ruling (d)).
                 marker, _doubled, cls = map_idainilai(tcode, feats[tcode])
                 comps.append(FormationComponent(
                     part="இடைநிலை", form=marker, role=f"{trole} ({cls})" if cls else trole,
@@ -452,9 +451,9 @@ def _kind(c: FormationComponent, verb: bool) -> str:
 _JUNCTION_COMPONENT = {
     "santhi_tha_na": dict(part="சந்தி", authority="Nannūl",
                           role="சந்தி — த் appears as ந் (TVA C0212 §5.3.6; Saran's ruling 2026-08-11)"),
-    "irattitha_otru": dict(part=None, authority=None,
-                           role="இரட்டித்த ஒற்று — a doubled consonant the word really has; which "
-                                "உறுப்பு it is stays OPEN until a cited rule names it (D-023)"),
+    "irattitha_otru": dict(part="சந்தி", authority="Nannūl",
+                           role="சந்தி — joins the பகுதி to the next part, doubling its hard consonant "
+                                "(TVA C0212 §5.3.5; provisional until a சொல்லதிகாரம் உரை is found, D-026)"),
 }
 
 

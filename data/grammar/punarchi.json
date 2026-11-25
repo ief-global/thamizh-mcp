@@ -4,7 +4,7 @@
     "primary": "Tholkappiyam",
     "primary_ref": "எழுத்ததிகாரம் (புணரியல், உருபியல், குற்றியலுகரப்புணரியல்)",
     "fallback": "Nannūl",
-    "why": "புணர்ச்சி is Tholkappiyam's ground (tamil-grammar.md; DESIGN.md §4a), so each rule cites Tholkappiyam first. Nannūl is cited where it states the same rule more specifically (162 names WHICH உடம்படுமெய்), and is the sole citation only where a search of the pinned எழுத்ததிகாரம் found no Tholkappiyam verse for the rule; each such rule says so in `tholkappiyam_searched`. Two rules rest on the TVA course books (CC BY-SA 4.0, D-021), which state the analysis verbatim; they are marked `textbook`, not `classical`.",
+    "why": "புணர்ச்சி is Tholkappiyam's ground (tamil-grammar.md; DESIGN.md §4a), so each rule cites Tholkappiyam first. Nannūl is cited where it states the same rule more specifically (162 names WHICH உடம்படுமெய்), and is the sole citation only where a search of the pinned எழுத்ததிகாரம் found no Tholkappiyam verse for the rule; each such rule says so in `tholkappiyam_searched`. Two rules rest on the TVA course books (CC BY-SA 4.0, D-021), which state the analysis verbatim; they are marked `textbook`, not `classical`, and a classical source found later takes precedence over them (`supersede_when`).",
     "citation_format": "தொல்காப்பியம் numbers restart per இயல், so a citation is {authority, athikaram, iyal, verse}. நன்னூல் is continuous: {authority, verse}."
   },
   "status_values": {
@@ -131,12 +131,21 @@
     },
     {
       "id": "irattitha_otru",
-      "name": "இரட்டித்த ஒற்று (label parked)",
-      "effect": "a hard consonant appears doubled where a verb's parts meet (படி + த் + ஆன் → படித்தான்; படி + கிறு + ஆன் → படிக்கிறான்)",
-      "status": "parked",
+      "name": "சந்தி (இரட்டித்த ஒற்று)",
+      "effect": "a சந்தி consonant appears where a verb's parts meet, doubling the hard consonant that follows (படி + த் + த் + ஆன் → படித்தான்; படி + க் + கிறு + ஆன் → படிக்கிறான்)",
+      "status": "textbook",
       "context": "verb, before a part that begins with a hard consonant",
-      "parked": "D-023, ruling (d). The doubled consonant is NAMED so the round-trip never drops it, but no cited rule says which உறுப்பு it is. TVA C0212 §5.3.5 defines சந்தி by position (between பகுதி and இடைநிலை, e.g. நட + த் + தல்) and A0212 §2.2.1 shows வா + த் + த் + ஏன் without naming the slot; neither is a நூற்பா or a classical உரை. The two earlier entries (2026-08-02 'it is சந்தி', 2026-08-08 'it is not சந்தி') are withdrawn as rulings.",
-      "cites": []
+      "part": "சந்தி",
+      "textbook": {
+        "source": "TVA C0212 §5.3.5 (சந்தி)",
+        "quote": "சந்தி பெரும்பாலும் முதனிலை (பகுதி)க்கும் இடைநிலைக்கும் இடையில் வரும். பகுதிக்கும் விகுதிக்கும் இடையிலும் சிறுபான்மை வரக்கூடும். உறுப்புகளின் இணைவில் (சந்தி), அவற்றை இணைக்க வருவது சந்தி. நடத்தல் என்னும் பகுபதம் நட+த்+தல் என்று பிரிந்து வரும்."
+      },
+      "ruling": "Saran, 2026-11-25 (D-026), closing ruling (d): the TVA course book is a sufficient text to label this slot சந்தி for now. It was parked under D-023 because no நூற்பா or classical உரை had been found; the two earlier entries (2026-08-02 'it is சந்தி', 2026-08-08 'it is not சந்தி') stay withdrawn, and this label rests on the text, not on them.",
+      "supersede_when": "PROVISIONAL. A classical உரை on தொல்காப்பியம் சொல்லதிகாரம் (or a நூற்பா) that names this slot takes PRECEDENCE over the course book, whatever it says. Finding and pinning an authentic சொல்லதிகாரம் உரை is an open item (CLAUDE.md, Next tasks 0).",
+      "cites": [
+        {"authority": "Nannūl", "verse": 133,
+         "role": "names சந்தி as one of the six பகுபத உறுப்பு; it does not say where சந்தி comes, which is what the course book supplies"}
+      ]
     }
   ],
   "stem_alternants": {

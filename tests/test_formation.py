@@ -155,24 +155,28 @@ def test_present_idainilai_is_the_grammatical_form_not_the_fst_surface():
     assert forms2["இடைநிலை"] == "கின்று"        # not "கின்ற்"
 
 
-def test_strong_verb_doubling_is_named_but_not_labelled():
-    """The doubled க் is real material and is NAMED, so the split rebuilds its word, but it carries
-    NO part label: which உறுப்பு it is stays parked until a cited rule names it (D-023, ruling (d)).
-    The 2026-08-02 entry that called it சந்தி is withdrawn as a ruling, and so is its மிகுதல் event."""
+def test_strong_verb_doubling_is_a_santhi_on_the_course_book():
+    """The doubled க் is a சந்தி: TVA C0212 §5.3.5 places சந்தி between the பகுதி and the இடைநிலை
+    (நட + த் + தல்). Saran's ruling (d), 2026-11-25 (D-026): the course book suffices until an
+    authentic சொல்லதிகாரம் உரை is found, which would take precedence. So the step is `textbook`,
+    quotes §5.3.5, and carries no மிகுதல் event (the text names an உறுப்பு, not a change)."""
     an = MorphAnalysis(lemma="படி", pos="verb", tags=["fin", "strong", "pres=க்கிற்", "3sgm=ஆன்"])
     f = decoder.decode_formation("படிக்கிறான்", an)
     assert [(c.part, c.form) for c in f.components] == [
-        ("பகுதி", "படி"), (None, "க்"), ("இடைநிலை", "கிறு"), ("விகுதி", "ஆன்")]
-    assert "D-023" in f.components[1].role
+        ("பகுதி", "படி"), ("சந்தி", "க்"), ("இடைநிலை", "கிறு"), ("விகுதி", "ஆன்")]
+    assert "§5.3.5" in f.components[1].role and "D-026" in f.components[1].role
     assert not f.sandhi
     assert f.round_trip.holds
-    assert [s.status for s in f.round_trip.steps if s.rule == "irattitha_otru"] == ["parked"]
+    [step] = [s for s in f.round_trip.steps if s.rule == "irattitha_otru"]
+    assert step.status == "textbook"
+    assert any("§5.3.5" in (r.ref or "") and "இடைநிலைக்கும்" in (r.verse_text or "")
+               for r in step.sources)
 
 
-def test_future_doubling_is_named_the_same_way():
+def test_future_doubling_is_a_santhi_the_same_way():
     an = MorphAnalysis(lemma="படி", pos="verb", tags=["fin", "strong", "fut=ப்ப்", "3sgm=ஆன்"])
     forms = [(c.part, c.form) for c in decoder.decode_formation("படிப்பான்", an).components]
-    assert forms == [("பகுதி", "படி"), (None, "ப்"), ("இடைநிலை", "ப்"), ("விகுதி", "ஆன்")]
+    assert forms == [("பகுதி", "படி"), ("சந்தி", "ப்"), ("இடைநிலை", "ப்"), ("விகுதி", "ஆன்")]
 
 
 def test_past_and_future_markers_are_already_canonical():
@@ -287,7 +291,7 @@ def test_b1_causative_vi_stays_an_idainilai():
     NOT a பிறவினை விகுதி despite TVA C0212 §6.1.7 listing it among them. Settled — do not re-open."""
     assert _parts("செய்வித்தான்", lemma="செய்", pos="verb",
                   tags=["fin", "caus=வி", "past=த்", "3sgm=ஆன்"]) == [
-        ("பகுதி", "செய்"), ("இடைநிலை", "வி"), (None, "த்"), ("இடைநிலை", "த்"), ("விகுதி", "ஆன்")]
+        ("பகுதி", "செய்"), ("இடைநிலை", "வி"), ("சந்தி", "த்"), ("இடைநிலை", "த்"), ("விகுதி", "ஆன்")]
 
 
 def test_unmapped_surfaces_still_pass_through_unchanged():

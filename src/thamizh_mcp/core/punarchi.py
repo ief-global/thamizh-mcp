@@ -253,13 +253,13 @@ def _apply(rule_id: str, st: _State, left: Part, right: Part, rp: list[str],
     if rule_id == "irattitha_otru":
         if verb and rp[0] in VALLINAM and right.kind in ("idainilai", "vikuthi"):
             segs.append([("j", rule_id), [rp[0]]])
-            return _State(segs, st.steps + [_step(rule_id, at, f"{rp[0]} appears doubled")]), rp
+            return _State(segs, st.steps + [_step(rule_id, at, f"சந்தி {rp[0]} appears before {rp[0]}")]), rp
         return None
     return None
 
 
-# Rules tried at a boundary, alone or as an ordered pair. Classical first; a parked rule is tried
-# last, so it is used only when nothing cited rebuilds the word.
+# Rules tried at a boundary, alone or as an ordered pair. Classical first, then the textbook rules,
+# so a course book is used only when no நூற்பா rebuilds the word.
 _ORDER = ["athu_otru_kedal", "athu_akaram_kedal", "otru_irattal", "ukaram_kedal", "udambadumei",
           "urubu_vallinam_mikuthal", "makaram_inam", "santhi_tha_na", "irattitha_otru"]
 _COMBOS: list[tuple[str, ...]] = [()] + [(r,) for r in _ORDER] + [
@@ -303,8 +303,11 @@ def _search(parts: list[Part], stem_ps: list[str], target: list[str], verb: bool
     return found
 
 
-def _cost(st: _State) -> tuple[int, int]:
-    return (sum(s.status == "parked" for s in st.steps), len(st.steps))
+def _cost(st: _State) -> tuple[int, int, int]:
+    """Fewest parked steps, then fewest textbook steps (a நூற்பா outranks a course book), then
+    fewest steps."""
+    return (sum(s.status == "parked" for s in st.steps),
+            sum(s.status == "textbook" for s in st.steps), len(st.steps))
 
 
 def round_trip(word: str, parts: list[Part], verb: bool) -> RoundTripResult:
