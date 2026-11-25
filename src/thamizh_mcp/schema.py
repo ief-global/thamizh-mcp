@@ -19,7 +19,9 @@ from pydantic import BaseModel, ConfigDict, Field
 Tier = Literal["anchor", "evolving"]
 Authority = Literal["Tholkappiyam", "Nannūl"]
 
-OriginClass = Literal["இயற்சொல்", "திரிசொல்", "திசைச்சொல்", "வடசொல்", "loanword", "unknown"]
+# பிராகிருதம் sits OUTSIDE Tholkappiyam's four classes, like `loanword`. It is NOT a kind of வடசொல்
+# (Saran's ruling (e), 2026-11-24, D-022): assigned only when a source names Prakrit explicitly.
+OriginClass = Literal["இயற்சொல்", "திரிசொல்", "திசைச்சொல்", "வடசொல்", "பிராகிருதம்", "loanword", "unknown"]
 Pos = Literal["பெயர்ச்சொல்", "வினைச்சொல்", "இடைச்சொல்", "உரிச்சொல்", "unknown"]
 WordClass = Literal["பெயர்", "வினை", "இடை", "உரிச்சொல்", "unknown"]
 WordType = Literal["பகுபதம்", "பகாப்பதம்", "unknown"]

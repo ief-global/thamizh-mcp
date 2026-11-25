@@ -25,7 +25,7 @@ integration. Loop: work on `develop` here → push → open PR `develop → main
 milestones. After any history rewrite, other clones must `git reset --hard origin/main`
 (not merge/rebase).
 
-## Current state (2026-08-11) — 266 tests pass (5 skip without live foma)
+## Current state (2026-11-24) — 270 tests pass (5 skip without live foma)
 
 **Everything below is live and merged to `main`.** Nine MCP tools + web/REST + CLI over ONE engine
 (blueprint §8 — the web head needed zero engine changes, which validated that design).
@@ -45,11 +45,11 @@ milestones. After any history rewrite, other clones must `git reset --hard origi
 
 | | result |
 |---|---|
-| **Origin** | 91 correct · 12 honest `unknown` · **3 wrong** (பட்டன், மனிதன், காலம்; was 59/30/17 → 82/23/1 → 87/18/1 → 94/11/1 on 2026-08-11 → now) |
+| **Origin** | 92 correct · 12 honest `unknown` · **2 wrong** (காலம், பட்டன்; was 59/30/17 → 82/23/1 → 87/18/1 → 94/11/1 on 2026-08-11 → 91/12/3 on 2026-11-24 before ruling (e) → now) |
 | **Formation** | 26/29 **in-scope** decoded · 3 gaps (`கொடுக்க` `கொடுத்து` `கொடுக்கும்` non-finite) · `வீட்டிற்கு` is **out of scope**, not a gap — புணர்ச்சி engine owns it (Saran's ruling 2026-08-08) |
 
 ⚠️ **The 2026-11-24 origin drop is UPSTREAM DRIFT, not a code change** — en.wiktionary was edited under
-three sweep words. மனிதன் is now marked borrowed from **Prakrit** (we say `loanword`; ruling (e) below).
+three sweep words. மனிதன் is now marked borrowed from **Prakrit** — resolved by ruling (e): it is now classed **பிராகிருதம்**.
 காலம்'s Sanskrit origin moved to the new `{{af|ta|sa:…}}` / `{{ety|…}}` template style, which
 `adapters/etymology.py` does not read, so it falls through to native-by-default — **a parser gap, ours
 to fix.** கொடு now states cognates only → honest `unknown`. Per-word table: design repo `CODE-STATUS.md`.
@@ -91,17 +91,21 @@ and for plain `த` (செய்தான்). The decoder treats that tag as i
   decoded formation must rebuild its own surface or declare a gap. Expect the headline number to
   FALL; the current one is measuring the wrong thing.
 
-**2 · `map_idainilai` labels strong-verb doubling as சந்தி, which Saran has RULED WRONG.**
-`idainilai.json`'s `known_gap` says it plainly: *"It is not சந்தி (ruled) … `map_idainilai` currently
-splits the doubling off AS சந்தி and emits a வல்லினம் மிகுதல் SandhiEvent. Both are wrong and must
-change."* Today படிக்கிறான் still returns `படி + க்(சந்தி) + கிறு + ஆன்`.
+**2 · `map_idainilai` labels strong-verb doubling as சந்தி — an UNRULED label (PARKED, D-023).**
+`map_idainilai` splits the doubling off AS சந்தி and emits a வல்லினம் மிகுதல் SandhiEvent. No cited rule
+supports that label (`idainilai.json` → `sandhi_rule` now says so). Today படிக்கிறான் still returns
+`படி + க்(சந்தி) + கிறு + ஆன்`.
 
-⛔ **BLOCKED — do NOT guess the label.** It is not சந்தி (ruled); it is not one of the listed
-இடைநிலை, which are all single; and TVA C0212 §6.3.1's பகுதி-இரட்டித்தல் is defined only for the case
-where there is NO இடைநிலை, which is not this case. Fixing defect 1 will EXPOSE this immediately on
-படித்தான், கொடுத்தான், பார்த்தான், செய்வித்தான். Scope once ruled touches every strong-verb form
-already decoded (கொடுக்கிறான், படிக்கிறான், படிப்பான், கொடுப்பான் …), not only the new ones — which
-is exactly why the note says getting the label wrong means doing the rework twice.
+⛔ **PARKED 2026-11-24 (D-023) — do NOT guess the label, and treat neither earlier entry as a
+ruling.** Saran's direction: the label must come from a rule found in the grammar texts, stated with a
+citation. What the sources say so far: TVA A0212 §2.2.1 shows the four-slot split வா + த் + த் + ஏன்
+without naming slot 3; the listed இடைநிலை (நன்னூல் 142–144) are all single; TVA C0212 §6.3.1's
+பகுதி-இரட்டித்தல் is defined only where there is NO இடைநிலை. Candidate source for the rule: a classical
+உரை (the எழுத்ததிகாரம் உரை of நச்சினார்க்கினியர் is queued for pinning; the verb question may need a
+சொல்லதிகாரம் உரை). Fixing defect 1 will EXPOSE this on படித்தான், கொடுத்தான், பார்த்தான், செய்வித்தான்,
+and the label touches every strong-verb form already decoded (கொடுக்கிறான், படிக்கிறான், படிப்பான்,
+கொடுப்பான் …): until a rule is found, the round-trip work should keep the doubled consonant as named
+material WITHOUT asserting a part label it has no source for.
 
 ### How origin works now (the hard-won part)
 
@@ -162,12 +166,12 @@ Orthography proves a word is **not native**; it can NEVER say which language it 
    - **(c) எச்சவினை விகுதி** — FOUND: தொல். சொல். வினையியல் 31 and நன்னூல் 343 both enumerate the
      class, so this is a Tholkappiyam-FIRST citation. Open part: they name the FORMS, not the விகுதி
      letters, and **நன்னூல் 140 lists `து` where `vikuthi.json` (following TVA) has `உ`**.
-   - **(d) What the doubled `த்` slot is called** — see KNOWN DECODER DEFECTS above. ⚠️ Our own records
-     disagree here: `idainilai.json`'s `sandhi_rule` (2026-08-02) says சந்தி, its `known_gap` (08-08)
-     says not சந்தி, and the memory note (08-11) says first த் = சந்தி, second = இடைநிலை. Ask once, then
-     make all three say the same thing.
-   - **(e) Does வடசொல் cover Prakrit borrowings?** en.wiktionary now gives மனிதன் as Prakrit-borrowed
-     (2026-08-25); the classifier maps any non-Sanskrit source to `loanword`.
+   - **(d) What the doubled `த்` slot is called — PARKED (D-023).** Not to be ruled; to be found as a
+     cited rule in the grammar texts. The 2026-08-02 ("சந்தி") and 2026-08-08 ("not சந்தி") entries are
+     WITHDRAWN as rulings. See KNOWN DECODER DEFECTS 2.
+   - ~~**(e) Does வடசொல் cover Prakrit borrowings?**~~ **RULED 2026-11-24 (D-022): no.** பிராகிருதம் is
+     its own origin class, assigned only when a source names Prakrit (`classifier.PRAKRIT_CODES`).
+     Pali is NOT included; it stays `loanword` until ruled.
 
 1. **▶ NEXT — the ந் surface-reconciliation fix** (defect 1 above). Unblocked by Saran's 2026-08-11
    ruling, and it should ship with a guard test asserting a decoded formation rebuilds its own
@@ -254,6 +258,12 @@ ruled OUT, not merely unconfirmed. The slot is still unnamed; see KNOWN DECODER 
 - **Self-enriching, no static dictionary:** fill gaps from live sources, cache
   per-claim with provenance (source + tier + retrieved date).
 - **Honesty over guessing:** unknown → return a **gap**, never a fabricated answer.
+- **Round-trip validity (D-023, Saran, 2026-11-24) — a fundamental rule.** A word split is valid only
+  if joining its parts back, under the SAME rule tables, rebuilds the word. Split and join follow one
+  rule set. A split that does not rebuild its word declares a gap; it never drops material in silence.
+- **Rules come from the texts, not from rulings (D-023).** Where the grammar is ambiguous, find the
+  rule in a cited source (நூற்பா, or a classical உரை) and follow it. Do not settle an ambiguity by
+  asking for a ruling made without a source; park it until the text is found.
 
 ## Gotchas
 - Install package **`foma`**, NOT `foma-bin` (empty transitional deb).
@@ -287,6 +297,11 @@ ruled OUT, not merely unconfirmed. The slot is still unnamed; see KNOWN DECODER 
 - **Classical texts:** `data/classical/{tholkappiyam,nannul}.json` — verse-addressable, checksummed
   in `data/PINS.md`. Rebuild/verify: `scripts/build_classical.py`. Guard: `tests/test_citations.py`.
 - **Grammar rule tables:** `data/grammar/*.json` — each with `source_priority` + நூற்பா citations.
+- **TVA material is CC BY-SA 4.0 (D-021, 2026-11-24)** — derived data may ship with attribution and
+  stays share-alike. tamilvu.org is unreliable: read from `archive.org/details/TamilVirtualAcademy`
+  when it is down. TVA's annotated corpus of 56 classical texts (word-level lemma + grammar tags) is at
+  `tamilvu.org/coresite/download/annotate/*.pdf` (Latha font with a broken ToUnicode map: glyph names
+  carry the codepoints, and vowel signs come out in visual order — both mechanically reversible).
 - **Design repo (separate, PUBLIC since 2026-08-02):** `~/projects/thamizh-mcp-design` →
   `ief-global/thamizh-mcp-design` — blueprint, DESIGN.md, DECISIONS.md, tamil-grammar.md,
   CODE-STATUS.md, DECODER-AUDIT-D014.md, sources/, thamizh-eval/. Same develop→PR→main flow as here.

@@ -27,7 +27,7 @@ different properties — collapsing them is the error D-016 exists to correct.
 
 ## The position
 
-**Every source below is cleared for use, including in the public hosted service** at thamizhai.org.
+**Every source below is cleared for use, including in the public hosted service** at thamizh-ai.org.
 Mixed licences are fine because each claim in this project already carries its source — the same
 provenance machinery that makes answers auditable also makes licences classifiable per record.
 
@@ -38,6 +38,7 @@ provenance machinery that makes answers auditable also makes licences classifiab
 | Sanskrit-To-Pure-Tamil (S2PT) word lists | ⚠️ **unstated upstream** (D-017) | provisional; under review | attribution + name the source's limits |
 | Tamil Wiktionary (meanings) | CC BY-SA 4.0 / GFDL | use + public serving | attribution; stays CC BY-SA |
 | English-loanword artifact (derived from Google Dakshina) | CC BY-SA 4.0 | use + public serving | attribution (Roark et al. 2020, LREC); stays CC BY-SA, never Apache-2.0 |
+| Tamil Virtual Academy — course books, கலைச்சொல் glossaries, annotated corpus (D-021) | CC BY-SA 4.0 | use + public serving + redistribution with attribution | attribution to TVA; stays CC BY-SA, never Apache-2.0 |
 | foma / flookup | Apache-2.0 | runtime dep (not redistributed) | — |
 | Tholkappiyam / Nannūl — the *works* | classical, public domain | everything | cite அதிகாரம்/இயல் + நூற்பா |
 | Tholkappiyam / Nannūl — the pinned **Project Madurai etexts** (`data/classical/*.json`) | Project Madurai: free distribution **provided the header is kept intact** | use + redistribution incl. public serving | reproduce the © Project Madurai header + edition credits wherever the text or its verses travel |
@@ -50,12 +51,15 @@ provenance machinery that makes answers auditable also makes licences classifiab
    page naming each source.
 3. **Exports (Hugging Face datasets) are classified per source**, so a share-alike subset is labelled
    as such rather than diluting the whole dataset. Publish per-source subsets where licences differ.
-4. **Project Madurai etexts ship in this public repo, unlike the TVA course books.** The distinction
-   is the licence, not the content: Project Madurai explicitly grants free distribution provided its
-   header travels with the file, so `data/classical/*.json` carry that header in an `attribution`
-   field and `data/PINS.md` restates it. The TVA textbooks carry no such grant — they stay in the
-   private design repo and only *derived cited rule tables* ship. See `data/PINS.md`.
-4. **`meaning` stays ENABLED in the public app.** Surfacing meanings — including wrong ones — is a
+4. **Project Madurai etexts ship in this public repo.** Project Madurai explicitly grants free
+   distribution provided its header travels with the file, so `data/classical/*.json` carry that
+   header in an `attribution` field and `data/PINS.md` restates it.
+5. **TVA material is CC BY-SA 4.0 (D-021, 2026-11-24).** The Tamil Virtual Academy states this in
+   writing for the works of the தமிழ்ப்பெருங்களஞ்சியம், and extended it to all TVA materials. TVA-derived
+   data (rule tables, glossary entries, corpus extracts) may ship with attribution and stays
+   share-alike. The course books themselves stay out of git for size, not for licence. TVA's servers
+   are unreliable, so read from the archive.org mirror when tamilvu.org is down.
+6. **`meaning` stays ENABLED in the public app.** Surfacing meanings — including wrong ones — is a
    *purpose* of the public demo: scholars and users pinpoint errors so we can correct them. Disabling
    it would remove the feedback loop that improves the data.
 
@@ -86,7 +90,7 @@ Treat S2PT as a working placeholder, never an anchor, and never cite it as a set
   integration awaits written permission from U. Madras / DSAL.
 - **S2PT upstream licence** — unstated; see the section above. The one genuine licence gap we ship.
 - **Aalamaram treebank** — distribution/licence unknown until located (D-008).
-- **Tholkappiyam / Nannūl digitised editions** — to be pinned (Project Madurai chosen); needed for
-  நூற்பா-level citation. Until then citations stay chapter-level and say so.
+- ~~**Tholkappiyam / Nannūl digitised editions**~~ — RESOLVED 2026-08-02: pinned from Project
+  Madurai (`data/PINS.md`), served verse-level at runtime since D-018.
 
 These are *sourcing* tasks, not blockers on going live with what we already ship.

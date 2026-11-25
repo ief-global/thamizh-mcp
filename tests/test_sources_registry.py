@@ -182,3 +182,7 @@ def test_registry_agrees_with_licensing_md_on_the_share_alike_sources():
         assert e["redistribution"] == "serve-with-attribution"
     assert "unstated upstream" in prose, (
         "LICENSING.md no longer records the S2PT gap the registry still declares")
+    tva = sources.entry("TVA கலைச்சொல்")
+    assert "CC BY-SA 4.0" in tva["licence"] and tva["redistribution"] == "serve-with-attribution"
+    assert "Tamil Virtual Academy" in prose and "D-021" in prose, (
+        "the registry declares TVA as CC BY-SA 4.0 (D-021) but LICENSING.md does not record why")
