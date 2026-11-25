@@ -1,5 +1,5 @@
 {
-  "comment": "Passages of the OCR'd commentaries (D-027) that were read against the SCAN PAGE IMAGE, not just the OCR. The OCR is not proof-read, so a rule may cite a commentary passage only if it is listed here. `as_printed` is transcribed from the page image, the edition's own misprints included (noted where seen). tests/test_sol_urai.py checks that each passage (by `id`, which a rule's `urai` list names) is still found, by text, in the unit it is filed under, and that its leaf belongs to that unit.",
+  "comment": "Passages of the OCR'd commentaries (D-027, D-028, D-029) that were read against the SCAN PAGE IMAGE, not just the OCR. The OCR is not proof-read, so a rule may cite a commentary passage only if it is listed here. `as_printed` is transcribed from the page image, the edition's own misprints included (noted where seen). tests/test_sol_urai.py checks that each passage (by `id`, which a rule's `urai` list names) is still found, by text, in the unit it is filed under, and that its leaf belongs to that unit.",
   "quotations": [
     {
       "id": "nacc-vinai-5-tense-letters",
@@ -132,6 +132,249 @@
       "printed_page": "13",
       "as_printed": "இனி அவை நிகழ்காலம் பற்றி வருங்கால், நில், கின்று என்பனவற்றொடு வரும். நில்லென்பது லகாரம் னகாரமாய் றகாரம் பெற்று நிற்கும்",
       "bears_on": "ruling (a): the same shape as நச்சினார்க்கினியர் on கொல்/செல்/வெல் — ல் becomes ன் and takes ற் (நின்று)",
+      "verified_on": "2026-11-25"
+    },
+    {
+      "id": "nacc-vinai-5-nil",
+      "artifact": "tholkappiyam_sol_urai_nacchinarkkiniyar",
+      "unit": {
+        "iyal": "வினையியல்",
+        "verse": "5"
+      },
+      "leaf": 231,
+      "printed_page": "203",
+      "as_printed": "நில்லென்பது லகரம் னகரமாய்த் தனக்கேற்ற றகரம் பெற்று நிற்கும்",
+      "bears_on": "ruling (a): நில் — ல் becomes ன், and the ற் that suits it follows (நின்று, நின்றான்). Same words as சேனாவரையர் on this நூற்பா (sena-vinai-5-nil).",
+      "verified_on": "2026-11-25"
+    },
+    {
+      "id": "eluthu-pulli-71-la-ra",
+      "artifact": "tholkappiyam_eluthu_urai",
+      "unit": {
+        "iyal": "புள்ளிமயங்கியல்",
+        "verse": "71"
+      },
+      "verified_against": "proof-read etext (Project Madurai, D-024); no scan page",
+      "as_printed": "லகார ஈற்றுப் பெயர் வன்கணம் வந்துழி னகார ஈற்று இயல்பிற்றாய் லகரம் றகரமாய்த் திரிந்துமுடியும்",
+      "bears_on": "the join itself: a ல்-final word before a hard consonant turns ல் into ற் (கற்குறை). Stated for a பெயர் in a வேற்றுமை join; the Nannūl commentators carry such joins into the பகுபதம் (sivagnana-139-matteru).",
+      "verified_on": "2026-11-25"
+    },
+    {
+      "id": "eluthu-pulli-101-la-ta",
+      "artifact": "tholkappiyam_eluthu_urai",
+      "unit": {
+        "iyal": "புள்ளிமயங்கியல்",
+        "verse": "101"
+      },
+      "verified_against": "proof-read etext (Project Madurai, D-024); no scan page",
+      "as_printed": "ளகார ஈற்றுப் பெயர் ணகார ஈற்றின் இயல்பிற்றாய் வன்கணம் வந்துழி டகாரமாய்த் திரிந்துமுடியும்",
+      "bears_on": "the join itself: a ள்-final word before a hard consonant turns ள் into ட் (மட்குறை). Same scope note as eluthu-pulli-71-la-ra.",
+      "verified_on": "2026-11-25"
+    },
+    {
+      "id": "mayil-139-kol",
+      "artifact": "nannul_uraivalam_padaviyal",
+      "commentator": "மயிலைநாதர்",
+      "nannul_verse": 139,
+      "edition_number": "138",
+      "leaf": 144,
+      "printed_page": "144",
+      "as_printed": "கொள்ளென்பகுதி, கொண்டான், கோடு, கோடும் என்புழி ளகாரம் ணகாரமாகியும் கெட்டும் ஆதி நீண்டும் வந்தது",
+      "bears_on": "ruling (a): கொள் — ள் becomes ண் (கொண்டான்). The oldest Nannūl commentator, agreeing with நச்சினார்க்கினியர் p. 467.",
+      "verified_on": "2026-11-25"
+    },
+    {
+      "id": "mayil-139-la-na",
+      "artifact": "nannul_uraivalam_padaviyal",
+      "commentator": "மயிலைநாதர்",
+      "nannul_verse": 139,
+      "edition_number": "138",
+      "leaf": 145,
+      "printed_page": "145",
+      "as_printed": "சேறும், வேறு வேறும் என்புழி லகாரம் னகாரமாகியும் கெட்டும் ஆதி நீண்டும் வந்தன",
+      "bears_on": "ruling (a): கொல், செல், வெல் (named on p. 144) — ல் becomes ன் (கொன்றான், சென்றான், வென்றான்). The shape of நில் → நின்றான்.",
+      "verified_on": "2026-11-25"
+    },
+    {
+      "id": "mayil-139-others",
+      "artifact": "nannul_uraivalam_padaviyal",
+      "commentator": "மயிலைநாதர்",
+      "nannul_verse": 139,
+      "edition_number": "138",
+      "leaf": 145,
+      "printed_page": "145",
+      "as_printed": "பிறவும் இதுவே நிலனாகப் பகுதிக்கு வருவன வெல்லாம் வருவித்துக் கொள்க",
+      "bears_on": "the general licence: other stem changes are to be derived on this same ground (நூற்பா 139, 'விளம்பிய பகுதி வேறு ஆதலும் விதியே').",
+      "verified_on": "2026-11-25"
+    },
+    {
+      "id": "sivagnana-139-matteru",
+      "artifact": "nannul_uraivalam_padaviyal",
+      "commentator": "சங்கர நமச்சிவாயர் – சிவஞான முனிவர்",
+      "nannul_verse": 139,
+      "edition_number": "138",
+      "leaf": 145,
+      "printed_page": "145",
+      "as_printed": "இவ் விகாரங்கள், பகுபதவுறுப்பாக மாட்டெறிந்து கொண்ட மூன்று சந்தியுள்ளும் ஒன்பது விகாரத்துள்ளும் அமைந்து கிடத்தலின் அது பொருந்தாது என்க",
+      "bears_on": "WHERE a verb's stem changes belong: in the சந்தி and விகாரம் of புணர்ச்சி, carried over (மாட்டேறு) to the பகுபதம். So the எழுத்ததிகாரம் joins (புள்ளிமயங்கியல் 71, 101) are the rule for கல் → கற், கேள் → கேட். They reject reading 139 itself as the rule for these changes.",
+      "verified_on": "2026-11-25"
+    },
+    {
+      "id": "visakap-137-kal",
+      "artifact": "nannul_uraivalam_padaviyal",
+      "commentator": "விசாகப் பெருமாளையர்",
+      "nannul_verse": 137,
+      "leaf": 114,
+      "printed_page": "114",
+      "as_printed": "கல் – கற்றான் என வீற்றுமெய் வருமெய்யாகத் திரிந்தும், செல் – சென்றான் என வீற்று மெய் வருமெழுத்திற்கு இனமாகத் திரிந்தும், இன்னும் பலவாறு விகாரப்பட்டும் வரும்",
+      "bears_on": "names the VERBS: கல் → கற்றான் (the final ஒற்று becomes the consonant that follows) and செல் → சென்றான் (it becomes the nasal of that consonant). A 19th-century commentator.",
+      "verified_on": "2026-11-25"
+    },
+    {
+      "id": "visakap-137-punarchi",
+      "artifact": "nannul_uraivalam_padaviyal",
+      "commentator": "விசாகப் பெருமாளையர்",
+      "nannul_verse": 137,
+      "leaf": 114,
+      "printed_page": "114",
+      "as_printed": "கல் – நில் – புல்– சொல் – இவை கற்றான், நின்றான்– புல்லினான், சொன்னான் எனவும், ஒரு நிகராகிய பகுதிகள் பலவிதமாக விகாரப்படுதலால் அவையெல்லாம் தனித் தனிச் சொல்லப்புகுந்தால் விரியுமாதலால் செய்யுள் வழக்கத்தையும் உலக வழக்கத்தையும் பார்த்துச் செய்யுள் விகாரமும் புணர்ச்சி விகாரமுங் கொண்டு அமைத்துக் கொள்க",
+      "bears_on": "similar roots change differently (கற்றான் / நின்றான் / புல்லினான் / சொன்னான்), each to be settled by புணர்ச்சி விகாரம் and usage. He does not split சொன்னான்.",
+      "verified_on": "2026-11-25"
+    },
+    {
+      "id": "krishnam-137-kel",
+      "artifact": "nannul_uraivalam_padaviyal",
+      "commentator": "சே. கிருஷ்ணமாசாரியார்",
+      "nannul_verse": 137,
+      "leaf": 125,
+      "printed_page": "125",
+      "as_printed": "கல் – கற்றான், கேள் – கேட்டான் என ஈற்றுமெய் வருமெய்யாக திரிந்தும்; செல் – சென்றான்; கொள் – கொண்டான் என ஈற்றுமெய் வருமெழுத்திற்கு இனமாகத் திரிந்தும்",
+      "bears_on": "names கேள் → கேட்டான் with கல் → கற்றான், and கொள் → கொண்டான் with செல் → சென்றான். A 20th-century commentator; corroboration, not the primary citation.",
+      "verified_on": "2026-11-25"
+    },
+    {
+      "id": "visakap-137-neettal",
+      "artifact": "nannul_uraivalam_padaviyal",
+      "commentator": "விசாகப் பெருமாளையர்",
+      "nannul_verse": 137,
+      "leaf": 114,
+      "printed_page": "114",
+      "as_printed": "செல் – சேறல் என முதனீண்டும்",
+      "bears_on": "pakuthi_vikaram muthal_neettal: the first vowel of the பகுதி lengthens (செல் → சேறல்). One entry of his list of the kinds of change a verb's பகுதி undergoes when it joins its விகுதி (D-030).",
+      "verified_on": "2026-11-25"
+    },
+    {
+      "id": "visakap-137-tha-saa",
+      "artifact": "nannul_uraivalam_padaviyal",
+      "commentator": "விசாகப் பெருமாளையர்",
+      "nannul_verse": 137,
+      "leaf": 114,
+      "printed_page": "114",
+      "as_printed": "தா – தந்தான் எனத் தனிநெடில் குறுகியும், சா – செத்தான் என முதல் ஆகாரம் ஏகாரமாகியும்",
+      "bears_on": "pakuthi_vikaram muthanilai_kurukkal (a one-letter long root shortens: தா → த) and muthal_aa_ekaram (the first ஆ becomes எ: சா → செ).",
+      "note": "The page prints ஏகாரம் (long) where its own example செத்தான் shows எ (short); the same sentence in a later commentator on the next pages of this volume prints எகரம். The rule follows the example.",
+      "verified_on": "2026-11-25"
+    },
+    {
+      "id": "visakap-137-kona-virava",
+      "artifact": "nannul_uraivalam_padaviyal",
+      "commentator": "விசாகப் பெருமாளையர்",
+      "nannul_verse": 137,
+      "leaf": 114,
+      "printed_page": "114",
+      "as_printed": "கொணா கொணர்ந்தான் என முதலய லெழுத்துக் குறுகி, ரகரமெய் விரிந்தும், விரவு – விராவினான் என நடுக்குறில் நீண்டும்",
+      "bears_on": "pakuthi_vikaram ayal_kurukki_ra_virithal (கொணா → கொணர்) and naduk_kuril_neettal (விரவு → விராவு).",
+      "verified_on": "2026-11-25"
+    },
+    {
+      "id": "visakap-137-vaa-varu",
+      "artifact": "nannul_uraivalam_padaviyal",
+      "commentator": "விசாகப் பெருமாளையர்",
+      "nannul_verse": 137,
+      "leaf": 114,
+      "printed_page": "114",
+      "as_printed": "வா – வருகிறான் எனத் தனிநெடில் குறுகி ஒருயிர்மெய் விரிந்தும்",
+      "bears_on": "pakuthi_vikaram kurukki_uyirmei_virithal: a one-letter long root shortens and one உயிர்மெய் is added (வா → வரு).",
+      "verified_on": "2026-11-25"
+    },
+    {
+      "id": "visakap-137-vazhakku",
+      "artifact": "nannul_uraivalam_padaviyal",
+      "commentator": "விசாகப் பெருமாளையர்",
+      "nannul_verse": 137,
+      "leaf": 114,
+      "printed_page": "114",
+      "as_printed": "கல் – நில் – புல்– சொல் – இவை கற்றான், நின்றான்– புல்லினான், சொன்னான் எனவும், ஒரு நிகராகிய பகுதிகள் பலவிதமாக விகாரப்படுதலால் அவையெல்லாம் தனித் தனிச் சொல்லப்புகுந்தால் விரியுமாதலால் செய்யுள் வழக்கத்தையும் உலக வழக்கத்தையும் பார்த்துச் செய்யுள் விகாரமும் புணர்ச்சி விகாரமுங் கொண்டு அமைத்துக் கொள்க",
+      "bears_on": "HOW the rules are applied (D-030): roots of the same shape (கல், நில், சொல்) change in different ways, so the grammar does not list each one; the change is found from usage (வழக்கு) under the விகாரம் and புணர்ச்சி rules. The engine reads usage from the word itself: it tries every listed change and keeps the one that rebuilds the word. Also names சொல் → சொன்னான் among them.",
+      "verified_on": "2026-11-25"
+    },
+    {
+      "id": "ponnaiya-139-kaan",
+      "artifact": "nannul_uraivalam_padaviyal",
+      "commentator": "மோசசு பொன்னையா",
+      "nannul_verse": 139,
+      "edition_number": "138",
+      "leaf": 150,
+      "printed_page": "150",
+      "as_printed": "தார், தர், தம் எனவும்; வார், வா, வம் எனவும்; வே, வெம் எனவும், நோ, நொம் எனவும்; காண், கண் எனவும் அமைந்துள்ள அடிச்சொற்றரிபுகள் பற்பல உண்டென்பதையும் அவையடியாகத் தாரான், தருவான், தந்தான்,வாரான், வருவான், வந்தான், வேகிறான், வெந்தான், நோகின்றார், நொந்தான், காண்கிறான், கண்டான்",
+      "bears_on": "names the root variants காண் / கண் (கண்டான்), with தா / த, வா / வ, வே / வெ, நோ / நொ. He calls them அடிச்சொல் திரிபு (root variants) and does not name the change; the only commentator here to name காண் → கண். A 20th-century commentator.",
+      "verified_on": "2026-11-25"
+    },
+    {
+      "id": "sankara-144-pira-idainilai",
+      "artifact": "nannul_uraivalam_padaviyal",
+      "commentator": "சங்கர நமச்சிவாயர்",
+      "nannul_verse": 144,
+      "edition_number": "143",
+      "leaf": 228,
+      "printed_page": "228",
+      "as_printed": "இனி, இவை சிலவில எனவே காலத்தை இறுதிநிலை தரும் என்பதூஉம், முதனிலை தரும் என்பதூஉம், பிற இடைநிலை தரும் என்பதூஉம் பெற்றாம்",
+      "bears_on": "நூற்பா 144's 'இவை சில இல' (some verbs lack the listed tense letters): tense may then be shown by the ending, by the root, or by ANOTHER இடைநிலை. So a past-tense letter outside 142's four (the ன் of சொன்னான், போனான்) is an இடைநிலை under 144.",
+      "verified_on": "2026-11-25"
+    },
+    {
+      "id": "tampiran-144-sonnan",
+      "artifact": "nannul_uraivalam_padaviyal",
+      "commentator": "கூழங்கைத் தம்பிரான்",
+      "nannul_verse": 144,
+      "edition_number": "143",
+      "leaf": 228,
+      "printed_page": "228",
+      "as_printed": "'சிலவில' என்பதினானே நக்கான், புக்கான், சொன்னான், போனான், வைச்சான் என்பனவும் கொள்க",
+      "bears_on": "names சொன்னான் and போனான் as the verbs that 144's 'இவை சில இல' covers: their past-tense letter (ன்) is not among 142's four. An 18th-century commentator.",
+      "verified_on": "2026-11-25"
+    },
+    {
+      "id": "visakap-137-examples",
+      "artifact": "nannul_uraivalam_padaviyal",
+      "commentator": "விசாகப் பெருமாளையர்",
+      "nannul_verse": 137,
+      "leaf": 114,
+      "printed_page": "114",
+      "as_printed": "நடந்தான், வந்தான், மடிந்தான், சீத்தான், விட்டான், கூவினான், வெந்தான், வைத்தான், நொந்தான், போயினான், வெளவினான், உரிஞினான், உண்டான், பொருநினான், திருமினான், தின்றான், தேய்த்தான், பார்த்தான், சென்றான், வவ்வினான், வாழ்ந்தான், கேட்டான், அஃகினான்",
+      "bears_on": "the past forms of the 23 roots of நூற்பா 137. Where ந் comes before the tense letter த்: after a vowel (நடந்தான், மடிந்தான், வெந்தான்) and after ழ் (வாழ்ந்தான்); the strong forms (சீத்தான், வைத்தான், பார்த்தான்) double the த் instead.",
+      "verified_on": "2026-11-25"
+    },
+    {
+      "id": "visakap-137-sernthan",
+      "artifact": "nannul_uraivalam_padaviyal",
+      "commentator": "விசாகப் பெருமாளையர்",
+      "nannul_verse": 137,
+      "leaf": 114,
+      "printed_page": "114",
+      "as_printed": "செம்மை – சேர்ந்தான், சிறுமை – சிறுத்தான் என வுரிச்சொற்களிலிருந்தும் பிறக்கும்",
+      "bears_on": "ந் before த் after ர் (சேர்ந்தான்); with கொணர்ந்தான் (visakap-137-kona-virava) the second example after ர்.",
+      "verified_on": "2026-11-25"
+    },
+    {
+      "id": "ramanuja-137-theynthan",
+      "artifact": "nannul_uraivalam_padaviyal",
+      "commentator": "முகவை இராமானுச கவிராயர்",
+      "nannul_verse": 137,
+      "leaf": 117,
+      "printed_page": "117",
+      "as_printed": "திருமினான், தின்றான், தேய்ந்தான், பார்த்தான், சென்றான், வவ்வினான், வாழ்ந்தான்",
+      "bears_on": "his list of the same 23 roots gives தேய்ந்தான் (ந் before த் after ய்) where விசாகப் பெருமாளையர் gives the strong தேய்த்தான்; both are in use (the commentators on நூற்பா 138 pair them as தன்வினை / பிறவினை).",
       "verified_on": "2026-11-25"
     }
   ]

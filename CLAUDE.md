@@ -25,7 +25,7 @@ integration. Loop: work on `develop` here → push → open PR `develop → main
 milestones. After any history rewrite, other clones must `git reset --hard origin/main`
 (not merge/rebase).
 
-## Current state (2026-11-25) — 385 tests pass (the FST tests skip without live foma)
+## Current state (2026-11-25) — 439 tests pass (the FST tests skip without live foma)
 
 **Everything below is live and merged to `main`.** Nine MCP tools + web/REST + CLI over ONE engine
 (blueprint §8 — the web head needed zero engine changes, which validated that design).
@@ -47,7 +47,7 @@ milestones. After any history rewrite, other clones must `git reset --hard origi
 | | result |
 |---|---|
 | **Origin** | 92 correct · 12 honest `unknown` · **2 wrong** (காலம், பட்டன்; was 59/30/17 → 82/23/1 → 87/18/1 → 94/11/1 on 2026-08-11 → 91/12/3 on 2026-11-24 before ruling (e) → now) |
-| **Formation** | 26/29 **in-scope** decoded AND rebuild their word (25 with every step cited, 1 with a parked stem: சொன்னான்) · 3 gaps (`கொடுக்க` `கொடுத்து` `கொடுக்கும்` non-finite) · `வீட்டிற்கு` is **out of scope**, not a gap — புணர்ச்சி engine owns it (Saran's ruling 2026-08-08) |
+| **Formation** | 26/29 **in-scope** decoded AND rebuild their word (all 26 with every step cited) · 3 gaps (`கொடுக்க` `கொடுத்து` `கொடுக்கும்` non-finite) · `வீட்டிற்கு` is **out of scope**, not a gap — புணர்ச்சி engine owns it (Saran's ruling 2026-08-08) |
 
 ⚠️ **The 2026-11-24 origin drop is UPSTREAM DRIFT, not a code change** — en.wiktionary was edited under
 three sweep words. மனிதன் is now marked borrowed from **Prakrit** — resolved by ruling (e): it is now classed **பிராகிருதம்**.
@@ -59,8 +59,8 @@ The formation figure now means something it did not before 2026-11-25: a word co
 split **rebuilds the word** (D-023). The same 26 pass, but five of them (வந்தான், வந்தனன், வந்தார்கள்,
 வந்தீர்கள், நடந்தன) used to pass with a letter missing. "Cited" includes `urai` steps (a classical
 commentary, quoted as read on the scan page): since D-028 that covers the strong-verb doubled
-consonant, வந்தான்'s ந் and the வா → வ/வரு stem (15 words). No sweep word rests on a course book now.
-"Parked" = a curated stem whose change is unnamed under ruling (a) (சொன்னான்).
+consonant, வந்தான்'s ந், and every பகுதி change (D-030). No sweep word rests on a course book, and
+none is parked.
 
 Re-run: `uv run python scripts/quality_sweep.py` (network on; ~3 min). It is the only honest
 read on quality — expected labels inside are ASSESSMENTS, not authority, and need Saran's eye.
@@ -100,8 +100,29 @@ analysis that rebuilds (செய்தான்'s FST lists a noun reading firs
 - Statuses: `classical` (a நூற்பா states it) · `urai` (a classical commentary states it, in a passage
   listed in `verified_quotations.json`) · `textbook` (a TVA course book states it verbatim) · `parked`
   (named, never labelled). **Precedence (Saran, D-028): நூற்பா > உரை > course book, always**; `_cost`
-  prefers the higher one when two splits rebuild. Only காண் → கண் is still `textbook`. A stem alternant from `verb_paradigms.json` is `parked` too: its
-  விகாரம் is ruling (a). நில் → நி + ன்ற் looks odd because the curated marker is `ன்ற்`; that is ruling (a).
+  prefers the higher one when two splits rebuild. No rule is `textbook` any more (காண் → கண் moved to
+  `urai` with D-030).
+- **A பகுதி's changes are RULES, not a list of verbs (D-030, Saran 2026-11-25; superseded D-029's
+  per-verb list).** `punarchi.json → pakuthi_vikaram` is ONE catalogue, from விசாகப் பெருமாளையர்'s list
+  of the kinds of change (உரை on நன்னூல் 137, p. 114), each rule cited first to the Tholkappiyam
+  commentator who states it. The engine tries every rule on every verb and keeps the split that
+  rebuilds the word, so a verb it has never seen decodes the same way: கொன்றான், சென்றான், வென்றான்,
+  நீண்டது, போன்றான் failed to rebuild before D-030 only because they were not on the list.
+  - Why not "decide by the root's shape": the same commentator says roots of one shape (கல், நில், சொல்)
+    change in different ways, so the change is read from usage. The word being analysed IS that usage.
+    Generation (`joins_all`) therefore offers both நின்றான் and நிற்றான்; analysis picks the one that
+    rebuilds the word in front of it.
+  - Rules: `muthanilai_kurukkal` (வா → வ, தா → த, காண் → கண்) · `muthal_aa_ekaram` (சா → செ) ·
+    `kurukki_uyirmei_virithal` (வா → வரு) · `naduk_kuril_neettal` (விரவு → விராவு) ·
+    `ayal_kurukki_ra_virithal` (கொணா → கொணர்) · `eetrumei_varumei_thirithal` (ல்/ள் → ற்/ட் before a hard
+    consonant, ன்/ண் before a nasal: கற்றான், கேட்டான், நிற்பான், **சொன்னான்**; Tholkappiyam
+    புள்ளிமயங்கியல் 71/37/72, 101/7/102) · `eetrumei_inam_thirithal` (ல் → ன் before ற், ள் → ண் before ட்:
+    நின்றான், கொண்டான்). Two catalogued kinds are NOT applied and say why (`catalogued_not_applied`).
+  - **Fallback (Saran, D-030): where no Tholkappiyam commentator states a change, a Nannūl commentator
+    is cited.** சொன்னான்'s ன் is a tense letter outside 142's four, admitted by 144's "இவை சில இல"
+    (சங்கர நமச்சிவாயர்) and named by கூழங்கைத் தம்பிரான் with போனான் (`idainilai.json`).
+  - The ந் before த் now fires after ய், ர், ழ் as well as a vowel (வாழ்ந்தான், தேய்ந்தான், சேர்ந்தான்
+    were failing): the Nannūl commentators' lists of past forms give it there.
 
 ### How origin works now (the hard-won part)
 
@@ -150,12 +171,8 @@ Orthography proves a word is **not native**; it can NEVER say which language it 
 
 0. ⛔ **BLOCKED ON SARAN — open rulings. Do NOT guess these**; they are recorded as `inferred`/open
    precisely so they stay marked until he rules.
-   - **(a) The four verb-paradigm entries** — `data/grammar/concept_map.json` →
-     `concepts.விகாரம்.inferred`. **விற் is RULED (2026-08-11): the root is வில், ல்→ற் is the
-     விகாரம், and the following ற் is a நூற்பா-142-listed இடைநிலை** — so it joins கல்/கேள்/நில்/கொள்
-     rather than standing alone. **சொல், கல், கேள் remain open.** `verb_paradigms.json` is
-     deliberately NOT restructured yet: the lemma is the lookup key, so விற்→வில் lands with the
-     other three as one change.
+   - ~~**(a) The verb-paradigm stem changes.**~~ **SETTLED 2026-11-25**: on the texts for நில், கொள்,
+     கல், கேள், வில் (D-029), and for சொல் with every other verb by the rule catalogue (D-030).
    - **(b) The 15 running-head candidates** in `data/PINS.md` — our reading is a PROPOSAL. Note it
      contradicts itself in two places: 139/242 share a structure but get opposite verdicts, as do
      181/182.
@@ -174,19 +191,17 @@ Orthography proves a word is **not native**; it can NEVER say which language it 
    verb சந்தி; the slots were relabelled (Defects 1 and 2 above). சேனாவரையர் names the tense letters
    "ஈற்றுமிசை நிற்கும் எழுத்து" (vol. 2 p. 11) and does not split them further; his editor சி. கணேசையர்
    notes that, unlike Nannūl, he does not call them இடைநிலை. இளம்பூரணர் is silent on tense letters.
-   **Still open, ruling (a):** the commentaries give the SHAPE for ல்/ள் roots: ல் → ன் + ற் (கொல்/செல்/
-   வெல், நச்சினார்க்கினியர் p. 467; நில், சேனாவரையர் vol. 2 p. 13) and ள் → ண் (கொள், p. 467). They do NOT
-   cover சொல் (சொன்னான்), கல், கேள், or வில்/விற், so `verb_paradigms.json` is unchanged. Next: look for
-   those roots in the three உரை before applying anything.
+   Ruling (a) was then settled from these and the Nannūl commentaries (D-029, D-030; see Statuses above).
 ✓ ~~**The ந் surface-reconciliation fix**~~ **DONE 2026-11-25 (D-025)** — the round-trip engine.
-   Natural next steps on it: non-finite forms once ruling (a) allows, and the noun joins the sweep
+   Natural next steps on it: non-finite forms, and the noun joins the sweep
    does not cover yet (இன் சாரியை, so வீட்டிற்கு moves from "out of scope" to rebuildable).
 2. **Loanword lexicon** — the last unprincipled branch is native-by-default (no Grantha + legal
    phonotactics + no attestation ⇒ assumed native). It is one of the 3 wrong (பட்டன், English
    button, no en.wiktionary page) and part of the 11 unknowns. Needs a lexicon, not a rule.
    **Madras Tamil Lexicon** (dsal.uchicago.edu) is the intended ANCHOR upgrade over Wiktionary.
 3. **FST coverage:** non-finite forms (infinitive கொடுக்க, verbal participle கொடுத்து, adjectival
-   கொடுக்கும்) + more lemmas beyond the 11 curated. ⛔ Non-finite is BLOCKED on ruling (a) below.
+   கொடுக்கும்) + more lemmas beyond the 11 curated. The stem changes are rules now (D-030), so a lemma
+   added here needs no stem entry of its own.
    வீட்டிற்கு is NOT on this list — Saran ruled it புணர்ச்சி-engine work, not பகுபத உறுப்பிலக்கணம்.
 4. **Storage backend abstraction (D-013)** — `store/knowledge.py` is SQLite-coupled (`import sqlite3`,
    `INSERT OR REPLACE`, `AUTOINCREMENT`). `thamizh-ai.org` runs Postgres; **the MCP product keeps
@@ -332,8 +347,14 @@ labelled it சந்தி on TVA C0212 §5.3.5; **D-028 relabelled it இட�
   `classical.tholkappiyam_urai("சொல்லதிகாரம்", இயல், n, commentator=…)` (default நச்சினார்க்கினியர்).
   The scans and raw OCR are mirrored in the design repo `sources/classical/sol-urai/` (not in git; see
   its README). Guard: `tests/test_sol_urai.py`.
+- **Nannūl commentaries (D-029, D-030):** `data/classical/nannul_uraivalam_padaviyal.json` holds ONLY the pages a
+  rule cites, from நன்னூல் உரைவளம் 5 (பதவியல்; மயிலைநாதர், சங்கர நமச்சிவாயர் – சிவஞான முனிவர், விசாகப்
+  பெருமாளையர் and later, side by side), archive.org `tdl.6041-5`. Built by `scripts/build_nannul_uraivalam.py`
+  (add a leaf to `LEAVES` before citing it); mirror in the design repo `sources/classical/nannul-urai/`.
+  This edition numbers one lower in places (its 138 is our 139): quotations use OUR number.
 - **Grammar rule tables:** `data/grammar/*.json` — each with `source_priority` + நூற்பா citations.
-  `punarchi.json` holds the JOIN rules the round-trip uses (`core/punarchi.py`, guard `tests/test_roundtrip.py`).
+  `punarchi.json` holds the JOIN rules and the பகுதி விகாரம் catalogue the round-trip uses
+  (`core/punarchi.py`, guard `tests/test_roundtrip.py`).
 - **TVA material is CC BY-SA 4.0 (D-021, 2026-11-24)** — derived data may ship with attribution and
   stays share-alike. tamilvu.org is unreliable: read from `archive.org/details/TamilVirtualAcademy`
   when it is down. TVA's annotated corpus of 56 classical texts (word-level lemma + grammar tags) is at

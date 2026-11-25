@@ -75,6 +75,7 @@ _ATHIKARAM_OF = {name: a for (a, _), name in _URAI.items()}
 # The registry entry (data/sources.json) a commentary citation is graded under.
 URAI_SOURCE_NAME = ("Tholkappiyam சொல்லதிகாரம் — classical commentaries "
                     "(நச்சினார்க்கினியர், இளம்பூரணர், சேனாவரையர்)")
+NANNUL_URAI_SOURCE_NAME = "Nannūl பதவியல் — commentaries (நன்னூல் உரைவளம் 5, cited pages)"
 
 
 def commentators(athikaram: str) -> list[str]:
@@ -125,21 +126,33 @@ def verified_quotations() -> dict[str, dict]:
 
 
 def cite_urai(quotation_id: str, ref: str) -> SourceRef:
-    """A SourceRef quoting a verified commentary passage, as printed, with its page (D-028).
+    """A SourceRef quoting a verified commentary passage, as printed, with its page (D-028, D-029, D-030).
 
-    The verse label names the நூற்பா the commentary is written on, by OUR coordinates; the page is
-    the edition's printed page (and volume, for a multi-volume edition)."""
+    A Tholkappiyam commentary is filed under the நூற்பா it comments on, by OUR coordinates; a Nannūl
+    commentary under OUR Nannūl number. The page is the edition's printed page (and volume, for a
+    multi-volume edition); a proof-read etext has none."""
     q = verified_quotations()[quotation_id]
     d = _load(q["artifact"])
+    commentator = q.get("commentator") or d.get("commentator")
+    page = ((f"vol. {q['volume']}, " if q.get("volume") else "") + f"p. {q['printed_page']}"
+            if q.get("printed_page") else "proof-read etext")
+    if q.get("nannul_verse"):
+        return SourceRef(
+            name=NANNUL_URAI_SOURCE_NAME, tier="anchor", authority="Nannūl",
+            ref=f"{commentator} உரை, {d.get('text_ta', '')}, {page} — {ref}",
+            verse=f"நூற்பா {q['nannul_verse']} ({commentator} உரை)",
+            verse_text=q["as_printed"],
+            retrieved=(d.get("edition") or {}).get("publisher"))
     u = q["unit"]
-    page = (f"vol. {q['volume']}, " if q.get("volume") else "") + f"p. {q['printed_page']}"
+    athikaram = _ATHIKARAM_OF.get(q["artifact"], "சொல்லதிகாரம்")
     return SourceRef(
-        name=URAI_SOURCE_NAME, tier="anchor", authority="Tholkappiyam",
-        ref=f"{d.get('commentator')} உரை, {page} — {ref}",
-        verse=f"{_ATHIKARAM_OF.get(q['artifact'], 'சொல்லதிகாரம்')} › {u['iyal']} › நூற்பா {u['verse']} "
-              f"({d.get('commentator')} உரை)",
+        name=URAI_SOURCE_NAME if athikaram == "சொல்லதிகாரம்" else "Tholkappiyam",
+        tier="anchor", authority="Tholkappiyam",
+        ref=f"{commentator} உரை, {page} — {ref}",
+        verse=f"{athikaram} › {u['iyal']} › நூற்பா {u['verse']} ({commentator} உரை)",
         verse_text=q["as_printed"],
-        retrieved=(d.get("edition") or {}).get("publisher"))
+        retrieved=(d.get("edition") or {}).get("publisher") if isinstance(d.get("edition"), dict)
+        else d.get("edition"))
 
 
 def cite_nannul(verse: int | str, ref: str) -> SourceRef:

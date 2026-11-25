@@ -26,8 +26,9 @@ def test_join_surface_merges_mei_and_uyir():
 
 def test_irregular_past_forms_resolve_with_correct_lemma():
     ad = VerbParadigmAdapter()
+    # விற்றான் → வில்: Saran's ruling 2026-08-11, applied with ruling (a) in D-029.
     cases = {"கொடுத்தான்": "கொடு", "சொன்னான்": "சொல்", "கற்றான்": "கல்",
-             "போனான்": "போ", "விற்றான்": "விற்", "நின்றாள்": "நில்"}
+             "போனான்": "போ", "விற்றான்": "வில்", "நின்றாள்": "நில்"}
     for word, lemma in cases.items():
         got = ad.analyses_for(word)
         assert got and got[0].lemma == lemma, f"{word} → {got}"
@@ -47,7 +48,7 @@ def test_png_is_decoded_from_the_generated_tags():
 def test_present_forms_resolve():
     ad = VerbParadigmAdapter()
     cases = {"வருகிறான்": "வா", "கொடுக்கிறான்": "கொடு", "கேட்கிறாள்": "கேள்",
-             "விற்கிறேன்": "விற்", "தூங்குகிறோம்": "தூங்கு", "கற்கிறான்": "கல்"}
+             "விற்கிறேன்": "வில்", "தூங்குகிறோம்": "தூங்கு", "கற்கிறான்": "கல்"}
     for word, lemma in cases.items():
         got = ad.analyses_for(word)
         assert got and got[0].lemma == lemma, f"{word} → {got}"
@@ -64,7 +65,7 @@ def test_literary_present_variant_kinru():
 def test_future_forms_resolve():
     ad = VerbParadigmAdapter()
     cases = {"வருவான்": "வா", "கொடுப்பான்": "கொடு", "கேட்பாள்": "கேள்",
-             "விற்பேன்": "விற்", "தூங்குவோம்": "தூங்கு", "கற்பான்": "கல்"}
+             "விற்பேன்": "வில்", "தூங்குவோம்": "தூங்கு", "கற்பான்": "கல்"}
     for word, lemma in cases.items():
         got = ad.analyses_for(word)
         assert got and got[0].lemma == lemma, f"{word} → {got}"

@@ -163,6 +163,12 @@ def map_idainilai(tense_code: str, fst_surface: str) -> tuple[str, Optional[str]
     return hit.get("idainilai", fst_surface), hit.get("doubled"), cls
 
 
+def idainilai_role_note(tense_code: str, fst_surface: str) -> Optional[str]:
+    """Where a tense letter is not among the ones its நூற்பா lists (சொன்னான்'s ன்), the table says on
+    what authority it is still an இடைநிலை (D-030); the reader sees that with the label."""
+    return _IDAINILAI.get(tense_code, {}).get("from_fst", {}).get(fst_surface, {}).get("role_note")
+
+
 class Vikuthi(NamedTuple):
     """One விகுதி, decomposed the way Nannūl names it rather than the way the FST splits it."""
     vikuthi: str
@@ -382,9 +388,11 @@ def decode_formation(word: str, analysis: MorphAnalysis) -> Formation:
                 # (க்கிற், ப்ப்) is NOT split off here: the round-trip finds it in the word and
                 # labels it சந்தி under TVA C0212 §5.3.5 (D-026, closing ruling (d)).
                 marker, _doubled, cls = map_idainilai(tcode, feats[tcode])
+                role = f"{trole} ({cls})" if cls else trole
+                if note := idainilai_role_note(tcode, feats[tcode]):
+                    role += f" — {note}"
                 comps.append(FormationComponent(
-                    part="இடைநிலை", form=marker, role=f"{trole} ({cls})" if cls else trole,
-                    authority="Nannūl"))
+                    part="இடைநிலை", form=marker, role=role, authority="Nannūl"))
                 break
         # சாரியை — the FST tags it `euph` (‘euphonic’); Nannūl names it சாரியை and places it
         # between the இடைநிலை and the விகுதி (வந்தனன் = வா+த்+த்+அன்+அன்). Previously dropped.
@@ -478,8 +486,6 @@ def _round_trip(word: str, comps: list[FormationComponent], sandhi: list[SandhiE
         if p.surface and p.surface != c.form:
             c.surface = p.surface
     steps = list(res.steps)
-    if res.stem_note:
-        steps.insert(0, _stem_step(comps[0].form, res.stem_note))
     for j in sorted(res.junctions, key=lambda j: j.after, reverse=True):
         spec = _JUNCTION_COMPONENT.get(j.rule)
         if spec is None:
@@ -488,24 +494,3 @@ def _round_trip(word: str, comps: list[FormationComponent], sandhi: list[SandhiE
             part=spec["part"], form=j.form, role=spec["role"], authority=spec["authority"],
             surface=j.surface if j.surface != j.form else None))
     return RoundTrip(holds=True, rebuilt=res.rebuilt, steps=steps)
-
-
-def _stem_step(lemma: str, alt: dict) -> JoinStep:
-    """A பகுதி that surfaces in another shape (வா → வ). Cited when a source states it; when the
-    source does not name the change, no விகாரம் label is asserted."""
-    textbook = alt.get("source", "").startswith("TVA")
-    if alt.get("urai"):
-        # A classical commentary names the change (D-028); it is quoted as read on the scan page.
-        src = classical.cite_urai(alt["urai"], f"பகுதி {lemma} → {alt['surface']}")
-    else:
-        src = SourceRef(name="thamizh-mcp cited rule tables" if textbook
-                        else "thamizh-mcp curated verb paradigms",
-                        tier="anchor",
-                        ref=alt.get("source", "") + (" (Tamil Virtual Academy, CC BY-SA 4.0)" if textbook else ""),
-                        verse_text=alt.get("quote"))
-    change = alt.get("change")
-    effect = f"பகுதி {lemma} appears as {alt['surface']}" + (f" — {change}" if change else
-                                                              " — the change is not named")
-    return JoinStep(rule="stem_alternant", name="பகுதி வடிவம்", at=lemma, effect=effect,
-                    status="urai" if alt.get("urai") else "textbook" if textbook else "parked",
-                    sources=[src])

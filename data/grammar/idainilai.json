@@ -70,11 +70,13 @@
         },
         "ன்": {
           "idainilai": "ன்",
-          "note": "curated-paradigm surface (போன், சொன்ன்)"
+          "role_note": "not among நூற்பா 142's four; 144's 'இவை சில இல' admits another இடைநிலை (சங்கர நமச்சிவாயர்), and கூழங்கைத் தம்பிரான் names சொன்னான், போனான் for it",
+          "urai": ["sankara-144-pira-idainilai", "tampiran-144-sonnan"],
+          "note": "போனான் (போ + ன் + ஆன்), சொன்னான் (சொல் → சொன் + ன் + ஆன்; the ல் → ன் is the பகுதி விகாரம் eetrumei_varumei_thirithal, punarchi.json). Cited since D-030; it was an uncited curated-paradigm surface before."
         },
         "ன்ற்": {
-          "idainilai": "ன்ற்",
-          "note": "curated-paradigm surface (நின்ற்)"
+          "idainilai": "ற்",
+          "note": "a surface where the பகுதி's ல் already shows as ன் (நின்ற்): the tense letter is ற், and the ன் is the பகுதி விகாரம் eetrumei_inam_thirithal (punarchi.json, D-030)"
         },
         "த்த்": {
           "idainilai": "த்",
