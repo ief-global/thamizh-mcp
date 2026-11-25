@@ -145,7 +145,7 @@
         {
           "claim": "In a strong-verb form such as கொடு + த் + த் + ஆன், the FIRST doubled consonant is the சந்தி and the SECOND is the இடைநிலை.",
           "derivation": "By elimination among the six of நூற்பா 133: (a) only ONE of the two த் can be the இடைநிலை, because 142 lists the past இடைநிலை as single த்/ட்/ற்/இன்; (b) it is not a சாரியை — த் is absent from 244's inventory and this is not the பதம்–விகுதி junction 243 describes; (c) it is not a விகாரம், because 154 makes விகாரம் the three EVENTS தோன்றல்/திரிதல்/கெடுதல், not a segment; (d) it is not the பகுதி or விகுதி. சந்தி is what remains.",
-          "status": "SUPERSEDED 2026-11-25 (D-028). D-026 labelled the strong-verb doubled consonant சந்தி on TVA C0212 §5.3.5, provisionally until a classical உரை on சொல்லதிகாரம் was found. It was found and pinned (D-027: நச்சினார்க்கினியர், இளம்பூரணர்; D-028: சேனாவரையர்). None of them calls any part of a verb சந்தி; நச்சினார்க்கினியர் calls the medial letters இடைநிலை எழுத்து (a doubled ஒற்று among them, சொல். பெயரியல் 11, p. 174). Saran ruled that a commentary always outranks a course book, so the engine now labels the slot இடைநிலை (data/grammar/punarchi.json → irattitha_otru, status urai). Saran's 2026-08-08 entry stays withdrawn (D-023)."
+          "status": "SETTLED 2026-11-25 (D-031) on தேவநேயப் பாவாணர்: the claim holds. இயற்றமிழ் இலக்கணம் §57 (p. 66): 'படித்தான் – படி + த் + தான் (த் + ஆன்) – த் சந்தி' — the FIRST த் is the சந்தி, the second the இடைநிலை; and he gives சந்தி the positional definition this entry lacked: 'பகுதியும் அதற்கடுத்த உறுப்பும் புணரும் புணர்ச்சியே சந்தியாகக் கூறப்படும்', the letter that APPEARS (தோன்றல்) there. History: D-026 labelled it சந்தி on TVA C0212 §5.3.5; D-028 relabelled it இடைநிலை எழுத்து on நச்சினார்க்கினியர், who never splits a strong verb's two த்; Saran ruled that பாவாணர் breaks the tie (D-031). SUPERSEDED 2026-11-25 (D-028). D-026 labelled the strong-verb doubled consonant சந்தி on TVA C0212 §5.3.5, provisionally until a classical உரை on சொல்லதிகாரம் was found. It was found and pinned (D-027: நச்சினார்க்கினியர், இளம்பூரணர்; D-028: சேனாவரையர்). None of them calls any part of a verb சந்தி; நச்சினார்க்கினியர் calls the medial letters இடைநிலை எழுத்து (a doubled ஒற்று among them, சொல். பெயரியல் 11, p. 174). Saran ruled that a commentary always outranks a course book, so the engine now labels the slot இடைநிலை (data/grammar/punarchi.json → irattitha_otru, status urai). Saran's 2026-08-08 entry stays withdrawn (D-023)."
         },
         {
           "claim": "A சந்தி is never itself doubled, and neither is a சாரியை.",
@@ -154,8 +154,9 @@
         }
       ],
       "used_by": [
-        "core/punarchi.py idainilai_na (the ந் of வந்தான்; was santhi_tha_na, a சந்தி on TVA C0212 §5.3.6, until D-028 relabelled it இடைநிலை on நச்சினார்க்கினியர்)",
-        "core/punarchi.py irattitha_otru (the doubled consonant; சந்தி on TVA C0212 §5.3.5 under D-026, relabelled இடைநிலை on நச்சினார்க்கினியர் under D-028)"
+        "core/punarchi.py santhi_na (the ந் of வந்தான்: santhi_tha_na on TVA under D-025/D-026, idainilai_na on நச்சினார்க்கினியர் under D-028, சந்தி on பாவாணர் under D-031)",
+        "core/punarchi.py santhi_otru (the doubled consonant after the பகுதி: சந்தி on TVA under D-026, இடைநிலை on நச்சினார்க்கினியர் under D-028, சந்தி on பாவாணர் under D-031)",
+        "core/punarchi.py irattitha_otru (a doubled consonant after another part, which பாவாணர் does not call சந்தி: இடைநிலை எழுத்து, D-028)"
       ]
     },
     "விகாரம்": {

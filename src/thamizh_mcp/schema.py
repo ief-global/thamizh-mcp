@@ -170,7 +170,7 @@ class SandhiEvent(BaseModel):
     authority: Optional[Authority] = None   # புணர்ச்சி/விகாரம்: Tholkappiyam (எழுத்ததிகாரம், புணரியல்)
 
 
-JoinStatus = Literal["classical", "urai", "textbook", "parked"]
+JoinStatus = Literal["classical", "urai", "scholar", "textbook", "parked"]
 
 
 class JoinStep(BaseModel):
@@ -180,7 +180,9 @@ class JoinStep(BaseModel):
     at: str                       # the boundary, e.g. "தூங்கு | இன்"
     effect: str                   # what the join did there, in words
     # classical = a நூற்பா states it · urai = a classical commentary states it, in a passage read
-    # against its scan page (D-028) · textbook = a TVA course book states it verbatim ·
+    # against its scan page (D-028) · scholar = தேவநேயப் பாவாணர் states it, read on the scan page;
+    # he breaks ties where the classical sources are silent or disagree (D-031) ·
+    # textbook = a TVA course book states it verbatim ·
     # parked = the material is named but no cited rule labels it (D-023)
     status: JoinStatus
     sources: list[SourceRef] = Field(default_factory=list)   # each quotes its நூற்பா; [] if parked

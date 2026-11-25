@@ -397,6 +397,24 @@
         "மே",
         "து"
       ],
+      "tense_vikuthi": {
+        "past": [
+          "உ",
+          "இ",
+          "ய்"
+        ],
+        "present": [
+          "அ"
+        ],
+        "future": [
+          "இன்"
+        ],
+        "urai": [
+          "pavanar-116-echcham"
+        ],
+        "source": "தேவநேயப் பாவாணர், இயற்றமிழ் இலக்கணம் §116 (பாவாணர் தமிழ்க் களஞ்சியம் 25, p. 37): 'உ, இ, ய் என்பன இறந்தகால வினையெச்ச விகுதிகள்; அ என்பது நிகழ்கால வினையெச்ச விகுதி; இன் என்பது எதிர்கால வினையெச்ச விகுதி' (the edition's font prints ய் as '-'). Examples: படித்து, ஓடி, போய்; படிக்க; படிக்கின்.",
+        "settles": "Ruling (c)'s open letter (D-031): the past வினையெச்ச விகுதி is உ (படித்து = படி + த் + த் + உ), as TVA C0212 §6.1.3 has it, against reading நன்னூல் 140's து as this விகுதி. Saran ruled that பாவாணர்'s statements break such ties."
+      },
       "closed_inventory": false,
       "closed_inventory_note": "The source ends the list with 'முதலியன' (= and so on), so this inventory is EXPLICITLY open-ended, unlike the Nannūl-140 வினைமுற்று inventory above which is closed. A வினையெச்சம் ending absent from this list is therefore not evidence that the analysis is wrong.",
       "negative_sense": {
@@ -476,7 +494,8 @@
     },
     "open_questions_for_review": [
       "RESOLVED 2026-08-08 (Saran's ruling): the INFINITIVE (உண்ண, ஆட, கொடுக்க) is a **வினையெச்சம்** with விகுதி 'அ', exactly as TVA §6.1.3 classifies it — NOT a separate செயவெனெச்சம் category. Settled; do not re-open.",
-      "STANDING (not a defect): 'அ' is both a பெயரெச்ச and a வினையெச்ச விகுதி; 'உம்' likewise; 'து' is also the ஒன்றன்பால் வினைமுற்று விகுதி (நடந்தது). The ENDING ALONE cannot decide the உறுப்பு — the decoder must use the form's function, and where it cannot, it must say so rather than pick."
+      "STANDING (not a defect): 'அ' is both a பெயரெச்ச and a வினையெச்ச விகுதி; 'உம்' likewise; 'து' is also the ஒன்றன்பால் வினைமுற்று விகுதி (நடந்தது). The ENDING ALONE cannot decide the உறுப்பு — the decoder must use the form's function, and where it cannot, it must say so rather than pick.",
+      "RESOLVED 2026-11-25 (D-031, on பாவாணர், இயற்றமிழ் இலக்கணம் §116): the past வினையெச்ச விகுதி is உ (with இ, ய்), present அ, future இன். The class itself is Tholkappiyam-first (தொல். சொல். வினையியல் 31; நன்னூல் 343)."
     ],
     "source_extract": "TVA C0212 §6.1.3, verbatim: 'எச்சவினை விகுதிகளையும் இங்குக் காண்போம். தெரிநிலைப் பெயரெச்ச விகுதிகள்: நடந்த, நடக்கின்ற, நடவாத, நடக்கும் – இவற்றுள் அ, உம் விகுதிகள். குறிப்புப் பெயரெச்ச விகுதிகள்: சிறிய – அ பெரிய – அ தெரிநிலை வினையெச்ச விகுதிகள்: … உ, இ, ய், பு, ஆ, ஊ, என, ஏ, அ, இன், ஆல், கால், ஏல், எனின், ஆயின், ஏனும், கு, இய, இயர், வான், பான், பாக்கு, கடை, கண், வழி, இடத்து, உம், மல், மை, மே, து முதலியன. இவற்றில் மல், மை, மே, து என்ற நான்கும் எதிர்மறைப் பொருளிலும் வருவன. … குறிப்பு வினையெச்ச விகுதிகள் … அ, றி, து, ஆல், மல், கால், கடை, வழி, இடத்து என்னும் 9 விகுதிகள்.'"
   }

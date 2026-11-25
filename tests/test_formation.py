@@ -66,11 +66,11 @@ def test_verb_tense_and_ending():
     an = MorphAnalysis(lemma="வா", pos="verb", tags=["fin", "sim", "strong", "past=த்", "3sgm=ஆன்"])
     f = decoder.decode_formation("வந்தான்", an)
     assert f.word_type == "பகுபதம்"
-    # வந்தான் = வா(→வ) + ந் இடைநிலை எழுத்து + த் இடைநிலை + ஆன் (நச்சினார்க்கினியர், சொல். எச்சவியல்
-    # 67, p. 467: 'முதனிலை குறுகி, கால வெழுத்திற் கேற்ற இடைநிலை யெழுத்துப் பெற்று'; D-028). Before
-    # the round-trip (D-023) this decoded as வா + த் + ஆன் and the ந் was lost: DECODER DEFECT 1.
+    # வந்தான் = வா(→வ) + ந் சந்தி + த் இடைநிலை + ஆன் (பாவாணர், இயற்றமிழ் இலக்கணம் §57, p. 66:
+    # 'வந்தான் – வ + ந் + தான் – ந் – சந்தி'; D-031). Before the round-trip (D-023) this decoded as
+    # வா + த் + ஆன் and the ந் was lost: DECODER DEFECT 1.
     assert [(c.part, c.form, c.surface) for c in f.components] == [
-        ("பகுதி", "வா", "வ"), ("இடைநிலை", "ந்", None), ("இடைநிலை", "த்", None), ("விகுதி", "ஆன்", None)]
+        ("பகுதி", "வா", "வ"), ("சந்தி", "ந்", None), ("இடைநிலை", "த்", None), ("விகுதி", "ஆன்", None)]
     assert f.round_trip.holds and f.round_trip.rebuilt == "வந்தான்"
     tense, png = decoder.decode_verb_grammar(an)
     assert tense == "இறந்தகாலம்" and png == "படர்க்கை ஆண்பால் ஒருமை"
@@ -156,30 +156,28 @@ def test_present_idainilai_is_the_grammatical_form_not_the_fst_surface():
     assert forms2["இடைநிலை"] == "கின்று"        # not "கின்ற்"
 
 
-def test_strong_verb_doubling_is_an_idainilai_on_the_commentary():
-    """The doubled க் is an இடைநிலை எழுத்து (D-028). நச்சினார்க்கினியர் counts a doubled ஒற்று among
-    the இடைநிலை எழுத்துக்கள் (சொல். பெயரியல் 11, p. 174) and calls a verb's medial letter an
-    இடைநிலை எழுத்து (எச்சவியல் 67, p. 469); he never calls one சந்தி. Saran, 2026-11-25: a classical
-    commentary ALWAYS outranks a TVA course book, so the D-026 சந்தி (TVA C0212 §5.3.5) is superseded.
-    The step is `urai`, quotes the scan-verified passage, and carries no மிகுதல் event."""
+def test_strong_verb_doubling_after_the_pakuthi_is_a_santhi_on_pavanar():
+    """The doubled க் is the சந்தி (D-031). பாவாணர் splits படித்தான் as 'படி + த் + தான் – த் சந்தி'
+    (இயற்றமிழ் இலக்கணம் §57, p. 66); no classical commentator splits a strong verb's two த், and
+    Saran ruled that பாவாணர் breaks such ties. The step is `scholar`, quotes the page it was read
+    on, and carries no மிகுதல் event."""
     an = MorphAnalysis(lemma="படி", pos="verb", tags=["fin", "strong", "pres=க்கிற்", "3sgm=ஆன்"])
     f = decoder.decode_formation("படிக்கிறான்", an)
     assert [(c.part, c.form) for c in f.components] == [
-        ("பகுதி", "படி"), ("இடைநிலை", "க்"), ("இடைநிலை", "கிறு"), ("விகுதி", "ஆன்")]
-    assert "p. 174" in f.components[1].role and "D-028" in f.components[1].role
+        ("பகுதி", "படி"), ("சந்தி", "க்"), ("இடைநிலை", "கிறு"), ("விகுதி", "ஆன்")]
+    assert "p. 66" in f.components[1].role and "D-031" in f.components[1].role
     assert not f.sandhi
     assert f.round_trip.holds
-    [step] = [s for s in f.round_trip.steps if s.rule == "irattitha_otru"]
-    assert step.status == "urai"
-    assert any("நச்சினார்க்கினியர்" in (r.ref or "") and "ரண்டிடை நிலை" in (r.verse_text or "")
-               for r in step.sources)
+    [step] = [s for s in f.round_trip.steps if s.rule == "santhi_otru"]
+    assert step.status == "scholar"
+    assert any("பாவாணர்" in (r.ref or "") and "த் சந்தி" in (r.verse_text or "") for r in step.sources)
     assert not any("TVA" in (r.ref or "") for r in step.sources)
 
 
-def test_future_doubling_is_an_idainilai_the_same_way():
+def test_future_doubling_is_a_santhi_the_same_way():
     an = MorphAnalysis(lemma="படி", pos="verb", tags=["fin", "strong", "fut=ப்ப்", "3sgm=ஆன்"])
     forms = [(c.part, c.form) for c in decoder.decode_formation("படிப்பான்", an).components]
-    assert forms == [("பகுதி", "படி"), ("இடைநிலை", "ப்"), ("இடைநிலை", "ப்"), ("விகுதி", "ஆன்")]
+    assert forms == [("பகுதி", "படி"), ("சந்தி", "ப்"), ("இடைநிலை", "ப்"), ("விகுதி", "ஆன்")]
 
 
 def test_past_and_future_markers_are_already_canonical():
@@ -213,10 +211,10 @@ def _parts(word, **kw):
 def test_a1_euphonic_increment_is_a_sariyai_not_dropped():
     """வந்தனன் = வா + ந் + த் + அன்(சாரியை) + அன்(விகுதி), TVA C0212 §5.3.4 for the சாரியை. The FST
     tags the சாரியை `euph`; we used to have no handler, so the word silently lost an உறுப்பு. The ந்
-    was lost too until the round-trip (D-023); it is an இடைநிலை எழுத்து (D-028)."""
+    was lost too until the round-trip (D-023); it is the சந்தி (பாவாணர், D-031)."""
     got = _parts("வந்தனன்", lemma="வா", pos="verb",
                  tags=["fin", "past=த்", "euph=அன்", "3sgm=அன்"])
-    assert got == [("பகுதி", "வா"), ("இடைநிலை", "ந்"), ("இடைநிலை", "த்"), ("சாரியை", "அன்"),
+    assert got == [("பகுதி", "வா"), ("சந்தி", "ந்"), ("இடைநிலை", "த்"), ("சாரியை", "அன்"),
                    ("விகுதி", "அன்")]
 
 
@@ -226,18 +224,18 @@ def test_a2_kal_is_split_off_the_vikuthi_as_modern_accretion():
     f = decoder.decode_formation(
         "வந்தீர்கள்", MorphAnalysis(lemma="வா", pos="verb", tags=["fin", "past=த்", "2pl=ஈர்கள்"]))
     assert [(c.part, c.form) for c in f.components] == [
-        ("பகுதி", "வா"), ("இடைநிலை", "ந்"), ("இடைநிலை", "த்"), ("விகுதி", "ஈர்"), ("விகுதி", "கள்")]
+        ("பகுதி", "வா"), ("சந்தி", "ந்"), ("இடைநிலை", "த்"), ("விகுதி", "ஈர்"), ("விகுதி", "கள்")]
     kal = f.components[-1]
     assert kal.authority is None, "no classical authority sanctions கள்"
     assert "modern" in (kal.role or "")
 
 
 def test_a3_3pln_surface_is_two_urupukal():
-    """நடந்தன = நட + ந் இடைநிலை எழுத்து (D-028) + த் + அன்(சாரியை) + அ(விகுதி), TVA C0214 §4.2.1 —
+    """நடந்தன = நட + ந் சந்தி (D-031) + த் + அன்(சாரியை) + அ(விகுதி), TVA C0214 §4.2.1 —
     one FST suffix, TWO உறுப்புகள். `3pln` was not mapped at all, so the word previously got no
     விகுதி."""
     got = _parts("நடந்தன", lemma="நட", pos="verb", tags=["fin", "past=த்", "3pln=அன"])
-    assert got == [("பகுதி", "நட"), ("இடைநிலை", "ந்"), ("இடைநிலை", "த்"), ("சாரியை", "அன்"),
+    assert got == [("பகுதி", "நட"), ("சந்தி", "ந்"), ("இடைநிலை", "த்"), ("சாரியை", "அன்"),
                    ("விகுதி", "அ")]
 
 

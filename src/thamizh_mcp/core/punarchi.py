@@ -255,12 +255,27 @@ def _apply(rule_id: str, st: _State, left: Part, right: Part, rp: list[str],
             segs[-1][1] = lp[:-1] + [_INAM[rp[0]]]
             return _State(segs, st.steps + [_step(rule_id, at, f"ம் becomes {_INAM[rp[0]]} before {rp[0]}")]), rp
         return None
-    if rule_id == "idainilai_na":
+    if rule_id == "santhi_na":
         if verb and right.kind == "idainilai" and right.form == "த்" and (lp[-1] in UYIR
                                                                          or lp[-1] in _NA_AFTER):
             segs.append([("j", rule_id), ["ந்"]])
             return _State(segs, st.steps + [_step(
-                rule_id, at, "இடைநிலை எழுத்து ந் comes before the tense letter த்")]), rp
+                rule_id, at, "the சந்தி ந் appears between the பகுதி and the tense letter த்")]), rp
+        return None
+    if rule_id == "santhi_otru":
+        # பாவாணர் (இயற்றமிழ் இலக்கணம் §57): சந்தி is the letter that APPEARS where the பகுதி meets
+        # the next part, and only there. A doubled letter after another part is irattitha_otru.
+        if verb and left.kind == "stem" and len(segs) == 1 and rp[0] in VALLINAM \
+                and right.kind in ("idainilai", "vikuthi"):
+            segs.append([("j", rule_id), [rp[0]]])
+            return _State(segs, st.steps + [_step(
+                rule_id, at, f"the சந்தி {rp[0]} appears between the பகுதி and {right.form}")]), rp
+        return None
+    if rule_id == "in_muthal_kurai":
+        # The past இடைநிலை இன் appears as ன், its first letter dropped (பாவாணர் §104: போனான்).
+        if verb and right.kind == "idainilai" and right.form == "இன்" and rp[:1] == ["இ"]:
+            return _State(segs, st.steps + [_step(
+                rule_id, at, "the இடைநிலை இன் appears as ன், its first letter dropped")]), rp[1:]
         return None
     if rule_id in ("eetrumei_varumei_thirithal", "eetrumei_inam_thirithal"):
         if not (verb and left.kind == "stem" and len(segs) == 1 and lp[-1] in ("ல்", "ள்")
@@ -275,7 +290,8 @@ def _apply(rule_id: str, st: _State, left: Part, right: Part, rp: list[str],
             rule_id, at, f"the பகுதி's final {lp[-1]} becomes {new} before {rp[0]}",
             final=lp[-1], before=before)]), rp
     if rule_id == "irattitha_otru":
-        if verb and rp[0] in VALLINAM and right.kind in ("idainilai", "vikuthi"):
+        # Only where santhi_otru does not reach: after a part that is not the பகுதி (செய்வித்தான்).
+        if verb and left.kind != "stem" and rp[0] in VALLINAM and right.kind in ("idainilai", "vikuthi"):
             segs.append([("j", rule_id), [rp[0]]])
             return _State(segs, st.steps + [_step(
                 rule_id, at, f"இடைநிலை எழுத்து {rp[0]} appears before {rp[0]}")]), rp
@@ -369,12 +385,13 @@ def _stem_variants(stem: str, verb: bool, target: Optional[list[str]] = None
 # Rules tried at a boundary, alone or as an ordered pair. Classical first, then the rules a
 # commentary states (D-028), so an உரை is used only when no நூற்பா rebuilds the word.
 _ORDER = ["athu_otru_kedal", "athu_akaram_kedal", "otru_irattal", "ukaram_kedal", "udambadumei",
-          "urubu_vallinam_mikuthal", "makaram_inam", "idainilai_na", "irattitha_otru",
-          "eetrumei_varumei_thirithal", "eetrumei_inam_thirithal"]
+          "urubu_vallinam_mikuthal", "makaram_inam", "santhi_na", "santhi_otru", "irattitha_otru",
+          "in_muthal_kurai", "eetrumei_varumei_thirithal", "eetrumei_inam_thirithal"]
 _COMBOS: list[tuple[str, ...]] = [()] + [(r,) for r in _ORDER] + [
     ("athu_otru_kedal", "athu_akaram_kedal"),
     ("otru_irattal", "ukaram_kedal"),
     ("otru_irattal", "urubu_vallinam_mikuthal"),
+    ("in_muthal_kurai", "eetrumei_varumei_thirithal"),   # சொல் + இன் → சொன்ன்: ன் then ல் before it
 ]
 
 
@@ -413,11 +430,14 @@ def _search(parts: list[Part], stem_ps: list[str], target: list[str], verb: bool
     return found
 
 
-def _cost(st: _State) -> tuple[int, int, int, int]:
-    """Fewest parked steps, then fewest textbook steps, then fewest commentary steps, then fewest
-    steps: a நூற்பா outranks a classical உரை, which outranks a course book (D-028)."""
+def _cost(st: _State) -> tuple[int, int, int, int, int]:
+    """Fewest parked steps, then fewest textbook, then fewest பாவாணர், then fewest commentary steps,
+    then fewest steps: a நூற்பா outranks an உரை, which outranks பாவாணர், who outranks a course book
+    (D-028, D-031). பாவாணர் decides a LABEL where the others are silent or disagree; between two
+    splits that both rebuild, the one resting on the older text is kept."""
     return (sum(s.status == "parked" for s in st.steps),
             sum(s.status == "textbook" for s in st.steps),
+            sum(s.status == "scholar" for s in st.steps),
             sum(s.status == "urai" for s in st.steps), len(st.steps))
 
 

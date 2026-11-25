@@ -107,8 +107,10 @@ def test_verified_quotations_are_still_in_their_units():
     for q in vq["quotations"]:
         d = _load(q["artifact"])
         if "excerpts" in d:
-            # A page-excerpt artifact (the Nannūl commentaries, D-029): the passage is on its leaf.
-            assert q["commentator"] and q["nannul_verse"], q["id"]
+            # A page-excerpt artifact (the Nannūl commentaries, D-029; பாவாணர், D-031): the passage
+            # is on its leaf, and names its commentator and நூற்பா, or its author and section.
+            assert (q.get("commentator") and q.get("nannul_verse")) or (
+                q.get("author") and q.get("section")), q["id"]
             [ex] = [e for e in d["excerpts"] if e["leaf"] == q["leaf"]]
             body = ex["text"]
         else:
@@ -135,6 +137,8 @@ def test_quotation_ids_are_unique_and_every_rule_citation_resolves():
     rules = g["join_rules"] + pv["rules"] + pv["catalogued_not_applied"] + [pv["framework"]]
     idn = json.loads(config.GRAMMAR_IDAINILAI_FILE.read_text("utf-8"))["idainilai"]
     rules += [e for t in idn.values() for e in t.get("from_fst", {}).values()]
+    vk = json.loads(config.GRAMMAR_VIKUTHI_FILE.read_text("utf-8"))["echchavinai"]["vinaiyeccham"]
+    rules.append(vk["tense_vikuthi"])
     cited = [i for r in rules for i in r.get("urai", [])]
     assert cited and set(cited) <= set(ids)
 

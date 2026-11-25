@@ -152,6 +152,21 @@ Mirror: design repo `sources/classical/nannul-urai/`. archive.org's MD5s matched
 | `_page_numbers.json` (leaf = printed page in this volume) | `53a82da4cd8b…` | 2026-11-25 |
 | `.pdf` (scan, 152,227,490 bytes; for checking quotations) | `299da0ea203d…` | 2026-11-25 |
 
+**தேவநேயப் பாவாணர் (D-031).** Built by `scripts/build_pavanar.py`. Saran ruled that his statements
+break ties where the classical sources are silent or disagree. All from the TVA collection on
+archive.org (CC BY-SA 4.0 under D-021); mirror: design repo `sources/classical/pavanar/`. Only
+களஞ்சியம் 25 has cited pages so far (leaves 49, 54, 83, 84 → `pavanar_iyatramil_ilakkanam.json`);
+the other two are pinned by checksum for later use.
+
+| Book | archive.org | `_djvu.xml` sha256 | `_page_numbers.json` sha256 | scan sha256 |
+|---|---|---|---|---|
+| களஞ்சியம் 25, இயற்றமிழ் இலக்கணம் | `tdl.48547-25` | `75451b84f4d9…` | `e9bd60aea79d…` | `210d80888e06…` (3,167,501 B, typeset) |
+| களஞ்சியம் 19, வேர்ச்சொற் கட்டுரைகள் 3 | `tdl.48510-19-3` | `742d102db8f9…` | `11e4170be590…` | `f9788f679849…` (3,982,121 B) |
+| எழுத்ததிகாரம், நச்சினார்க்கினியர் உரை, his footnotes (கழகம் 1972) | `dli.jZY9lup2kZl6TuXGlZQdjZMdl0Uy` | `161eb84f2a1a…` | `5db55fa17a3b…` | `0ffd2fa2e02a…` (395,251,979 B) |
+
+archive.org's MD5s matched on download. The 1972 book's footnotes are mostly glosses; none falls on a
+verse our rules cite, so none is excerpted yet.
+
 ⚠️ **Nannūl upstream was REVISED after we pinned it** (primary sha256 `bfc865ddc2e4…` → `b970b4ee13b4…`,
 seen 2026-11-24). The parser reads the new page into a different text for all but 14 verses, so the
 builder now REFUSES to overwrite `nannul.json` and keeps the verified pin. Adopting the revision is

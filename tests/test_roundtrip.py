@@ -116,12 +116,11 @@ def test_verb_components_spell_the_word(word):
 
 def test_defect_1_the_missing_na_is_named():
     """KNOWN DECODER DEFECT 1: காத்திருந்தாள் decoded as காத்திரு + த் + ஆள், the ந் gone.
-    Since D-028 the ந் is an இடைநிலை எழுத்து: நச்சினார்க்கினியர் names வந்தான்'s ந் 'கால வெழுத்திற்
-    கேற்ற இடைநிலை யெழுத்து' (சொல். எச்சவியல் 67, p. 467). It was a சந்தி த் → ந் on TVA C0212 §5.3.6
-    and Saran's ruling of 2026-08-11; a classical commentary outranks both."""
+    Since D-031 the ந் is the சந்தி: பாவாணர், 'வந்தான், இருந்தான் முதலிய சொற்களில், ந் என்பதே சந்தி'
+    (இயற்றமிழ் இலக்கணம் §57, p. 66). D-028 had it an இடைநிலை எழுத்து after நச்சினார்க்கினியர்."""
     f = _decode("காத்திருந்தாள்")
     assert [(c.part, c.form, c.surface) for c in f.components] == [
-        ("பகுதி", "காத்திரு", None), ("இடைநிலை", "ந்", None), ("இடைநிலை", "த்", None),
+        ("பகுதி", "காத்திரு", None), ("சந்தி", "ந்", None), ("இடைநிலை", "த்", None),
         ("விகுதி", "ஆள்", None)]
 
 
@@ -188,6 +187,10 @@ def test_every_rule_declares_a_known_status_and_classical_rules_cite_a_verse():
             assert r["urai"] and r["urai_scope"], r["id"]
             assert set(r["urai"]) <= set(classical.verified_quotations()), r["id"]
             assert "textbook" not in r, f"{r['id']}: a commentary outranks the course book (D-028)"
+        if r["status"] == "scholar":
+            # பாவாணர் (D-031): a passage of his read on the scan page, with its reach stated.
+            assert r["urai_scope"] and any(q.startswith("pavanar-") for q in r["urai"]), r["id"]
+            assert set(r["urai"]) <= set(classical.verified_quotations()), r["id"]
         if r["status"] == "parked":
             assert "D-023" in r["parked"]
 
@@ -220,31 +223,32 @@ def test_a_parked_rule_never_carries_a_label():
             assert not r.get("part"), f"{r['id']} is parked, so it must not name an உறுப்பு"
 
 
-def test_no_verb_part_is_labelled_santhi_once_the_commentary_is_read():
-    """D-028 (Saran, 2026-11-25): a classical commentary ALWAYS outranks a TVA course book.
-    நச்சினார்க்கினியர் never calls a part of a verb சந்தி; the medial letters are இடைநிலை எழுத்து. So
-    the strong-verb doubled consonant (D-026's சந்தி, TVA C0212 §5.3.5) and வந்தான்'s ந் (TVA
-    C0212 §5.3.6) are both இடைநிலை now, each citing the scan-verified passage it rests on."""
-    for rid in ("irattitha_otru", "idainilai_na"):
+def test_the_letter_after_the_pakuthi_is_a_santhi_on_pavanar():
+    """D-031 (Saran, 2026-11-25): பாவாணர் breaks ties. He names the letter that appears where the
+    பகுதி meets the next part a சந்தி (படித்தான், வந்தான்; இயற்றமிழ் இலக்கணம் §57, p. 66), which
+    supersedes D-028's இடைநிலை எழுத்து. He limits சந்தி to that join, so a doubled letter after
+    another part (செய்வித்தான்'s த்த் after வி) keeps D-028's label."""
+    for rid in ("santhi_otru", "santhi_na"):
         rule = punarchi.rules()[rid]
-        assert rule["status"] == "urai" and rule["part"] == "இடைநிலை", rid
-        assert "TVA" in rule["superseded"]["source"] and "D-028" in rule["superseded"]["by"], rid
+        assert rule["status"] == "scholar" and rule["part"] == "சந்தி", rid
+        assert "D-031" in rule["superseded"]["by"] and "இடைநிலை" in rule["superseded"]["label"], rid
         assert rule["cites"][0]["authority"] == "Tholkappiyam", rid
-    for word in ("படித்தான்", "படிக்கிறான்", "படிப்பான்", "பார்த்தான்", "கொடுத்தான்", "செய்வித்தான்",
-                 "வந்தான்", "காத்திருந்தாள்"):
-        f = _decode(word)
-        assert all(c.part is not None for c in f.components), word
-        assert "சந்தி" not in [c.part for c in f.components], word
-        assert not any(s.status in ("parked", "textbook") for s in f.round_trip.steps
-                       if s.rule in ("irattitha_otru", "idainilai_na")), word
+        assert rule["urai"][0].startswith("pavanar-"), rid
+    for word in ("படித்தான்", "படிக்கிறான்", "படிப்பான்", "பார்த்தான்", "கொடுத்தான்", "வந்தான்",
+                 "காத்திருந்தாள்", "சேர்ந்தான்"):
+        parts = [c.part for c in _decode(word).components]
+        assert parts[:2] == ["பகுதி", "சந்தி"] and None not in parts, word
+    f = _decode("செய்வித்தான்")
+    assert [c.part for c in f.components] == ["பகுதி", "இடைநிலை", "இடைநிலை", "இடைநிலை", "விகுதி"]
+    assert [s.rule for s in f.round_trip.steps] == ["irattitha_otru"]
 
 
-def test_a_commentary_step_quotes_the_page_it_was_read_on():
-    for rid in ("irattitha_otru", "idainilai_na"):
+def test_a_pavanar_step_quotes_the_page_it_was_read_on():
+    for rid in ("santhi_otru", "santhi_na", "in_muthal_kurai"):
         refs = punarchi.cite(rid)
-        urai = [r for r in refs if "உரை" in (r.verse or "")]
-        assert urai and all(r.verse_text and "p. " in r.ref for r in urai), rid
-        assert refs[0].name == "Tholkappiyam", f"{rid}: the நூற்பா is cited first"
+        pav = [r for r in refs if "பாவாணர்" in (r.name or "")]
+        assert pav and all(r.verse_text and "p. " in r.ref for r in pav), rid
+    assert punarchi.cite("santhi_na")[0].name == "Tholkappiyam", "the நூற்பா is cited first"
 
 
 # --- fixtures from நச்சினார்க்கினியர்'s உரை: the commentary's own worked examples -------------
@@ -356,15 +360,25 @@ def test_roots_of_one_shape_change_differently_and_the_word_decides():
 
 def test_sol_follows_nil_and_its_tense_letter_is_cited():
     """Saran, 2026-11-25 (D-030): சொல் → சொன் follows the same pattern as நில் → நின். The change is
-    Tholkappiyam's ல் before a nasal (புள்ளிமயங்கியல் 71, 72); the ன் after it is a tense letter
-    outside நன்னூல் 142's four, which 144's 'இவை சில இல' admits — கூழங்கைத் தம்பிரான் names
-    சொன்னான் and போனான் for it. Nothing about சொன்னான் is parked any more."""
+    Tholkappiyam's ல் before a nasal (புள்ளிமயங்கியல் 71, 72). The ன் after it is the இடைநிலை இன் with
+    its first letter dropped (பாவாணர் §104; D-031). Nothing about சொன்னான் is parked."""
     f = _verb("சொன்னான்", "சொல்", "past=ன்")
     assert [(c.part, c.form, c.surface) for c in f.components] == [
-        ("பகுதி", "சொல்", "சொன்"), ("இடைநிலை", "ன்", None), ("விகுதி", "ஆன்", None)]
+        ("பகுதி", "சொல்", "சொன்"), ("இடைநிலை", "இன்", "ன்"), ("விகுதி", "ஆன்", None)]
     assert not any(s.status == "parked" for s in f.round_trip.steps)
+    assert [s.rule for s in f.round_trip.steps] == ["in_muthal_kurai", "eetrumei_varumei_thirithal"]
     na = json.loads(config.GRAMMAR_IDAINILAI_FILE.read_text("utf-8"))["idainilai"]["past"]["from_fst"]["ன்"]
-    assert "tampiran-144-sonnan" in na["urai"] and "144" in f.components[1].role
+    assert na["urai"] == ["pavanar-104-in"] and "§104" in f.components[1].role
+
+
+def test_ponan_is_po_plus_in_with_its_first_letter_dropped():
+    """பாவாணர் §104 (p. 32): 'இன் என்னும் இடைநிலை ன் என முதல் குறைந்தும் … நிற்கும். உ-ம். போனான்
+    – போ + ன் + ஆன்'. It breaks the tie with D-030's reading (another இடைநிலை under நன்னூல் 144)."""
+    f = _verb("போனான்", "போ", "past=ன்")
+    assert [(c.part, c.form, c.surface) for c in f.components] == [
+        ("பகுதி", "போ", None), ("இடைநிலை", "இன்", "ன்"), ("விகுதி", "ஆன்", None)]
+    [step] = f.round_trip.steps
+    assert step.rule == "in_muthal_kurai" and step.status == "scholar"
 
 
 def test_na_comes_after_ya_ra_zha_as_the_commentators_examples_show():
